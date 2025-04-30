@@ -1,14 +1,27 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 
 type HoroscopeType = 'daily' | 'weekly' | 'monthly';
+type ZodiacSign = 'Aries' | 'Taurus' | 'Gemini' | 'Cancer' | 'Leo' | 'Virgo' | 'Libra' | 'Scorpio' | 'Sagittarius' | 'Capricorn' | 'Aquarius' | 'Pisces';
+type DayType = 'TODAY' | 'TOMORROW' | 'YESTERDAY' | string;
+type Language = 'russian' | 'english';
+
+interface HoroscopeResponse {
+  sign: ZodiacSign;
+  date?: string;
+  week?: string;
+  month?: string;
+  prediction: string;
+  mood: string;
+  color: string;
+  number: number;
+}
 
 interface HoroscopeState {
-  sign: string;
+  sign: ZodiacSign;
   type: HoroscopeType;
-  dailyHoroscope: {
-    date: string;
-    horoscope: string;
-  } | null;
+  day: DayType;
+  lang: Language;
+  horoscope: HoroscopeResponse | null;
   loading: boolean;
   error: string | null;
 }
@@ -16,39 +29,44 @@ interface HoroscopeState {
 const initialState: HoroscopeState = {
   sign: 'Aries',
   type: 'daily',
-  dailyHoroscope: null,
+  day: 'TODAY',
+  lang: 'russian',
+  horoscope: null,
   loading: false,
   error: null,
 };
 
-// Моковые данные для заглушки
-const mockHoroscopes = {
-  daily: {
-    date: new Date().toLocaleDateString('ru-RU'),
-    horoscope: 'Сегодня вас ждут приятные сюрпризы. Будьте открыты новым возможностям и не бойтесь перемен. Звезды благосклонны к вам, особенно в сфере личных отношений.',
-  },
-  weekly: {
-    date: `${new Date().toLocaleDateString('ru-RU')} - ${new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString('ru-RU')}`,
-    horoscope: 'На этой неделе вас ждет период активного роста и развития. Сосредоточьтесь на своих целях и не отвлекайтесь на мелочи. В середине недели возможны неожиданные повороты событий.',
-  },
-  monthly: {
-    date: `${new Date().toLocaleDateString('ru-RU')} - ${new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString('ru-RU')}`,
-    horoscope: 'Этот месяц принесет значительные изменения в вашей жизни. Будьте готовы к новым вызовам и возможностям. Особое внимание уделите карьерному росту и личностному развитию.',
-  },
-};
+const API_URL = 'https://taro-d8jd.onrender.com';
 
 export const fetchHoroscope = createAsyncThunk(
   'horoscope/fetchHoroscope',
-  async ({ sign, type }: { sign: string; type: HoroscopeType }, { rejectWithValue }) => {
+  async ({ sign, type, day = 'TODAY', lang = 'russian' }: { 
+    sign: ZodiacSign; 
+    type: HoroscopeType;
+    day?: DayType;
+    lang?: Language;
+  }, { rejectWithValue }) => {
     try {
-      // Имитация задержки сети
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const params = new URLSearchParams({
+        sign,
+        lang,
+        ...(type === 'daily' && { day }),
+      });
+
+      const response = await fetch(`${API_URL}/horoscope/${type}?${params}`);
       
-      // Возвращаем моковые данные
-      return mockHoroscopes[type];
+      if (!response.ok) {
+        if (response.status === 429) {
+          throw new Error('Превышен лимит запросов. Пожалуйста, попробуйте позже.');
+        }
+        throw new Error('Ошибка при получении гороскопа');
+      }
+      
+      const data = await response.json();
+      return data;
     } catch (error) {
       console.error('Error fetching horoscope:', error);
-      return rejectWithValue('Не удалось получить гороскоп. Пожалуйста, попробуйте позже.');
+      return rejectWithValue(error instanceof Error ? error.message : 'Не удалось получить гороскоп. Пожалуйста, попробуйте позже.');
     }
   }
 );
@@ -57,11 +75,17 @@ const horoscopeSlice = createSlice({
   name: 'horoscope',
   initialState,
   reducers: {
-    setSign: (state, action: PayloadAction<string>) => {
+    setSign: (state, action: PayloadAction<ZodiacSign>) => {
       state.sign = action.payload;
     },
     setType: (state, action: PayloadAction<HoroscopeType>) => {
       state.type = action.payload;
+    },
+    setDay: (state, action: PayloadAction<DayType>) => {
+      state.day = action.payload;
+    },
+    setLanguage: (state, action: PayloadAction<Language>) => {
+      state.lang = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -72,10 +96,7 @@ const horoscopeSlice = createSlice({
       })
       .addCase(fetchHoroscope.fulfilled, (state, action) => {
         state.loading = false;
-        state.dailyHoroscope = {
-          date: action.payload.date,
-          horoscope: action.payload.horoscope,
-        };
+        state.horoscope = action.payload;
       })
       .addCase(fetchHoroscope.rejected, (state, action) => {
         state.loading = false;
@@ -84,5 +105,5 @@ const horoscopeSlice = createSlice({
   },
 });
 
-export const { setSign, setType } = horoscopeSlice.actions;
+export const { setSign, setType, setDay, setLanguage } = horoscopeSlice.actions;
 export default horoscopeSlice.reducer; 

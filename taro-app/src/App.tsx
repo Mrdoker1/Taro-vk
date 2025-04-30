@@ -4,7 +4,7 @@ import { View, SplitLayout, SplitCol, ScreenSpinner } from '@vkontakte/vkui';
 import { useActiveVkuiLocation } from '@vkontakte/vk-mini-apps-router';
 import { Provider } from 'react-redux';
 
-import { Persik, Home } from './panels';
+import { Persik, Home, NewPage, Settings } from './panels';
 import { DEFAULT_VIEW_PANELS } from './routes';
 import bridge from './bridge';
 import { store } from './store';
@@ -35,8 +35,10 @@ export const App = () => {
       <SplitLayout>
         <SplitCol>
           <View activePanel={activePanel}>
-            <Home id="home" fetchedUser={fetchedUser} />
-            <Persik id="persik" />
+            <Home id={DEFAULT_VIEW_PANELS.HOME} fetchedUser={fetchedUser} />
+            <Persik id={DEFAULT_VIEW_PANELS.PERSIK} />
+            <NewPage id={DEFAULT_VIEW_PANELS.NEW_PAGE} />
+            <Settings id={DEFAULT_VIEW_PANELS.SETTINGS} />
           </View>
         </SplitCol>
         {popout}
