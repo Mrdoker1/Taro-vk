@@ -61,6 +61,10 @@ export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
     routeNavigator.push(`/deck/${deckId}`);
   };
 
+  const handleOpenSpreads = () => {
+    routeNavigator.push(`/spreads`);
+  };
+
   return (
     <ConfigProvider hasCustomPanelHeaderAfter={false}>
       <Panel id={id}>
@@ -156,6 +160,25 @@ export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
                 </Div>
               )}
             </div>
+          </Group>
+
+          <Group header={<Header size="s">Расклады Таро</Header>}>
+            <Card mode="shadow">
+              <Div style={{ padding: '16px' }}>
+                <Title level="3" style={{ marginBottom: '8px' }}>Попробуйте гадание на картах Таро</Title>
+                <Text style={{ marginBottom: '16px' }}>
+                  Выберите один из доступных раскладов и получите предсказание на интересующий вас вопрос.
+                </Text>
+                <Button 
+                  mode="primary" 
+                  size="m" 
+                  onClick={handleOpenSpreads}
+                  stretched
+                >
+                  Выбрать расклад
+                </Button>
+              </Div>
+            </Card>
           </Group>
 
           <Group header={<Header size="s">Ваши колоды</Header>}>

@@ -1,16 +1,19 @@
 import { useState, useEffect, ReactNode } from 'react';
 import { UserInfo } from '@vkontakte/vk-bridge';
 import { View, SplitLayout, SplitCol, ScreenSpinner } from '@vkontakte/vkui';
-import { useActiveVkuiLocation } from '@vkontakte/vk-mini-apps-router';
+import { useActiveVkuiLocation, useParams } from '@vkontakte/vk-mini-apps-router';
 import { Provider } from 'react-redux';
 
-import { Persik, Home, NewPage, Settings, DeckDetails, CardDetails } from './panels';
+import { Persik, Home, NewPage, Settings, DeckDetails, CardDetails, TaroSpreads, TaroReadingPanel } from './panels';
 import { DEFAULT_VIEW_PANELS } from './routes';
 import bridge from './bridge';
 import { store } from './store';
 
 export const App = () => {
   const { panel: activePanel = DEFAULT_VIEW_PANELS.HOME } = useActiveVkuiLocation();
+  const params = useParams();
+  const spreadId = params?.spreadId || '';
+  const deckId = params?.deckId || '';
   const [fetchedUser, setUser] = useState<UserInfo | undefined>();
   const [popout, setPopout] = useState<ReactNode | null>(<ScreenSpinner />);
 
@@ -41,6 +44,12 @@ export const App = () => {
             <Settings id={DEFAULT_VIEW_PANELS.SETTINGS} />
             <DeckDetails id={DEFAULT_VIEW_PANELS.DECK_DETAILS} />
             <CardDetails id={DEFAULT_VIEW_PANELS.CARD_DETAILS} />
+            <TaroSpreads id={DEFAULT_VIEW_PANELS.TARO_SPREADS} />
+            <TaroReadingPanel 
+              id={DEFAULT_VIEW_PANELS.TARO_READING} 
+              spreadId={spreadId} 
+              deckId={deckId} 
+            />
           </View>
         </SplitCol>
         {popout}

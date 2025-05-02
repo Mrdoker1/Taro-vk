@@ -17,6 +17,8 @@ export const DEFAULT_VIEW_PANELS = {
   SETTINGS: 'settings',
   DECK_DETAILS: 'deck-details',
   CARD_DETAILS: 'card-details',
+  TARO_SPREADS: 'taro-spreads',
+  TARO_READING: 'taro-reading',
 } as const;
 
 export const routes = RoutesConfig.create([
@@ -28,6 +30,8 @@ export const routes = RoutesConfig.create([
       createPanel(DEFAULT_VIEW_PANELS.SETTINGS, `/${DEFAULT_VIEW_PANELS.SETTINGS}`, []),
       createPanel(DEFAULT_VIEW_PANELS.DECK_DETAILS, '/deck/:deckId', []),
       createPanel(DEFAULT_VIEW_PANELS.CARD_DETAILS, '/deck/:deckId/card/:cardId', []),
+      createPanel(DEFAULT_VIEW_PANELS.TARO_SPREADS, '/spreads', []),
+      createPanel(DEFAULT_VIEW_PANELS.TARO_READING, '/reading/:spreadId/:deckId', []),
     ]),
   ]),
 ]);
