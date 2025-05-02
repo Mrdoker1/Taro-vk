@@ -2,11 +2,13 @@ import { configureStore } from '@reduxjs/toolkit';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import appReducer from './slices/appSlice';
 import horoscopeReducer from './slices/horoscopeSlice';
+import taroDecksReducer from './slices/taroDecksSlice';
 
 export const store = configureStore({
   reducer: {
     app: appReducer,
     horoscope: horoscopeReducer,
+    taroDecks: taroDecksReducer,
   },
 });
 

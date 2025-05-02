@@ -13,6 +13,7 @@ import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
 import { useAppDispatch, useAppSelector } from '../store';
 import { setSign, setLanguage } from '../store/slices/horoscopeSlice';
 import { AppHeader } from '../components/AppHeader';
+import { AppLanguage, getLanguageDisplayName } from '../utils/languageUtils';
 
 const zodiacSigns = [
   { value: 'Aries', label: 'Овен' },
@@ -29,10 +30,14 @@ const zodiacSigns = [
   { value: 'Pisces', label: 'Рыбы' },
 ];
 
-const languages = [
-  { value: 'russian', label: 'Русский' },
-  { value: 'english', label: 'English' },
-];
+// Доступные в настоящее время языки
+const availableLanguages: AppLanguage[] = ['russian', 'english'];
+
+// Создаем список языков для дропдауна
+const languages = availableLanguages.map(lang => ({
+  value: lang,
+  label: getLanguageDisplayName(lang)
+}));
 
 export interface SettingsProps extends NavIdProps {}
 
@@ -46,7 +51,7 @@ export const Settings: FC<SettingsProps> = ({ id }) => {
   };
 
   const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    dispatch(setLanguage(e.target.value as 'russian' | 'english'));
+    dispatch(setLanguage(e.target.value as AppLanguage));
   };
 
   return (

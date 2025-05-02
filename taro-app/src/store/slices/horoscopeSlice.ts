@@ -1,9 +1,9 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import { AppLanguage, ApiType, getLanguageForApi } from '../../utils/languageUtils';
 
 type HoroscopeType = 'daily' | 'weekly' | 'monthly';
 type ZodiacSign = 'Aries' | 'Taurus' | 'Gemini' | 'Cancer' | 'Leo' | 'Virgo' | 'Libra' | 'Scorpio' | 'Sagittarius' | 'Capricorn' | 'Aquarius' | 'Pisces';
 type DayType = 'TODAY' | 'TOMORROW' | 'YESTERDAY' | string;
-type Language = 'russian' | 'english';
 
 interface HoroscopeResponse {
   sign: ZodiacSign;
@@ -20,7 +20,7 @@ interface HoroscopeState {
   sign: ZodiacSign;
   type: HoroscopeType;
   day: DayType;
-  lang: Language;
+  lang: AppLanguage;
   horoscope: HoroscopeResponse | null;
   loading: boolean;
   error: string | null;
@@ -45,16 +45,19 @@ const API_URL = isDevelopment
 
 export const fetchHoroscope = createAsyncThunk(
   'horoscope/fetchHoroscope',
-  async ({ sign, type, day = 'TODAY', lang = 'russian' }: { 
+  async ({ sign, type, day = 'TODAY', lang = 'russian' as AppLanguage }: { 
     sign: ZodiacSign; 
     type: HoroscopeType;
     day?: DayType;
-    lang?: Language;
+    lang?: AppLanguage;
   }, { rejectWithValue }) => {
     try {
+      // Получаем язык в формате, нужном для API гороскопов
+      const apiLang = getLanguageForApi(lang, ApiType.HOROSCOPE);
+      
       const params = new URLSearchParams({
         sign,
-        lang,
+        lang: apiLang,
         ...(type === 'daily' && { day }),
       });
 
@@ -64,7 +67,9 @@ export const fetchHoroscope = createAsyncThunk(
         if (response.status === 429) {
           throw new Error('Превышен лимит запросов. Пожалуйста, попробуйте позже.');
         }
-        throw new Error('Ошибка при получении гороскопа');
+        
+        const errorData = await response.json().catch(() => null);
+        throw new Error(errorData?.message || 'Ошибка при получении гороскопа');
       }
       
       const data = await response.json();
@@ -89,7 +94,7 @@ const horoscopeSlice = createSlice({
     setDay: (state, action: PayloadAction<DayType>) => {
       state.day = action.payload;
     },
-    setLanguage: (state, action: PayloadAction<Language>) => {
+    setLanguage: (state, action: PayloadAction<AppLanguage>) => {
       state.lang = action.payload;
     },
   },
