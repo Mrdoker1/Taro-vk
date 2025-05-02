@@ -5,6 +5,7 @@ import { generateText, clearGeneratedText } from '../store/slices/generationSlic
 import { Spinner, Button, Div, Title, Text, Group, Textarea, FormItem, Card, Select, Popover, IconButton, Accordion } from '@vkontakte/vkui';
 import { Icon20QuestionOutline } from '@vkontakte/icons';
 import { fetchDeckDetails } from '../store/slices/taroDecksSlice';
+import { getDefaultLanguage } from '../utils/languageUtils';
 
 interface TaroReadingProps {
   spreadId: string;
@@ -101,6 +102,7 @@ export const TaroReading: React.FC<TaroReadingProps> = ({
   // Функция для подготовки промпта с данными о картах
   const preparePrompt = () => {
     if (!currentTemplate || !currentSpread || !currentDeck) return null;
+    if (!question.trim()) return null; // Если вопрос не введен, не формируем промпт
 
     // Создаем список карт с позициями для промпта
     const cardsText = selectedCards.map(card => {
@@ -112,11 +114,11 @@ export const TaroReading: React.FC<TaroReadingProps> = ({
       return `${card.position}. ${positionLabel} — ${cardInfo?.id || card.cardId} (${orientation})`;
     }).join('\n');
 
-    // Получаем текущий вопрос (предустановленный или пользовательский)
-    const userQuestion = question.trim() || 'Общее толкование расклада';
+    // Получаем текущий вопрос
+    const userQuestion = question.trim();
 
-    // Определяем язык для ответа (всегда русский)
-    const responseLang = 'russian';
+    // Определяем язык для ответа из настроек или используем значение по умолчанию
+    const responseLang = getDefaultLanguage();
 
     // Формируем текст промпта напрямую без использования шаблона
     const promptText = `
@@ -133,7 +135,8 @@ ${cardsText}
       systemPrompt: currentTemplate.systemPrompt,
       parameters: {
         temperature: currentTemplate.temperature || 0.7,
-        maxTokens: currentTemplate.maxTokens || 800
+        maxTokens: currentTemplate.maxTokens || 800,
+        responseLang: responseLang
       },
       taroContext: {
         spreadId,
