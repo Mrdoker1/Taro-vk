@@ -35,11 +35,11 @@ export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
   const { photo_200, first_name } = { ...fetchedUser };
   const routeNavigator = useRouteNavigator();
   const dispatch = useAppDispatch();
-  const { type, horoscope, loading, error } = useAppSelector((state) => state.horoscope);
+  const { type, horoscope, loading, error, sign, lang } = useAppSelector((state) => state.horoscope);
 
   useEffect(() => {
-    dispatch(fetchHoroscope({ sign: 'Aries', type }));
-  }, [dispatch, type]);
+    dispatch(fetchHoroscope({ sign, type, lang }));
+  }, [dispatch, type, sign, lang]);
 
   const handleTypeChange = (value: string) => {
     dispatch(setType(value as 'daily' | 'weekly' | 'monthly'));
