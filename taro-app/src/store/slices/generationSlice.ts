@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 // Типы данных
 export interface GenerationRequest {
@@ -60,7 +60,8 @@ const prepareRequestData = (requestData: GenerationRequest) => {
   const parameters = {
     temperature: requestData.parameters?.temperature || 0.7,
     maxTokens: requestData.parameters?.maxTokens || 800,
-    responseLang: requestData.parameters?.responseLang || requestData.taroContext?.responseLang || 'russian'
+    // Принудительно устанавливаем русский язык для ответа
+    responseLang: 'russian'
   };
 
   // Подготавливаем промпт
@@ -78,33 +79,44 @@ const prepareRequestData = (requestData: GenerationRequest) => {
       const cardsTitle = 'Карты и позиции:';
       
       // Основной текст промпта
-      promptText = `${questionText}\n${spreadText}\n${cardsTitle}\n${cardsText || ''}\n\nСформируй ответ строго по описанному JSON-формату.`;
+      promptText = `${questionText}\n${spreadText}\n${cardsTitle}\n${cardsText || ''}\n\nСформируй ответ строго по описанному JSON-формату.\nОтвет ОБЯЗАТЕЛЬНО должен быть ТОЛЬКО на РУССКОМ ЯЗЫКЕ. Не переходи на английский ни в коем случае.`;
     } else {
       // Если в промпте есть плейсхолдеры, заменяем их
       promptText = promptText
         .replace('{{question}}', question || 'Общее толкование расклада')
         .replace('{{spreadName}}', spreadName || '')
         .replace('{{cards}}', cardsText || '');
+      
+      // Добавляем требование русского языка
+      promptText += '\nОтвет ОБЯЗАТЕЛЬНО должен быть ТОЛЬКО на РУССКОМ ЯЗЫКЕ. Не переходи на английский ни в коем случае.';
     }
   }
 
   // Получаем системный промпт
-  const systemPrompt = requestData.systemPrompt || `Ты — профессиональный таролог. Отвечай ТОЛЬКО на вопросы о таро, предсказаниях и эзотерике.
+  let systemPrompt = requestData.systemPrompt || `Ты — профессиональный таролог. Отвечай ТОЛЬКО на вопросы о таро, предсказаниях и эзотерике.
   ФОРМАТ ОТВЕТА (JSON):
   {
-    "message":  "общее толкование расклада",
-    "positions": [ { "index": 1, "interpretation": "толкование позиции" } ]
+    "message":  "общее толкование расклада на РУССКОМ языке",
+    "positions": [ { "index": 1, "interpretation": "толкование позиции на РУССКОМ языке" } ]
   }
   
-  Если вопрос не относится к таро — верни { "error": true, "message": "Ваш вопрос не относится к таро или астрологии." }. Без markdown, ≤ 800 токенов.`;
+  Если вопрос не относится к таро — верни { "error": true, "message": "Ваш вопрос не относится к таро или астрологии." }. Без markdown, ≤ 800 токенов.
+  ВАЖНО: Весь ответ должен быть ТОЛЬКО на РУССКОМ языке. Не используй английский язык ни в коем случае.`;
 
-  // Возвращаем объект запроса
+  // Принудительно добавляем требование русского языка в начало системного промпта
+  if (!systemPrompt.startsWith('ИСПОЛЬЗУЙ ТОЛЬКО РУССКИЙ ЯЗЫК')) {
+    systemPrompt = `ИСПОЛЬЗУЙ ТОЛЬКО РУССКИЙ ЯЗЫК ДЛЯ ВСЕХ ОТВЕТОВ. НЕ ИСПОЛЬЗУЙ АНГЛИЙСКИЙ НИ В КОЕМ СЛУЧАЕ.\n\n${systemPrompt}`;
+  }
+
+  // Возвращаем объект запроса с дополнительными явными параметрами языка
   return {
     systemPrompt,
     prompt: promptText,
     temperature: parameters.temperature,
     maxTokens: parameters.maxTokens,
-    responseLang: parameters.responseLang
+    responseLang: 'russian',  // Явно указываем русский язык
+    language: 'russian',      // Добавляем ещё один параметр для надёжности
+    outputLanguage: 'russian' // Добавляем параметр для выходного языка
   };
 };
 
@@ -196,13 +208,12 @@ export const generateText = createAsyncThunk(
         errorMessage = `${errorMessage}: ${error}`;
       }
       
-      console.error(errorMessage);
       return rejectWithValue(errorMessage);
     }
   }
 );
 
-// Создание слайса
+// Редьюсер
 const generationSlice = createSlice({
   name: 'generation',
   initialState,
@@ -210,25 +221,24 @@ const generationSlice = createSlice({
     clearGeneratedText: (state) => {
       state.generatedText = null;
       state.generationError = null;
-    },
+    }
   },
   extraReducers: (builder) => {
     builder
-      // Обработка generateText
       .addCase(generateText.pending, (state) => {
         state.isGenerating = true;
         state.generationError = null;
       })
-      .addCase(generateText.fulfilled, (state, action: PayloadAction<GenerationResponse>) => {
+      .addCase(generateText.fulfilled, (state, action) => {
         state.isGenerating = false;
-        state.generatedText = action.payload.text || JSON.stringify(action.payload);
+        state.generatedText = action.payload.text || null;
       })
       .addCase(generateText.rejected, (state, action) => {
         state.isGenerating = false;
-        state.generationError = action.payload as string || 'Ошибка генерации текста';
+        state.generationError = action.payload as string || 'Неизвестная ошибка';
       });
-  },
+  }
 });
 
 export const { clearGeneratedText } = generationSlice.actions;
-export default generationSlice.reducer; 
+export default generationSlice.reducer;

@@ -5,7 +5,6 @@ import { generateText, clearGeneratedText } from '../store/slices/generationSlic
 import { Spinner, Button, Div, Title, Text, Group, Textarea, FormItem, Card, Select, Popover, IconButton, Accordion } from '@vkontakte/vkui';
 import { Icon20QuestionOutline } from '@vkontakte/icons';
 import { fetchDeckDetails } from '../store/slices/taroDecksSlice';
-import { getDefaultLanguage } from '../utils/languageUtils';
 
 interface TaroReadingProps {
   spreadId: string;
@@ -117,8 +116,8 @@ export const TaroReading: React.FC<TaroReadingProps> = ({
     // Получаем текущий вопрос
     const userQuestion = question.trim();
 
-    // Определяем язык для ответа из настроек или используем значение по умолчанию
-    const responseLang = getDefaultLanguage();
+    // Принудительно устанавливаем русский язык
+    const responseLang = 'russian'; 
 
     // Формируем текст промпта напрямую без использования шаблона
     const promptText = `
@@ -127,16 +126,27 @@ export const TaroReading: React.FC<TaroReadingProps> = ({
 Карты и позиции:
 ${cardsText}
 
-Сформируй ответ строго по описанному JSON-формату.`;
+Сформируй ответ строго по описанному JSON-формату.
+Ответ ОБЯЗАТЕЛЬНО должен быть ТОЛЬКО на РУССКОМ ЯЗЫКЕ. Не переходи на английский ни в коем случае.`;
+
+    // Дополняем системный промпт требованием русского языка
+    let systemPromptText = currentTemplate.systemPrompt || '';
+    
+    // Добавляем указание на русский язык в начало системного промпта
+    if (!systemPromptText.includes('ИСПОЛЬЗУЙ ТОЛЬКО РУССКИЙ ЯЗЫК')) {
+      systemPromptText = `ИСПОЛЬЗУЙ ТОЛЬКО РУССКИЙ ЯЗЫК ДЛЯ ВСЕХ ОТВЕТОВ. НЕ ИСПОЛЬЗУЙ АНГЛИЙСКИЙ НИ В КОЕМ СЛУЧАЕ.\n\n${systemPromptText}`;
+    }
 
     // Создаем объект запроса для генерации
     return {
       prompt: promptText,
-      systemPrompt: currentTemplate.systemPrompt,
+      systemPrompt: systemPromptText,
       parameters: {
         temperature: currentTemplate.temperature || 0.7,
         maxTokens: currentTemplate.maxTokens || 800,
-        responseLang: responseLang
+        responseLang: responseLang,
+        language: 'russian',
+        outputLanguage: 'russian'
       },
       taroContext: {
         spreadId,
@@ -145,7 +155,7 @@ ${cardsText}
         cards: selectedCards,
         question: userQuestion,
         cardsText,
-        responseLang
+        responseLang: 'russian'
       }
     };
   };

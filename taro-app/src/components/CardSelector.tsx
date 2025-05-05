@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../store';
 import { fetchDeckDetails } from '../store/slices/taroDecksSlice';
 import { fetchSpreadDetails } from '../store/slices/taroSpreadsSlice';
-import { Spinner, Button, Div, Title, Text, Group, Card, Select, Switch, FormItem } from '@vkontakte/vkui';
+import { Spinner, Button, Div, Title, Text, Group, Card, Select, Switch, FormItem, SegmentedControl } from '@vkontakte/vkui';
+import CardDndSelector from './dnd/CardDndSelector';
 
 interface CardSelectorProps {
   spreadId: string;
@@ -17,6 +18,8 @@ interface SelectedCard {
   isReversed: boolean;
 }
 
+type SelectorMode = 'manual' | 'dnd';
+
 export const CardSelector: React.FC<CardSelectorProps> = ({ 
   spreadId, 
   deckId,
@@ -28,6 +31,7 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
   const { currentDeck, deckLoading, deckError } = useAppSelector((state) => state.taroDecks);
   const [selectedCards, setSelectedCards] = useState<SelectedCard[]>([]);
   const [allPositions, setAllPositions] = useState<number[]>([]);
+  const [selectorMode, setSelectorMode] = useState<SelectorMode>('manual');
 
   // Получаем данные колоды и расклада
   useEffect(() => {
@@ -98,6 +102,16 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
     }
   };
 
+  // Подготовка данных позиций для DnD селектора
+  const getPositionsForDnd = () => {
+    if (!currentSpread?.meta) return [];
+    
+    return allPositions.map(position => ({
+      position,
+      label: currentSpread.meta[position.toString()]?.label || `Позиция ${position}`
+    }));
+  };
+
   if (deckLoading) {
     return <Spinner size="m" />;
   }
@@ -129,6 +143,36 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
   // Получаем карты из колоды, если они есть
   const cards = currentDeck.cards || [];
 
+  // Выбор режима селектора карт
+  if (selectorMode === 'dnd') {
+    return (
+      <Group>
+        <Div>
+          <div style={{ marginBottom: 16 }}>
+            <SegmentedControl
+              size="l"
+              options={[
+                { label: 'Выбор из списка', value: 'manual' },
+                { label: 'Перетаскивание карт', value: 'dnd' }
+              ]}
+              value={selectorMode}
+              onChange={(value) => setSelectorMode(value as SelectorMode)}
+            />
+          </div>
+          
+          <CardDndSelector
+            spreadName={currentSpread.name}
+            deckName={currentDeck.name}
+            cards={cards}
+            positions={getPositionsForDnd()}
+            onCardsSelected={onCardsSelected}
+            onBack={onBack}
+          />
+        </Div>
+      </Group>
+    );
+  }
+
   return (
     <Group>
       <Div>
@@ -136,6 +180,18 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
         <Text style={{ marginTop: 8, marginBottom: 16 }}>
           {`${currentSpread.name} - ${currentDeck.name}`}
         </Text>
+
+        <div style={{ marginBottom: 16 }}>
+          <SegmentedControl
+            size="l"
+            options={[
+              { label: 'Выбор из списка', value: 'manual' },
+              { label: 'Перетаскивание карт', value: 'dnd' }
+            ]}
+            value={selectorMode}
+            onChange={(value) => setSelectorMode(value as SelectorMode)}
+          />
+        </div>
 
         <div style={{ marginTop: 24, marginBottom: 24 }}>
           <Title level="3" style={{ marginBottom: 16 }}>
