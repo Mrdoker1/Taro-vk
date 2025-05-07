@@ -65,6 +65,10 @@ export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
     routeNavigator.push(`/spreads`);
   };
 
+  const handleOpenAffirmations = () => {
+    routeNavigator.push(`/affirmation`);
+  };
+
   return (
     <ConfigProvider hasCustomPanelHeaderAfter={false}>
       <Panel id={id}>
@@ -176,6 +180,25 @@ export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
                   stretched
                 >
                   Выбрать расклад
+                </Button>
+              </Div>
+            </Card>
+          </Group>
+
+          <Group header={<Header size="s">🌞 Ежедневные аффирмации</Header>}>
+            <Card mode="shadow">
+              <Div style={{ padding: '16px' }}>
+                <Title level="3" style={{ marginBottom: '8px' }}>Аффирмации на сегодня</Title>
+                <Text style={{ marginBottom: '16px' }}>
+                  Позитивные утверждения помогут вам настроиться на успешный день и привлечь желаемое в свою жизнь.
+                </Text>
+                <Button 
+                  mode="primary" 
+                  size="m" 
+                  onClick={handleOpenAffirmations}
+                  stretched
+                >
+                  Получить аффирмации
                 </Button>
               </Div>
             </Card>

@@ -18,6 +18,7 @@ export enum ApiType {
   HOROSCOPE = 'horoscope',
   TARO_DECKS = 'taroDecks',
   WEATHER = 'weather',  // Пример для будущего расширения
+  DAILY_AFFIRMATION = 'dailyAffirmation', // Для ежедневных аффирмаций
 }
 
 // Маппинг форматов языка для каждого API
@@ -25,6 +26,7 @@ const API_LANGUAGE_FORMATS: Record<ApiType, ApiLanguageFormat> = {
   [ApiType.HOROSCOPE]: 'full',
   [ApiType.TARO_DECKS]: 'short',
   [ApiType.WEATHER]: 'iso639-1',
+  [ApiType.DAILY_AFFIRMATION]: 'full', // Используем полный формат для аффирмаций
 };
 
 // Полная информация о языках

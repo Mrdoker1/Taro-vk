@@ -4,6 +4,8 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 export interface GenerationRequest {
   prompt: string;
   systemPrompt?: string;
+  key?: string;
+  responseLang?: string;
   parameters?: {
     maxTokens?: number;
     temperature?: number;
@@ -56,68 +58,108 @@ const API_URL = isDevelopment
 
 // Функция для подготовки промпта с данными о картах
 const prepareRequestData = (requestData: GenerationRequest) => {
+  // Получаем ключ запроса или используем стандартный
+  const requestKey = requestData.key || 'taro';
+
   // Подготавливаем параметры
   const parameters = {
     temperature: requestData.parameters?.temperature || 0.7,
     maxTokens: requestData.parameters?.maxTokens || 800,
-    // Принудительно устанавливаем русский язык для ответа
-    responseLang: 'russian'
+    responseLang: requestData.responseLang || 'russian'
   };
 
   // Подготавливаем промпт
   let promptText = requestData.prompt || '';
   
-  // Если есть контекст таро, добавляем информацию о раскладе и картах
-  if (requestData.taroContext) {
-    const { question, spreadName, cardsText } = requestData.taroContext;
-    
-    // Если промпт не содержит конкретных мест для подстановки, добавляем информацию
-    // по стандартному формату
-    if (!promptText || (!promptText.includes('{{question}}') && !promptText.includes('{{cards}}'))) {
-      const questionText = question ? `Вопрос пользователя: ${question}` : 'Общее толкование расклада';
-      const spreadText = spreadName ? `Расклад: ${spreadName}` : '';
-      const cardsTitle = 'Карты и позиции:';
+  // Обрабатываем запрос в зависимости от ключа
+  switch (requestKey) {
+    case 'taro':
+      // Для Таро обрабатываем контекст расклада
+      if (requestData.taroContext) {
+        const { question, spreadName, cardsText } = requestData.taroContext;
+        
+        // Если промпт не содержит конкретных мест для подстановки, добавляем информацию
+        // по стандартному формату
+        if (!promptText || (!promptText.includes('{{question}}') && !promptText.includes('{{cards}}'))) {
+          const questionText = question ? `Вопрос пользователя: ${question}` : 'Общее толкование расклада';
+          const spreadText = spreadName ? `Расклад: ${spreadName}` : '';
+          const cardsTitle = 'Карты и позиции:';
+          
+          // Основной текст промпта
+          promptText = `${questionText}\n${spreadText}\n${cardsTitle}\n${cardsText || ''}\n\nСформируй ответ строго по описанному JSON-формату.\nОтвет ОБЯЗАТЕЛЬНО должен быть ТОЛЬКО на РУССКОМ ЯЗЫКЕ. Не переходи на английский ни в коем случае.`;
+        } else {
+          // Если в промпте есть плейсхолдеры, заменяем их
+          promptText = promptText
+            .replace('{{question}}', question || 'Общее толкование расклада')
+            .replace('{{spreadName}}', spreadName || '')
+            .replace('{{cards}}', cardsText || '');
+          
+          // Добавляем требование русского языка
+          promptText += '\nОтвет ОБЯЗАТЕЛЬНО должен быть ТОЛЬКО на языке, указанном в поле responseLang.';
+        }
+      }
+      break;
       
-      // Основной текст промпта
-      promptText = `${questionText}\n${spreadText}\n${cardsTitle}\n${cardsText || ''}\n\nСформируй ответ строго по описанному JSON-формату.\nОтвет ОБЯЗАТЕЛЬНО должен быть ТОЛЬКО на РУССКОМ ЯЗЫКЕ. Не переходи на английский ни в коем случае.`;
-    } else {
-      // Если в промпте есть плейсхолдеры, заменяем их
-      promptText = promptText
-        .replace('{{question}}', question || 'Общее толкование расклада')
-        .replace('{{spreadName}}', spreadName || '')
-        .replace('{{cards}}', cardsText || '');
+    case 'daily-affirmation':
+      // Для аффирмаций можем добавить дополнительный контекст
+      if (!promptText.includes('тема для аффирмации:')) {
+        promptText = `Тема для аффирмации: ${promptText}`;
+      }
+      break;
       
-      // Добавляем требование русского языка
-      promptText += '\nОтвет ОБЯЗАТЕЛЬНО должен быть ТОЛЬКО на РУССКОМ ЯЗЫКЕ. Не переходи на английский ни в коем случае.';
-    }
+    default:
+      // Для других типов запросов оставляем промпт как есть
+      break;
   }
 
   // Получаем системный промпт
-  let systemPrompt = requestData.systemPrompt || `Ты — профессиональный таролог. Отвечай ТОЛЬКО на вопросы о таро, предсказаниях и эзотерике.
-  ФОРМАТ ОТВЕТА (JSON):
-  {
-    "message":  "общее толкование расклада на РУССКОМ языке",
-    "positions": [ { "index": 1, "interpretation": "толкование позиции на РУССКОМ языке" } ]
+  let systemPrompt = requestData.systemPrompt || '';
+  
+  // Для Таро добавляем дефолтный системный промпт, если он не был предоставлен
+  if (requestKey === 'taro' && !systemPrompt) {
+    systemPrompt = `Ты — профессиональный таролог. Отвечай ТОЛЬКО на вопросы о таро, предсказаниях и эзотерике.
+    ФОРМАТ ОТВЕТА (JSON):
+    {
+      "message":  "общее толкование расклада на РУССКОМ языке",
+      "positions": [ { "index": 1, "interpretation": "толкование позиции на РУССКОМ языке" } ]
+    }
+    
+    Если вопрос не относится к таро — верни { "error": true, "message": "Ваш вопрос не относится к таро или астрологии." }. Без markdown, ≤ 800 токенов.
+    ВАЖНО: Весь ответ должен быть ТОЛЬКО на РУССКОМ языке. Не используй английский язык ни в коем случае.`;
+  }
+
+  // Если язык ответа - русский, принудительно добавляем требование русского языка в начало системного промпта
+  if (parameters.responseLang === 'russian' && !systemPrompt.startsWith('ИСПОЛЬЗУЙ ТОЛЬКО РУССКИЙ ЯЗЫК')) {
+    systemPrompt = `ИСПОЛЬЗУЙ ТОЛЬКО РУССКИЙ ЯЗЫК ДЛЯ ВСЕХ ОТВЕТОВ. НЕ ИСПОЛЬЗУЙ АНГЛИЙСКИЙ НИ В КОЕМ СЛУЧАЕ.\n\n${systemPrompt}`;
+  } else if (parameters.responseLang === 'english' && !systemPrompt.startsWith('USE ONLY ENGLISH')) {
+    systemPrompt = `USE ONLY ENGLISH FOR ALL RESPONSES. DO NOT USE ANY OTHER LANGUAGE.\n\n${systemPrompt}`;
+  }
+
+  // Формируем итоговый объект запроса
+  interface RequestObject {
+    systemPrompt: string;
+    prompt: string;
+    temperature: number;
+    maxTokens: number;
+    responseLang: string;
+    key?: string;
   }
   
-  Если вопрос не относится к таро — верни { "error": true, "message": "Ваш вопрос не относится к таро или астрологии." }. Без markdown, ≤ 800 токенов.
-  ВАЖНО: Весь ответ должен быть ТОЛЬКО на РУССКОМ языке. Не используй английский язык ни в коем случае.`;
-
-  // Принудительно добавляем требование русского языка в начало системного промпта
-  if (!systemPrompt.startsWith('ИСПОЛЬЗУЙ ТОЛЬКО РУССКИЙ ЯЗЫК')) {
-    systemPrompt = `ИСПОЛЬЗУЙ ТОЛЬКО РУССКИЙ ЯЗЫК ДЛЯ ВСЕХ ОТВЕТОВ. НЕ ИСПОЛЬЗУЙ АНГЛИЙСКИЙ НИ В КОЕМ СЛУЧАЕ.\n\n${systemPrompt}`;
-  }
-
-  // Возвращаем объект запроса с дополнительными явными параметрами языка
-  return {
+  const requestObject: RequestObject = {
     systemPrompt,
     prompt: promptText,
     temperature: parameters.temperature,
     maxTokens: parameters.maxTokens,
-    responseLang: 'russian',  // Явно указываем русский язык
-    language: 'russian',      // Добавляем ещё один параметр для надёжности
-    outputLanguage: 'russian' // Добавляем параметр для выходного языка
+    responseLang: parameters.responseLang
   };
+
+  // Если есть ключ, добавляем его
+  if (requestKey) {
+    requestObject.key = requestKey;
+  }
+  
+  // Возвращаем объект запроса
+  return requestObject;
 };
 
 // Асинхронные действия (thunks)
@@ -177,7 +219,8 @@ export const generateText = createAsyncThunk(
       }
       
       // Проверяем структуру ответа - сервер может вернуть либо объект с полем text,
-      // либо объект с полями message и positions (JSON толкования)
+      // либо объект с полями message и positions (JSON толкования),
+      // либо объект с полями title, sections, usage (аффирмации)
       if (!data) {
         console.error('Получен пустой ответ от API');
         return rejectWithValue('Получен пустой ответ от сервера');
@@ -186,17 +229,32 @@ export const generateText = createAsyncThunk(
       if (data.text) {
         // Если есть поле text, возвращаем ответ как есть
         return data;
-      } else if (data.message) {
-        // Если есть поле message, значит это формат JSON-толкования, который нам нужен
-        // Просто преобразуем его в строку и сохраняем как text
+      } else if (data.message && (data.positions || Array.isArray(data.positions))) {
+        // Если есть поле message и positions, значит это формат JSON-толкования для Таро
         const jsonResult = JSON.stringify(data);
-        console.log('Преобразовали объект толкования в строку:', jsonResult);
+        console.log('Преобразовали объект толкования Таро в строку:', jsonResult);
         return {
           text: jsonResult
         };
+      } else if (data.title && Array.isArray(data.sections)) {
+        // Если есть поля title и sections, это формат ответа для аффирмаций
+        console.log('Получен ответ в формате аффирмаций:', data);
+        // Для компонента DailyAffirmation мы возвращаем объект напрямую
+        return {
+          text: JSON.stringify(data)
+        };
       } else {
-        console.error('В ответе API отсутствуют ожидаемые поля:', data);
-        return rejectWithValue('Неожиданный формат ответа от сервера');
+        // Пытаемся предположить, что ответ уже в нужном формате и просто преобразуем его в строку
+        console.log('Получен ответ в неизвестном формате, пробуем преобразовать в JSON:', data);
+        try {
+          const jsonResult = JSON.stringify(data);
+          return {
+            text: jsonResult
+          };
+        } catch (e) {
+          console.error('Не удалось преобразовать ответ в JSON:', e);
+          return rejectWithValue('Неожиданный формат ответа от сервера');
+        }
       }
     } catch (error) {
       console.error('Ошибка при выполнении запроса:', error);

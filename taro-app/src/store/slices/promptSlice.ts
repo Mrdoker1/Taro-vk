@@ -32,8 +32,8 @@ const API_URL = isDevelopment
   ? 'http://localhost:3000' 
   : 'https://taro-d8jd.onrender.com';
 
-// Дефолтный системный промпт
-const DEFAULT_SYSTEM_PROMPT = `Ты — профессиональный таролог. Отвечай ТОЛЬКО на вопросы о таро, предсказаниях и эзотерике.
+// Дефолтный системный промпт для Таро
+const DEFAULT_TARO_SYSTEM_PROMPT = `Ты — профессиональный таролог. Отвечай ТОЛЬКО на вопросы о таро, предсказаниях и эзотерике.
 ФОРМАТ ОТВЕТА (JSON):
 {
   "message":  "общее толкование расклада",
@@ -42,15 +42,45 @@ const DEFAULT_SYSTEM_PROMPT = `Ты — профессиональный тар�
 
 Если вопрос не относится к таро — верни { "error": true, "message": "Ваш вопрос не относится к таро или астрологии." }. Без markdown, ≤ 800 токенов.`;
 
+// Дефолтный системный промпт для аффирмаций
+const DEFAULT_AFFIRMATION_SYSTEM_PROMPT = `Ты — коуч по ментальному здоровью и автор вдохновляющих аффирмаций. Создавай позитивные аффирмации по теме, заданной пользователем. Весь ответ должен быть на языке, указанном в поле \`responseLang\` (например: "russian", "english", "spanish").
+
+Формат JSON:
+{
+  "title": "🌞 Аффирмация на день для [тема]",
+  "sections": [
+    { "title": "[утро/начало дня]", "text": "..." },
+    { "title": "[обстоятельства/контекст]", "text": "..." },
+    { "title": "[энергия/настрой]", "text": "..." },
+    { "title": "[вечер/рефлексия]", "text": "..." }
+  ],
+  "usage": "Как использовать — также на языке ответа"
+}
+
+Если запрос бессмысленен, неэтичен или не имеет отношения к аффирмациям, верни:
+{ "error": true, "message": "Пожалуйста, переформулируйте запрос. Он должен быть позитивным и уместным для создания аффирмаций." }
+
+Ответ строго в формате JSON, без markdown, не более 1000 токенов.`;
+
 // Асинхронные действия (thunks)
 export const fetchPromptTemplate = createAsyncThunk(
   'prompt/fetchPromptTemplate',
   async ({ promptId, lang = 'russian' as AppLanguage }: { promptId: string; lang?: AppLanguage }, { rejectWithValue }) => {
     try {
-      // Используем утилиту для получения языка в нужном формате для API
-      const apiLang = getLanguageForApi(lang, ApiType.TARO_DECKS);
+      // Определяем тип API на основе promptId
+      let apiType = ApiType.TARO_DECKS;
+      let defaultSystemPrompt = DEFAULT_TARO_SYSTEM_PROMPT;
       
-      console.log(`Загрузка шаблона промпта: ID=${promptId}, язык=${apiLang}`);
+      // Выбираем тип API и дефолтный промпт в зависимости от идентификатора промпта
+      if (promptId === 'daily-affirmation') {
+        apiType = ApiType.DAILY_AFFIRMATION;
+        defaultSystemPrompt = DEFAULT_AFFIRMATION_SYSTEM_PROMPT;
+      }
+      
+      // Используем утилиту для получения языка в нужном формате для API
+      const apiLang = getLanguageForApi(lang, apiType);
+      
+      console.log(`Загрузка шаблона промпта: ID=${promptId}, язык=${apiLang}, тип API=${apiType}`);
       
       const response = await fetch(`${API_URL}/prompt-template/${promptId}?lang=${apiLang}`);
       
@@ -59,10 +89,10 @@ export const fetchPromptTemplate = createAsyncThunk(
           console.warn('Шаблон промпта не найден, используем дефолтный шаблон');
           return {
             id: promptId,
-            systemPrompt: DEFAULT_SYSTEM_PROMPT,
-            temperature: 0.7,
-            maxTokens: 800,
-            responseLang: 'russian'
+            systemPrompt: defaultSystemPrompt,
+            temperature: promptId === 'daily-affirmation' ? 0.8 : 0.7,
+            maxTokens: promptId === 'daily-affirmation' ? 1000 : 800,
+            responseLang: apiLang
           };
         }
         const errorData = await response.json().catch(() => null);
@@ -81,7 +111,7 @@ export const fetchPromptTemplate = createAsyncThunk(
       // Если всё равно нет systemPrompt, добавляем дефолтный
       if (!data.systemPrompt) {
         console.log('Шаблон не содержит поле systemPrompt, добавляем дефолтное значение');
-        data.systemPrompt = DEFAULT_SYSTEM_PROMPT;
+        data.systemPrompt = defaultSystemPrompt;
       }
       
       return data;
@@ -107,7 +137,7 @@ const promptSlice = createSlice({
       if (!state.currentTemplate) {
         state.currentTemplate = {
           id: action.payload || 'default',
-          systemPrompt: DEFAULT_SYSTEM_PROMPT,
+          systemPrompt: DEFAULT_TARO_SYSTEM_PROMPT,
           temperature: 0.7,
           maxTokens: 800,
           responseLang: 'russian'
@@ -128,7 +158,7 @@ const promptSlice = createSlice({
         
         // Если вернулся шаблон без системного промпта, добавляем дефолтный
         if (!state.currentTemplate.systemPrompt) {
-          state.currentTemplate.systemPrompt = DEFAULT_SYSTEM_PROMPT;
+          state.currentTemplate.systemPrompt = DEFAULT_TARO_SYSTEM_PROMPT;
         }
       })
       .addCase(fetchPromptTemplate.rejected, (state, action) => {
@@ -138,7 +168,7 @@ const promptSlice = createSlice({
         // При ошибке устанавливаем дефолтный шаблон для дальнейшей работы
         state.currentTemplate = {
           id: 'default',
-          systemPrompt: DEFAULT_SYSTEM_PROMPT,
+          systemPrompt: DEFAULT_TARO_SYSTEM_PROMPT,
           temperature: 0.7,
           maxTokens: 800,
           responseLang: 'russian'
