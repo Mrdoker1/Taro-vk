@@ -69,6 +69,10 @@ export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
     routeNavigator.push(`/affirmation`);
   };
 
+  const handleOpenCalendar = () => {
+    routeNavigator.push(`/calendar`);
+  };
+
   return (
     <ConfigProvider hasCustomPanelHeaderAfter={false}>
       <Panel id={id}>
@@ -199,6 +203,25 @@ export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
                   stretched
                 >
                   Получить аффирмации
+                </Button>
+              </Div>
+            </Card>
+          </Group>
+
+          <Group header={<Header size="s">📅 Календарь активностей</Header>}>
+            <Card mode="shadow">
+              <Div style={{ padding: '16px' }}>
+                <Title level="3" style={{ marginBottom: '8px' }}>Ваш духовный дневник</Title>
+                <Text style={{ marginBottom: '16px' }}>
+                  Отслеживайте свои расклады Таро, аффирмации и ведите заметки о своем духовном развитии.
+                </Text>
+                <Button 
+                  mode="primary" 
+                  size="m" 
+                  onClick={handleOpenCalendar}
+                  stretched
+                >
+                  Открыть календарь
                 </Button>
               </Div>
             </Card>

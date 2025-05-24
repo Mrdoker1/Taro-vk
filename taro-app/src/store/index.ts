@@ -6,6 +6,7 @@ import taroDecksReducer from './slices/taroDecksSlice';
 import taroSpreadsReducer from './slices/taroSpreadsSlice';
 import promptReducer from './slices/promptSlice';
 import generationReducer from './slices/generationSlice';
+import calendarReducer from './slices/calendarSlice';
 
 export const store = configureStore({
   reducer: {
@@ -15,6 +16,7 @@ export const store = configureStore({
     taroSpreads: taroSpreadsReducer,
     prompt: promptReducer,
     generation: generationReducer,
+    calendar: calendarReducer,
   },
 });
 

@@ -5,6 +5,7 @@ import { generateText, clearGeneratedText } from '../store/slices/generationSlic
 import { Spinner, Button, Div, Title, Text, Group, Textarea, FormItem, Card, Select, Popover, IconButton, Accordion } from '@vkontakte/vkui';
 import { Icon20QuestionOutline } from '@vkontakte/icons';
 import { fetchDeckDetails } from '../store/slices/taroDecksSlice';
+import { saveTarotReadingToCalendar } from '../utils/calendarUtils';
 
 interface TaroReadingProps {
   spreadId: string;
@@ -68,6 +69,40 @@ export const TaroReading: React.FC<TaroReadingProps> = ({
         console.log('Успешно распарсили JSON:', parsedResult);
         if (parsedResult.message) {
           setParsedInterpretation(parsedResult);
+          
+          // Сохраняем расклад в календарь
+          if (currentSpread && currentDeck) {
+            const cardNames = selectedCards.map(card => {
+              const cardInfo = currentDeck.cards?.find(c => c.id === card.cardId);
+              return cardInfo?.name || card.cardId;
+            });
+            
+            // Формируем полную информацию о раскладе для календаря
+            const fullReadingInfo = {
+              spreadName: currentSpread.name,
+              deckName: currentDeck.name,
+              question: question,
+              cards: selectedCards.map(card => {
+                const cardInfo = currentDeck.cards?.find(c => c.id === card.cardId);
+                const positionInfo = currentSpread.meta[card.position.toString()];
+                return {
+                  position: card.position,
+                  cardName: cardInfo?.name || card.cardId,
+                  positionLabel: positionInfo?.label || `Позиция ${card.position}`,
+                  isReversed: card.isReversed
+                };
+              }),
+              interpretation: parsedResult.message,
+              detailedPositions: parsedResult.positions || []
+            };
+            
+            saveTarotReadingToCalendar(
+              currentSpread.name, 
+              currentDeck.name, 
+              cardNames, 
+              JSON.stringify(fullReadingInfo)
+            ).catch(console.error);
+          }
         } else {
           console.warn('Ошибка формата JSON - отсутствует поле message');
         }
@@ -82,7 +117,7 @@ export const TaroReading: React.FC<TaroReadingProps> = ({
     } else {
       setParsedInterpretation(null);
     }
-  }, [generatedText]);
+  }, [generatedText, currentSpread, currentDeck, selectedCards, question]);
 
   // Обработчик выбора предустановленного вопроса
   const handleQuestionChange = (value: string) => {

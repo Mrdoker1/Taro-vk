@@ -17,6 +17,7 @@ import { useAppDispatch, useAppSelector } from '../store';
 import { fetchPromptTemplate } from '../store/slices/promptSlice';
 import { generateText, clearGeneratedText } from '../store/slices/generationSlice';
 import { ApiType, getLanguageForApi } from '../utils/languageUtils';
+import { saveAffirmationToCalendar } from '../utils/calendarUtils';
 
 interface AffirmationTopic {
   value: string;
@@ -104,6 +105,12 @@ export const DailyAffirmation: React.FC = () => {
         if (parsedData.title && Array.isArray(parsedData.sections)) {
           console.log('Найдены корректные данные в ответе:', parsedData);
           setParsedAffirmation(parsedData);
+          
+          // Сохраняем аффирмацию в календарь
+          const affirmationText = parsedData.sections
+            .map((section: { title: string; text: string }) => `${section.title}: ${section.text}`)
+            .join(' | ');
+          saveAffirmationToCalendar(affirmationText, parsedData).catch(console.error);
         } else {
           console.error('Неверная структура данных в ответе:', parsedData);
           setParsedAffirmation({
