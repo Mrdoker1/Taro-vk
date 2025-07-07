@@ -42,7 +42,8 @@ export const DraggableCard: React.FC<DraggableCardProps> = ({
     boxShadow: isDragging ? '0px 5px 15px rgba(0, 0, 0, 0.3)' : undefined,
     // Фиксируем z-index для карты, чтобы не перекрывать элементы управления
     zIndex: isDragging ? 1000 : (preview ? 10 : 1),
-    transition: isDragging ? undefined : 'transform 0.15s ease, opacity 0.15s ease',
+    // Отключаем переходную анимацию для предотвращения визуального "возврата" карты
+    transition: undefined,
     touchAction: 'none', // Важно для тач-устройств - отключаем нативный скролл при перетаскивании
     WebkitTouchCallout: 'none', // Отключаем контекстное меню на iOS
     WebkitUserSelect: 'none',
