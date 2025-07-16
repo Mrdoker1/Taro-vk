@@ -2,13 +2,14 @@ import { FC, useState } from 'react';
 import {
   Panel,
   NavIdProps,
-  PanelHeader,
-  PanelHeaderBack,
+  Button,
 } from '@vkontakte/vkui';
 import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
 import { CardSelector } from '../components/CardSelector';
 import { TaroReading } from '../components/TaroReading';
 import { Footer } from '../components/Footer';
+import { StarButton } from '../components/StarButton';
+import { AppHeader } from '../components/AppHeader';
 import { DEFAULT_VIEW_PANELS } from '../routes';
 
 export interface TaroReadingPanelProps extends NavIdProps {
@@ -52,11 +53,17 @@ export const TaroReadingPanel: FC<TaroReadingPanelProps> = ({ id, spreadId, deck
 
   return (
     <Panel id={id}>
-      <PanelHeader
-        before={<PanelHeaderBack onClick={handleBack} />}
-      >
-        {currentStep === 'SELECT_CARDS' ? 'Выбор карт' : 'Толкование расклада'}
-      </PanelHeader>
+      <AppHeader
+        left={
+          <Button
+            mode="tertiary"
+            onClick={handleBack}
+          >
+            {currentStep === 'VIEW_READING' ? 'К выбору карт' : 'Назад'}
+          </Button>
+        }
+        right={<StarButton size="s" mode="primary" />}
+      />
 
       {currentStep === 'SELECT_CARDS' && (
         <CardSelector

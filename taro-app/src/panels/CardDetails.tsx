@@ -1,8 +1,6 @@
 import { FC, useEffect } from 'react';
 import {
   Panel,
-  PanelHeader,
-  PanelHeaderBack,
   Div,
   NavIdProps,
   Text,
@@ -11,10 +9,13 @@ import {
   Placeholder,
   SimpleCell,
   Skeleton,
+  Button,
 } from '@vkontakte/vkui';
 import { useParams } from '@vkontakte/vk-mini-apps-router';
 import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
 import { Footer } from '../components/Footer';
+import { StarButton } from '../components/StarButton';
+import { AppHeader } from '../components/AppHeader';
 import { DEFAULT_VIEW_PANELS } from '../routes';
 import { useAppDispatch, useAppSelector } from '../store';
 import { fetchCardDetails, clearCurrentCard } from '../store/slices/taroDecksSlice';
@@ -99,11 +100,17 @@ export const CardDetails: FC<CardDetailsProps> = ({ id }) => {
 
   return (
     <Panel id={id}>
-      <PanelHeader
-        before={<PanelHeaderBack onClick={() => routeNavigator.back()} />}
-      >
-        {currentCard?.card.name || 'Детали карты'}
-      </PanelHeader>
+      <AppHeader
+        left={
+          <Button
+            mode="tertiary"
+            onClick={() => routeNavigator.back()}
+          >
+            Назад
+          </Button>
+        }
+        right={<StarButton size="s" mode="primary" />}
+      />
 
       {cardLoading && <CardDetailsSkeleton />}
       

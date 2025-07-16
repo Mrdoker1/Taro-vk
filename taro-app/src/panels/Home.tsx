@@ -27,6 +27,7 @@ import { fetchDecks } from '../store/slices/taroDecksSlice';
 import { DEFAULT_VIEW_PANELS } from '../routes';
 import { AppHeader } from '../components/AppHeader';
 import { Footer } from '../components/Footer';
+import { StarButton } from '../components/StarButton';
 
 const horoscopeTypes = [
   { value: 'daily', label: 'На сегодня' },
@@ -76,11 +77,6 @@ export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
 
   const handleOpenSettings = () => {
     routeNavigator.push(`/${DEFAULT_VIEW_PANELS.SETTINGS}`);
-  };
-
-  const handleAddStars = () => {
-    // TODO: Реализовать функциональность добавления звезд
-    console.log('Добавить звезды');
   };
 
   const handleAboutApp = () => {
@@ -134,15 +130,7 @@ export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
               </Button>
             </>
           }
-          right={
-            <Button
-              mode="primary"
-              size="s"
-              onClick={handleAddStars}
-            >
-              ⭐ Добавить звезды
-            </Button>
-          }
+          right={<StarButton size="s" mode="primary" />}
         />
 
         <Div style={{ padding: '0 12px' }}>

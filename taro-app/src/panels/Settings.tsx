@@ -19,6 +19,7 @@ import { setSign, setLanguage } from '../store/slices/horoscopeSlice';
 import { setUseManualCardSelection } from '../store/slices/appSlice';
 import { AppHeader } from '../components/AppHeader';
 import { Footer } from '../components/Footer';
+import { StarButton } from '../components/StarButton';
 import { DEFAULT_VIEW_PANELS } from '../routes';
 import { AppLanguage, getLanguageDisplayName } from '../utils/languageUtils';
 
@@ -85,6 +86,7 @@ export const Settings: FC<SettingsProps> = ({ id }) => {
             Назад
           </Button>
         }
+        right={<StarButton size="s" mode="primary" />}
       />
 
       <Div style={{ padding: '0 12px' }}>

@@ -2,15 +2,16 @@ import { FC } from 'react';
 import {
   Panel,
   NavIdProps,
-  PanelHeader,
-  PanelHeaderBack,
   Div,
   Group,
   Text,
-  Title
+  Title,
+  Button
 } from '@vkontakte/vkui';
 import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
 import { Footer } from '../components/Footer';
+import { StarButton } from '../components/StarButton';
+import { AppHeader } from '../components/AppHeader';
 
 export interface AboutAppProps extends NavIdProps {}
 
@@ -31,11 +32,17 @@ export const AboutApp: FC<AboutAppProps> = ({ id }) => {
 
   return (
     <Panel id={id}>
-      <PanelHeader
-        before={<PanelHeaderBack onClick={handleBackClick} />}
-      >
-        О приложении
-      </PanelHeader>
+      <AppHeader
+        left={
+          <Button
+            mode="tertiary"
+            onClick={handleBackClick}
+          >
+            Назад
+          </Button>
+        }
+        right={<StarButton size="s" mode="primary" />}
+      />
       
       <Div style={{ padding: '0 12px' }}>
         <Group>

@@ -2,15 +2,16 @@ import { FC, useState } from 'react';
 import {
   Panel,
   NavIdProps,
-  PanelHeader,
-  PanelHeaderBack,
   Group,
   Div,
+  Button,
 } from '@vkontakte/vkui';
 import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
 import { TaroSpreads as TaroSpreadsComponent } from '../components/TaroSpreads';
 import { TaroSpreadDetails } from '../components/TaroSpreadDetails';
 import { Footer } from '../components/Footer';
+import { StarButton } from '../components/StarButton';
+import { AppHeader } from '../components/AppHeader';
 import { DEFAULT_VIEW_PANELS } from '../routes';
 
 export interface TaroSpreadsProps extends NavIdProps {}
@@ -41,11 +42,17 @@ export const TaroSpreads: FC<TaroSpreadsProps> = ({ id }) => {
 
   return (
     <Panel id={id}>
-      <PanelHeader
-        before={<PanelHeaderBack onClick={handleBack} />}
-      >
-        {selectedSpreadId ? 'Детали расклада' : 'Расклады Таро'}
-      </PanelHeader>
+      <AppHeader
+        left={
+          <Button
+            mode="tertiary"
+            onClick={handleBack}
+          >
+            {selectedSpreadId ? 'К раскладам' : 'Назад'}
+          </Button>
+        }
+        right={<StarButton size="s" mode="primary" />}
+      />
 
       <Group>
         <Div>
