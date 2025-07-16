@@ -3,10 +3,11 @@ import { Div } from '@vkontakte/vkui';
 
 interface AppHeaderProps {
   left?: ReactNode;
+  center?: ReactNode;
   right?: ReactNode;
 }
 
-export const AppHeader: FC<AppHeaderProps> = ({ left, right }) => {
+export const AppHeader: FC<AppHeaderProps> = ({ left, center, right }) => {
   return (
     <Div
       style={{
@@ -20,6 +21,11 @@ export const AppHeader: FC<AppHeaderProps> = ({ left, right }) => {
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
         {left}
       </div>
+      {center && (
+        <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+          {center}
+        </div>
+      )}
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
         {right}
       </div>

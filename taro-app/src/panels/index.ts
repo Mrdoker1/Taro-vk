@@ -8,6 +8,8 @@ export { TaroSpreads } from './TaroSpreads';
 export { TaroReadingPanel } from './TaroReadingPanel';
 export { DailyAffirmationPanel } from './DailyAffirmationPanel';
 export { CalendarPanel } from './CalendarPanel';
+export { AboutApp } from './AboutApp';
+export { LegalInfo } from './LegalInfo';
 
 export type { HomeProps } from './Home';
 export type { DeckDetailsProps } from './DeckDetails';
@@ -16,3 +18,5 @@ export type { TaroSpreadsProps } from './TaroSpreads';
 export type { TaroReadingPanelProps } from './TaroReadingPanel';
 export type { DailyAffirmationPanelProps } from './DailyAffirmationPanel';
 export type { CalendarPanelProps } from './CalendarPanel';
+export type { AboutAppProps } from './AboutApp';
+export type { LegalInfoProps } from './LegalInfo';

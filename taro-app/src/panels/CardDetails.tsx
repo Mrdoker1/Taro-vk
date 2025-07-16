@@ -14,6 +14,8 @@ import {
 } from '@vkontakte/vkui';
 import { useParams } from '@vkontakte/vk-mini-apps-router';
 import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
+import { Footer } from '../components/Footer';
+import { DEFAULT_VIEW_PANELS } from '../routes';
 import { useAppDispatch, useAppSelector } from '../store';
 import { fetchCardDetails, clearCurrentCard } from '../store/slices/taroDecksSlice';
 
@@ -87,6 +89,14 @@ export const CardDetails: FC<CardDetailsProps> = ({ id }) => {
     </Div>
   );
 
+  const handleAboutApp = () => {
+    routeNavigator.push(`/${DEFAULT_VIEW_PANELS.ABOUT_APP}`);
+  };
+
+  const handleLegalInfo = () => {
+    routeNavigator.push(`/${DEFAULT_VIEW_PANELS.LEGAL_INFO}`);
+  };
+
   return (
     <Panel id={id}>
       <PanelHeader
@@ -154,6 +164,11 @@ export const CardDetails: FC<CardDetailsProps> = ({ id }) => {
           </Group>
         </Div>
       )}
+      
+      <Footer 
+        onAboutApp={handleAboutApp}
+        onLegalInfo={handleLegalInfo}
+      />
     </Panel>
   );
 }; 

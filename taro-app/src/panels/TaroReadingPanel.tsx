@@ -8,6 +8,8 @@ import {
 import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
 import { CardSelector } from '../components/CardSelector';
 import { TaroReading } from '../components/TaroReading';
+import { Footer } from '../components/Footer';
+import { DEFAULT_VIEW_PANELS } from '../routes';
 
 export interface TaroReadingPanelProps extends NavIdProps {
   spreadId: string;
@@ -40,6 +42,14 @@ export const TaroReadingPanel: FC<TaroReadingPanelProps> = ({ id, spreadId, deck
     setCurrentStep('VIEW_READING');
   };
 
+  const handleAboutApp = () => {
+    routeNavigator.push(`/${DEFAULT_VIEW_PANELS.ABOUT_APP}`);
+  };
+
+  const handleLegalInfo = () => {
+    routeNavigator.push(`/${DEFAULT_VIEW_PANELS.LEGAL_INFO}`);
+  };
+
   return (
     <Panel id={id}>
       <PanelHeader
@@ -65,6 +75,11 @@ export const TaroReadingPanel: FC<TaroReadingPanelProps> = ({ id, spreadId, deck
           onBack={() => setCurrentStep('SELECT_CARDS')}
         />
       )}
+      
+      <Footer 
+        onAboutApp={handleAboutApp}
+        onLegalInfo={handleLegalInfo}
+      />
     </Panel>
   );
 };

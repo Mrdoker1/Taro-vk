@@ -26,6 +26,7 @@ import { fetchHoroscope, setType } from '../store/slices/horoscopeSlice';
 import { fetchDecks } from '../store/slices/taroDecksSlice';
 import { DEFAULT_VIEW_PANELS } from '../routes';
 import { AppHeader } from '../components/AppHeader';
+import { Footer } from '../components/Footer';
 
 const horoscopeTypes = [
   { value: 'daily', label: 'На сегодня' },
@@ -73,6 +74,23 @@ export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
     routeNavigator.push(`/calendar`);
   };
 
+  const handleOpenSettings = () => {
+    routeNavigator.push(`/${DEFAULT_VIEW_PANELS.SETTINGS}`);
+  };
+
+  const handleAddStars = () => {
+    // TODO: Реализовать функциональность добавления звезд
+    console.log('Добавить звезды');
+  };
+
+  const handleAboutApp = () => {
+    routeNavigator.push(`/${DEFAULT_VIEW_PANELS.ABOUT_APP}`);
+  };
+
+  const handleLegalInfo = () => {
+    routeNavigator.push(`/${DEFAULT_VIEW_PANELS.LEGAL_INFO}`);
+  };
+
   return (
     <ConfigProvider hasCustomPanelHeaderAfter={false}>
       <Panel id={id}>
@@ -84,12 +102,45 @@ export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
               {first_name}
             </Cell>
           }
+          center={
+            <>
+              <Button
+                mode="tertiary"
+                size="s"
+                onClick={handleOpenSpreads}
+              >
+                Расклады
+              </Button>
+              <Button
+                mode="tertiary"
+                size="s"
+                onClick={handleOpenAffirmations}
+              >
+                Аффирмации
+              </Button>
+              <Button
+                mode="tertiary"
+                size="s"
+                onClick={handleOpenCalendar}
+              >
+                Календарь
+              </Button>
+              <Button
+                mode="tertiary"
+                size="s"
+                onClick={handleOpenSettings}
+              >
+                Настройки
+              </Button>
+            </>
+          }
           right={
             <Button
-              mode="tertiary"
-              onClick={() => routeNavigator.push(`/${DEFAULT_VIEW_PANELS.SETTINGS}`)}
+              mode="primary"
+              size="s"
+              onClick={handleAddStars}
             >
-              Настройки
+              ⭐ Добавить звезды
             </Button>
           }
         />
@@ -289,6 +340,11 @@ export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
             )}
           </Group>
         </Div>
+        
+        <Footer 
+          onAboutApp={handleAboutApp}
+          onLegalInfo={handleLegalInfo}
+        />
       </Panel>
     </ConfigProvider>
   );

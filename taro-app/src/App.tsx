@@ -4,7 +4,7 @@ import { View, SplitLayout, SplitCol, ScreenSpinner } from '@vkontakte/vkui';
 import { useActiveVkuiLocation, useParams } from '@vkontakte/vk-mini-apps-router';
 import { Provider } from 'react-redux';
 
-import { Persik, Home, NewPage, Settings, DeckDetails, CardDetails, TaroSpreads, TaroReadingPanel, DailyAffirmationPanel, CalendarPanel } from './panels';
+import { Persik, Home, NewPage, Settings, DeckDetails, CardDetails, TaroSpreads, TaroReadingPanel, DailyAffirmationPanel, CalendarPanel, AboutApp, LegalInfo } from './panels';
 import { DEFAULT_VIEW_PANELS } from './routes';
 import bridge from './bridge';
 import { store } from './store';
@@ -52,6 +52,8 @@ export const App = () => {
             />
             <DailyAffirmationPanel id={DEFAULT_VIEW_PANELS.DAILY_AFFIRMATION} />
             <CalendarPanel id={DEFAULT_VIEW_PANELS.CALENDAR} />
+            <AboutApp id={DEFAULT_VIEW_PANELS.ABOUT_APP} />
+            <LegalInfo id={DEFAULT_VIEW_PANELS.LEGAL_INFO} />
           </View>
         </SplitCol>
         {popout}

@@ -21,6 +21,8 @@ export const DEFAULT_VIEW_PANELS = {
   TARO_READING: 'taro-reading',
   DAILY_AFFIRMATION: 'daily-affirmation',
   CALENDAR: 'calendar',
+  ABOUT_APP: 'about-app',
+  LEGAL_INFO: 'legal-info',
 } as const;
 
 export const routes = RoutesConfig.create([
@@ -36,6 +38,8 @@ export const routes = RoutesConfig.create([
       createPanel(DEFAULT_VIEW_PANELS.TARO_READING, '/reading/:spreadId/:deckId', []),
       createPanel(DEFAULT_VIEW_PANELS.DAILY_AFFIRMATION, '/affirmation', []),
       createPanel(DEFAULT_VIEW_PANELS.CALENDAR, '/calendar', []),
+      createPanel(DEFAULT_VIEW_PANELS.ABOUT_APP, '/about-app', []),
+      createPanel(DEFAULT_VIEW_PANELS.LEGAL_INFO, '/legal-info', []),
     ]),
   ]),
 ]);

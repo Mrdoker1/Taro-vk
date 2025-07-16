@@ -10,6 +10,8 @@ import {
 import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
 import { TaroSpreads as TaroSpreadsComponent } from '../components/TaroSpreads';
 import { TaroSpreadDetails } from '../components/TaroSpreadDetails';
+import { Footer } from '../components/Footer';
+import { DEFAULT_VIEW_PANELS } from '../routes';
 
 export interface TaroSpreadsProps extends NavIdProps {}
 
@@ -27,6 +29,14 @@ export const TaroSpreads: FC<TaroSpreadsProps> = ({ id }) => {
     } else {
       routeNavigator.back();
     }
+  };
+
+  const handleAboutApp = () => {
+    routeNavigator.push(`/${DEFAULT_VIEW_PANELS.ABOUT_APP}`);
+  };
+
+  const handleLegalInfo = () => {
+    routeNavigator.push(`/${DEFAULT_VIEW_PANELS.LEGAL_INFO}`);
   };
 
   return (
@@ -49,6 +59,11 @@ export const TaroSpreads: FC<TaroSpreadsProps> = ({ id }) => {
           )}
         </Div>
       </Group>
+
+      <Footer 
+        onAboutApp={handleAboutApp}
+        onLegalInfo={handleLegalInfo}
+      />
     </Panel>
   );
 };

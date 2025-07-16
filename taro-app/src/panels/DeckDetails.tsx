@@ -15,6 +15,8 @@ import {
 } from '@vkontakte/vkui';
 import { useParams } from '@vkontakte/vk-mini-apps-router';
 import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
+import { Footer } from '../components/Footer';
+import { DEFAULT_VIEW_PANELS } from '../routes';
 import { useAppDispatch, useAppSelector } from '../store';
 import { fetchDeckDetails, clearCurrentDeck } from '../store/slices/taroDecksSlice';
 
@@ -40,6 +42,14 @@ export const DeckDetails: FC<DeckDetailsProps> = ({ id }) => {
 
   const handleCardClick = (cardId: string) => {
     routeNavigator.push(`/deck/${deckId}/card/${cardId}`);
+  };
+
+  const handleAboutApp = () => {
+    routeNavigator.push(`/${DEFAULT_VIEW_PANELS.ABOUT_APP}`);
+  };
+
+  const handleLegalInfo = () => {
+    routeNavigator.push(`/${DEFAULT_VIEW_PANELS.LEGAL_INFO}`);
   };
 
   // Компонент скелетона для отображения во время загрузки
@@ -174,6 +184,11 @@ export const DeckDetails: FC<DeckDetailsProps> = ({ id }) => {
           </Group>
         </Div>
       )}
+      
+      <Footer 
+        onAboutApp={handleAboutApp}
+        onLegalInfo={handleLegalInfo}
+      />
     </Panel>
   );
 }; 
