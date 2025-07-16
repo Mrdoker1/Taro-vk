@@ -176,9 +176,11 @@ ${parsedAffirmation.usage}
   
   // Загружаем шаблон промпта при монтировании компонента
   useEffect(() => {
+    // Очищаем предыдущие результаты генерации при входе на страницу
+    dispatch(clearGeneratedText());
     dispatch(fetchPromptTemplate({ promptId: 'daily-affirmation', lang }));
     
-    // Очищаем предыдущие результаты генерации
+    // Очищаем результаты при размонтировании компонента
     return () => {
       dispatch(clearGeneratedText());
     };
