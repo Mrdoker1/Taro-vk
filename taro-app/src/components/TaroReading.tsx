@@ -3,9 +3,10 @@ import { useAppDispatch, useAppSelector } from '../store';
 import { fetchPromptTemplate } from '../store/slices/promptSlice';
 import { generateText, clearGeneratedText } from '../store/slices/generationSlice';
 import { Spinner, Button, Div, Title, Text, Group, Textarea, FormItem, Card, Select, Popover, IconButton, Accordion } from '@vkontakte/vkui';
-import { Icon20QuestionOutline } from '@vkontakte/icons';
+import { Icon20QuestionOutline, Icon24Download, Icon24Share } from '@vkontakte/icons';
 import { fetchDeckDetails } from '../store/slices/taroDecksSlice';
 import { saveTarotReadingToCalendar } from '../utils/calendarUtils';
+import bridge from '../bridge';
 
 interface TaroReadingProps {
   spreadId: string;
@@ -41,6 +42,118 @@ export const TaroReading: React.FC<TaroReadingProps> = ({
   const [question, setQuestion] = useState<string>('');
   const [selectedQuestionIndex, setSelectedQuestionIndex] = useState<string>('custom');
   const [parsedInterpretation, setParsedInterpretation] = useState<ParsedInterpretation | null>(null);
+
+  // Функция для скачивания файла с толкованием
+  const handleDownloadPDF = async () => {
+    if (!parsedInterpretation || !currentSpread) return;
+
+    try {
+      const currentDate = new Date().toLocaleDateString('ru-RU');
+      const currentTime = new Date().toLocaleTimeString('ru-RU');
+      
+      // Создаем структурированный текст
+      let content = `═══════════════════════════════════════════════════════════════
+                        🔮 РАСКЛАД ТАРО 🔮
+═══════════════════════════════════════════════════════════════
+
+📊 РАСКЛАД: ${currentSpread.name}
+📅 ДАТА: ${currentDate}
+🕐 ВРЕМЯ: ${currentTime}
+🎯 ИСТОЧНИК: Taro VK Mini App
+
+`;
+      
+      if (question.trim()) {
+        content += `❓ ВАША ТЕМА/ВОПРОС:
+${question}
+
+`;
+      }
+
+      content += `✨ ОБЩЕЕ ТОЛКОВАНИЕ:
+${parsedInterpretation.message}
+
+`;
+
+      if (parsedInterpretation.positions && parsedInterpretation.positions.length > 0) {
+        content += `🃏 ДЕТАЛЬНОЕ ТОЛКОВАНИЕ КАРТ:
+───────────────────────────────────────────────────────────────
+
+`;
+        
+        parsedInterpretation.positions.forEach((pos, index) => {
+          const position = selectedCards.find(card => card.position === pos.index);
+          const positionInfo = position && currentSpread?.meta[position.position.toString()];
+          const positionLabel = positionInfo?.label || `Позиция ${pos.index}`;
+          const cardInfo = position && currentDeck?.cards?.find(c => c.id === position.cardId);
+          const cardName = cardInfo?.name || 'Неизвестная карта';
+          const reversedText = position?.isReversed ? ' (Перевернутая)' : '';
+          
+          content += `${index + 1}. ${positionLabel}
+🃏 Карта: ${cardName}${reversedText}
+
+${pos.interpretation}
+
+`;
+        });
+      }
+
+      content += `═══════════════════════════════════════════════════════════════
+Создано в приложении Taro VK
+Дата создания: ${currentDate} ${currentTime}
+═══════════════════════════════════════════════════════════════`;
+
+      // Создаем blob с UTF-8 BOM для корректного отображения в Windows
+      const BOM = '\uFEFF';
+      const blob = new Blob([BOM + content], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      
+      // Создаем ссылку для скачивания
+      const link = document.createElement('a');
+      link.href = url;
+      const spreadName = currentSpread.name.replace(/[^\w\s-]/g, '').replace(/\s+/g, '-');
+      link.download = `Тaro-${spreadName}-${new Date().toISOString().split('T')[0]}.txt`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      URL.revokeObjectURL(url);
+      
+      console.log('Файл с толкованием скачан');
+    } catch (error) {
+      console.error('Ошибка при скачивании файла:', error);
+    }
+  };
+
+  // Функция для публикации в VK
+  const handleShareToVK = async () => {
+    if (!parsedInterpretation || !currentSpread) return;
+
+    try {
+      let shareText = `🔮 Расклад Таро "${currentSpread.name}"\n\n`;
+      
+      if (question.trim()) {
+        shareText += `❓ Вопрос: ${question}\n\n`;
+      }
+
+      // Ограничиваем длину сообщения
+      let interpretation = parsedInterpretation.message;
+      if (interpretation.length > 200) {
+        interpretation = interpretation.substring(0, 200) + '...';
+      }
+      
+      shareText += `✨ ${interpretation}\n\n`;
+      shareText += `#ТароГадание #ВКМиниАпп`;
+
+      await bridge.send('VKWebAppShowWallPostBox', {
+        message: shareText
+      });
+
+      console.log('Публикация в VK успешна');
+    } catch (error) {
+      console.error('Ошибка при публикации в VK:', error);
+    }
+  };
 
   // Получаем шаблон промпта для выбранного расклада
   useEffect(() => {
@@ -455,6 +568,35 @@ ${cardsText}
               </>
             )}
           </Card>
+        )}
+
+        {/* Кнопки действий с результатом */}
+        {parsedInterpretation && !parsedInterpretation.error && (
+          <Div style={{ marginTop: 16, marginBottom: 8 }}>
+            <div style={{ 
+              display: 'flex', 
+              gap: '12px', 
+              justifyContent: 'center',
+              flexWrap: 'wrap'
+            }}>
+              <Button
+                mode="primary"
+                size="m"
+                before={<Icon24Download />}
+                onClick={handleDownloadPDF}
+              >
+                Скачать
+              </Button>
+              <Button
+                mode="secondary"
+                size="m"
+                before={<Icon24Share />}
+                onClick={handleShareToVK}
+              >
+                Поделиться в VK
+              </Button>
+            </div>
+          </Div>
         )}
 
         <Div style={{ marginTop: 24 }}>

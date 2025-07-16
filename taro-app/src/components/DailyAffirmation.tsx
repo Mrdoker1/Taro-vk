@@ -13,11 +13,13 @@ import {
   Spinner, 
   Skeleton 
 } from '@vkontakte/vkui';
+import { Icon24Download, Icon24Share } from '@vkontakte/icons';
 import { useAppDispatch, useAppSelector } from '../store';
 import { fetchPromptTemplate } from '../store/slices/promptSlice';
 import { generateText, clearGeneratedText } from '../store/slices/generationSlice';
 import { ApiType, getLanguageForApi } from '../utils/languageUtils';
 import { saveAffirmationToCalendar } from '../utils/calendarUtils';
+import bridge from '../bridge';
 
 interface AffirmationTopic {
   value: string;
@@ -59,6 +61,118 @@ export const DailyAffirmation: React.FC = () => {
   const [parsedAffirmation, setParsedAffirmation] = useState<ParsedAffirmation | null>(null);
   const [promptMode, setPromptMode] = useState<'preset' | 'custom'>('preset');
   const { lang } = useAppSelector((state) => state.horoscope); // Используем тот же язык, что и для гороскопа
+
+  // Функция для скачивания файла с аффирмациями
+  const handleDownloadPDF = async () => {
+    if (!parsedAffirmation || parsedAffirmation.error) return;
+
+    try {
+      const currentDate = new Date().toLocaleDateString('ru-RU');
+      const currentTime = new Date().toLocaleTimeString('ru-RU');
+      
+      // Определяем тему аффирмации
+      const topic = promptMode === 'custom' 
+        ? customPrompt 
+        : AFFIRMATION_TOPICS.find(t => t.value === selectedTopic)?.label || 'Персональная тема';
+      
+      // Создаем структурированный текст
+      let content = `═══════════════════════════════════════════════════════════════
+                    🌞 ЕЖЕДНЕВНЫЕ АФФИРМАЦИИ 🌞
+═══════════════════════════════════════════════════════════════
+
+🎯 ТЕМА: ${topic}
+📅 ДАТА: ${currentDate}
+🕐 ВРЕМЯ: ${currentTime}
+🌟 ИСТОЧНИК: Taro VK Mini App
+
+✨ ${parsedAffirmation.title}
+
+`;
+
+      // Добавляем секции аффирмаций
+      parsedAffirmation.sections.forEach((section, index) => {
+        content += `${index + 1}. ${section.title}
+───────────────────────────────────────────────────────────────
+
+${section.text}
+
+`;
+      });
+
+      // Добавляем инструкции по использованию
+      if (parsedAffirmation.usage) {
+        content += `🔧 КАК ИСПОЛЬЗОВАТЬ:
+───────────────────────────────────────────────────────────────
+
+${parsedAffirmation.usage}
+
+`;
+      }
+
+      content += `═══════════════════════════════════════════════════════════════
+Создано в приложении Taro VK
+Дата создания: ${currentDate} ${currentTime}
+═══════════════════════════════════════════════════════════════`;
+
+      // Создаем blob с UTF-8 BOM для корректного отображения в Windows
+      const BOM = '\uFEFF';
+      const blob = new Blob([BOM + content], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      
+      // Создаем ссылку для скачивания
+      const link = document.createElement('a');
+      link.href = url;
+      const topicName = topic.replace(/[^\w\s-]/g, '').replace(/\s+/g, '-');
+      link.download = `Аффирмации-${topicName}-${new Date().toISOString().split('T')[0]}.txt`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      URL.revokeObjectURL(url);
+      
+      console.log('Файл с аффирмациями скачан');
+    } catch (error) {
+      console.error('Ошибка при скачивании файла:', error);
+    }
+  };
+
+  // Функция для публикации в VK
+  const handleShareToVK = async () => {
+    if (!parsedAffirmation || parsedAffirmation.error) return;
+
+    try {
+      const topic = promptMode === 'custom' 
+        ? customPrompt 
+        : AFFIRMATION_TOPICS.find(t => t.value === selectedTopic)?.label || 'Персональная тема';
+
+      let shareText = `🌞 Ежедневные аффирмации\n\n`;
+      shareText += `🎯 Тема: ${topic}\n\n`;
+      shareText += `✨ ${parsedAffirmation.title}\n\n`;
+
+      // Добавляем первую аффирмацию как пример
+      if (parsedAffirmation.sections.length > 0) {
+        const firstSection = parsedAffirmation.sections[0];
+        let sectionText = `${firstSection.title}: ${firstSection.text}`;
+        
+        // Ограничиваем длину для поста в VK
+        if (sectionText.length > 150) {
+          sectionText = sectionText.substring(0, 150) + '...';
+        }
+        
+        shareText += `${sectionText}\n\n`;
+      }
+      
+      shareText += `#Аффирмации #ПозитивноеМышление #ВКМиниАпп`;
+
+      await bridge.send('VKWebAppShowWallPostBox', {
+        message: shareText
+      });
+
+      console.log('Публикация аффирмаций в VK успешна');
+    } catch (error) {
+      console.error('Ошибка при публикации в VK:', error);
+    }
+  };
   
   // Загружаем шаблон промпта при монтировании компонента
   useEffect(() => {
@@ -295,6 +409,33 @@ export const DailyAffirmation: React.FC = () => {
             </Text>
           </Div>
         )}
+
+        {/* Кнопки действий с результатом */}
+        <Div style={{ marginTop: 16, marginBottom: 8 }}>
+          <div style={{ 
+            display: 'flex', 
+            gap: '12px', 
+            justifyContent: 'center',
+            flexWrap: 'wrap'
+          }}>
+            <Button
+              mode="primary"
+              size="m"
+              before={<Icon24Download />}
+              onClick={handleDownloadPDF}
+            >
+              Скачать
+            </Button>
+            <Button
+              mode="secondary"
+              size="m"
+              before={<Icon24Share />}
+              onClick={handleShareToVK}
+            >
+              Поделиться в VK
+            </Button>
+          </div>
+        </Div>
       </Card>
     );
   };
