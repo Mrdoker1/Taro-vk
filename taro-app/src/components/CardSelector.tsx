@@ -32,6 +32,7 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
   const [selectedCards, setSelectedCards] = useState<SelectedCard[]>([]);
   const [allPositions, setAllPositions] = useState<number[]>([]);
   const [selectorMode, setSelectorMode] = useState<SelectorMode>('manual');
+  const [shuffledCards, setShuffledCards] = useState<Array<{id: string; name: string; image?: string}>>([]);
 
   // Получаем данные колоды и расклада
   useEffect(() => {
@@ -55,6 +56,25 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
       setAllPositions(positions.sort((a, b) => a - b));
     }
   }, [currentSpread]);
+
+  // Инициализируем перемешанные карты когда загружается колода
+  useEffect(() => {
+    if (currentDeck?.cards) {
+      setShuffledCards([...currentDeck.cards]);
+    }
+  }, [currentDeck]);
+
+  // Функция для перетасовки карт (алгоритм Фишера-Йетса)
+  const shuffleCards = () => {
+    if (!currentDeck?.cards) return;
+    
+    const newCards = [...currentDeck.cards];
+    for (let i = newCards.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [newCards[i], newCards[j]] = [newCards[j], newCards[i]];
+    }
+    setShuffledCards(newCards);
+  };
 
   // Функция для обновления выбранной карты
   const handleCardSelect = (position: number, cardId: string) => {
@@ -141,7 +161,7 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
   }
 
   // Получаем карты из колоды, если они есть
-  const cards = currentDeck.cards || [];
+  const cards = shuffledCards.length > 0 ? shuffledCards : (currentDeck?.cards || []);
 
   // Выбор режима селектора карт
   if (selectorMode === 'dnd') {
@@ -167,6 +187,7 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
             positions={getPositionsForDnd()}
             onCardsSelected={onCardsSelected}
             onBack={onBack}
+            onShuffleCards={shuffleCards}
           />
         </Div>
       </Group>

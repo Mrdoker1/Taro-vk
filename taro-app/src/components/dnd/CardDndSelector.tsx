@@ -20,6 +20,7 @@ interface CardDndSelectorProps {
   }[];
   onCardsSelected: (cards: { position: number; cardId: string; isReversed: boolean }[]) => void;
   onBack?: () => void;
+  onShuffleCards?: () => void;
 }
 
 interface SelectedCard {
@@ -76,13 +77,15 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
   cards,
   positions,
   onCardsSelected,
-  onBack
+  onBack,
+  onShuffleCards
 }) => {
   const [selectedCards, setSelectedCards] = useState<SelectedCard[]>([]);
   const [activeDragCard, setActiveDragCard] = useState<{id: string; cardData: CardData} | null>(null);
   const [isMobile, setIsMobile] = useState<boolean>(false);
   const [showMobileTip, setShowMobileTip] = useState<boolean>(true);
   const [activeControlsPosition, setActiveControlsPosition] = useState<number | null>(null);
+  const [isShuffling, setIsShuffling] = useState<boolean>(false);
   
   // Определяем, является ли устройство мобильным
   useEffect(() => {
@@ -230,6 +233,19 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
     } else {
       setActiveControlsPosition(position);
     }
+  };
+
+  // Функция для перетасовки с анимацией
+  const handleShuffle = () => {
+    setIsShuffling(true);
+    
+    // Запускаем анимацию на 800ms, затем вызываем перетасовку
+    setTimeout(() => {
+      if (onShuffleCards) {
+        onShuffleCards();
+      }
+      setIsShuffling(false);
+    }, 800);
   };
   
   return (
@@ -432,8 +448,20 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
             </div>
             
             {/* Колода карт - показываем ВТОРЫМ */}
-            <div style={{ display: 'flex', justifyContent: 'center', marginTop: 16 }}>
-              <CardDeck cards={cards} usedCardIds={usedCardIds} />
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px', marginTop: 16 }}>
+              <CardDeck cards={cards} usedCardIds={usedCardIds} isShuffling={isShuffling} />
+              
+              {/* Кнопка перетасовки карт */}
+              {onShuffleCards && (
+                <Button 
+                  mode="secondary" 
+                  size="m" 
+                  onClick={handleShuffle}
+                  disabled={isShuffling}
+                >
+                  {isShuffling ? '🔄 Перетасовываем...' : '🔀 Перетасовать карты'}
+                </Button>
+              )}
             </div>
           </div>
           
