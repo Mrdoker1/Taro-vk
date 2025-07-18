@@ -80,12 +80,23 @@ export const HoroscopeSection = () => {
   const [sunClicked, setSunClicked] = React.useState(false);
   const [moonClicked, setMoonClicked] = React.useState(false);
   const [textVisible, setTextVisible] = React.useState(false);
+  const [windowWidth, setWindowWidth] = React.useState(typeof window !== 'undefined' ? window.innerWidth : 1200);
 
   const tabs = [
     { value: 'daily', label: 'на сегодня' },
     { value: 'weekly', label: 'На неделю' },
     { value: 'monthly', label: 'На месяц' }
   ];
+
+  // Отслеживание размера окна
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Загрузка данных при изменении типа, знака или языка
   useEffect(() => {
@@ -108,15 +119,19 @@ export const HoroscopeSection = () => {
     dispatch(setType(tabValue as 'daily' | 'weekly' | 'monthly'));
   };
 
+  // Адаптивность для мобильных устройств
+  const isMobile = windowWidth < 768;
+  const isVerySmallMobile = windowWidth < 480;
+
   const sectionStyle: React.CSSProperties = {
     display: 'flex',
     flexDirection: 'column',
-    borderRadius: '16px',
+    borderRadius: isMobile ? '12px' : '16px',
     position: 'relative',
-    minHeight: '300px',
+    minHeight: isMobile ? (isVerySmallMobile ? '350px' : '400px') : '300px',
     width: '100%',
     overflow: 'hidden',
-    padding: '24px',
+    padding: isVerySmallMobile ? '12px' : isMobile ? '16px' : '24px',
     maxWidth: '100%',
     margin: '0 auto',
     boxSizing: 'border-box'
@@ -159,7 +174,7 @@ export const HoroscopeSection = () => {
     minWidth: 0,
     fontFamily: 'Jost',
     fontWeight: 400,
-    fontSize: '24px',
+    fontSize: 'clamp(16px, 4vw, 24px)', // Адаптивный размер шрифта
     lineHeight: 1.2,
     margin: 0
   };
@@ -401,51 +416,8 @@ export const HoroscopeSection = () => {
     opacity: 0.4
   };
 
-  // Адаптивность для мобильных устройств
-  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-
-  // Адаптивные стили для мобильных устройств
-  if (isMobile) {
-    sectionStyle.minHeight = '400px';
-    sectionStyle.padding = '24px';
-    
-    mainContentStyle.flexDirection = 'column';
-    mainContentStyle.alignItems = 'center';
-    mainContentStyle.gap = '12px';
-    
-    imageContainerStyle.width = '100%';
-    imageContainerStyle.maxWidth = '360px';
-    imageContainerStyle.margin = '0 auto';
-    
-    complexImageStyle.height = '272px';
-    complexImageStyle.borderRadius = '8px';
-    complexImageStyle.objectFit = 'contain';
-    complexImageStyle.maxWidth = '360px';
-    
-    // Мобильные стили для оверлея
-    luckyNumberStyle.fontSize = '48px';
-    colorNameStyle.fontSize = '14px';
-    moodSymbolStyle.fontSize = '20px';
-    
-    // Уменьшаем радиусы орбит для мобильной версии
-    // Адаптивные размеры применяются через функции createOrbitStyle и createElementStyle
-    
-    textContentStyle.fontSize = '14px';
-    textContentStyle.padding = '8px';
-    textContentStyle.width = '100%';
-    
-    predictionTextStyle.fontSize = '13px';
-    predictionTextStyle.lineHeight = '18px';
-    predictionTextStyle.textAlign = 'left';
-    
-    infoContainerStyle.fontSize = '12px';
-    infoContainerStyle.gap = '8px';
-    
-    moodValueStyle.fontSize = '16px';
-    
-    numberIconStyle.width = '18px';
-    numberIconStyle.height = '18px';
-  }
+  // Адаптивные стили теперь управляются через CSS классы и медиа-запросы
+  // Оставляем только критически важные JavaScript адаптации
 
   return (
     <>
@@ -702,7 +674,10 @@ export const HoroscopeSection = () => {
         `}
       </style>
       
-      <section className="HoroscopeSection" style={sectionStyle}>
+      <section 
+        className={`HoroscopeSection ${isMobile ? 'HoroscopeSection--mobile' : ''} ${isVerySmallMobile ? 'HoroscopeSection--small' : ''}`} 
+        style={sectionStyle}
+      >
         {/* Background Image */}
         <div style={backgroundStyle} />
       
@@ -733,7 +708,7 @@ export const HoroscopeSection = () => {
             {/* Animated Elements */}
             <div className="animated-elements-container" style={animatedElementsContainerStyle}>
               {/* Sun - Outer orbit, left side */}
-              <div style={{...createOrbitStyle(isMobile ? 180 : 240, 40, 0, 15), pointerEvents: 'none'}}>
+              <div style={{...createOrbitStyle(isVerySmallMobile ? 150 : isMobile ? 180 : 240, 40, 0, 15), pointerEvents: 'none'}}>
                 <div style={{...createCounterRotateStyle(40, 0), pointerEvents: 'none'}}>
                   <div 
                     className={sunClicked ? 'sun-clicked' : ''}
@@ -756,7 +731,7 @@ export const HoroscopeSection = () => {
               </div>
               
               {/* Moon - Outer orbit, right side */}
-              <div style={{...createOrbitStyle(isMobile ? 130 : 190, 35, 180, 12), pointerEvents: 'none'}}>
+              <div style={{...createOrbitStyle(isVerySmallMobile ? 110 : isMobile ? 130 : 190, 35, 180, 12), pointerEvents: 'none'}}>
                 <div style={{...createCounterRotateStyle(35, 180), pointerEvents: 'none'}}>
                   <div 
                     className={moonClicked ? 'moon-clicked' : ''}
@@ -779,17 +754,17 @@ export const HoroscopeSection = () => {
               </div>
               
               {/* Big Star - Inner orbit */}
-              <div style={{...createOrbitStyle(isMobile ? 90 : 140, 30, 90, 8), pointerEvents: 'none'}}>
+              <div style={{...createOrbitStyle(isVerySmallMobile ? 70 : isMobile ? 90 : 140, 30, 90, 8), pointerEvents: 'none'}}>
                 <img src={bigStarImage} alt="Big Star" style={createStarStyle(30, 90, 0)} />
               </div>
               
               {/* Star - Inner orbit */}
-              <div style={{...createOrbitStyle(isMobile ? 75 : 120, 25, 270, 3), pointerEvents: 'none'}}>
+              <div style={{...createOrbitStyle(isVerySmallMobile ? 60 : isMobile ? 75 : 120, 25, 270, 3), pointerEvents: 'none'}}>
                 <img src={starImage} alt="Star" style={createStarStyle(25, 270, 0)} />
               </div>
               
               {/* Star 2 - Inner orbit */}
-              <div style={{...createOrbitStyle(isMobile ? 85 : 130, 20, 45, 3), pointerEvents: 'none'}}>
+              <div style={{...createOrbitStyle(isVerySmallMobile ? 65 : isMobile ? 85 : 130, 20, 45, 3), pointerEvents: 'none'}}>
                 <img src={star2Image} alt="Star 2" style={createStarStyle(20, 45, 0)} />
               </div>
               
