@@ -106,7 +106,7 @@ export const DeckDetails: FC<DeckDetailsProps> = ({ id }) => {
             Назад
           </Button>
         }
-        right={<StarButton size="s" mode="primary" />}
+        right={<StarButton size="s" />}
       />
 
       {deckLoading && <DeckDetailsSkeleton />}

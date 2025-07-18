@@ -35,7 +35,7 @@ export const CalendarPanel: FC<CalendarPanelProps> = ({ id }) => {
             Назад
           </Button>
         }
-        right={<StarButton size="s" mode="primary" />}
+        right={<StarButton size="s" />}
       />
       <Calendar />
       

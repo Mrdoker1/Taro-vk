@@ -41,7 +41,7 @@ export const DailyAffirmationPanel: FC<DailyAffirmationPanelProps> = ({ id }) =>
             Назад
           </Button>
         }
-        right={<StarButton size="s" mode="primary" />}
+        right={<StarButton size="s" />}
       />
       
       <DailyAffirmation />

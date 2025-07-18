@@ -109,7 +109,7 @@ export const CardDetails: FC<CardDetailsProps> = ({ id }) => {
             Назад
           </Button>
         }
-        right={<StarButton size="s" mode="primary" />}
+        right={<StarButton size="s" />}
       />
 
       {cardLoading && <CardDetailsSkeleton />}

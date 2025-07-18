@@ -51,7 +51,7 @@ export const TaroSpreads: FC<TaroSpreadsProps> = ({ id }) => {
             {selectedSpreadId ? 'К раскладам' : 'Назад'}
           </Button>
         }
-        right={<StarButton size="s" mode="primary" />}
+        right={<StarButton size="s" />}
       />
 
       <Group>

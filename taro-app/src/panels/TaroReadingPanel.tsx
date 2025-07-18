@@ -62,7 +62,7 @@ export const TaroReadingPanel: FC<TaroReadingPanelProps> = ({ id, spreadId, deck
             {currentStep === 'VIEW_READING' ? 'К выбору карт' : 'Назад'}
           </Button>
         }
-        right={<StarButton size="s" mode="primary" />}
+        right={<StarButton size="s" />}
       />
 
       {currentStep === 'SELECT_CARDS' && (
