@@ -77,6 +77,9 @@ const getColorDescription = (hexColor: string): string => {
 export const HoroscopeSection = () => {
   const dispatch = useAppDispatch();
   const { type, horoscope, loading, error, sign, lang } = useAppSelector((state) => state.horoscope);
+  const [sunClicked, setSunClicked] = React.useState(false);
+  const [moonClicked, setMoonClicked] = React.useState(false);
+  const [textVisible, setTextVisible] = React.useState(false);
 
   const tabs = [
     { value: 'daily', label: 'на сегодня' },
@@ -88,6 +91,18 @@ export const HoroscopeSection = () => {
   useEffect(() => {
     dispatch(fetchHoroscope({ sign, type, lang }));
   }, [dispatch, type, sign, lang]);
+
+  // Анимация появления текста при смене данных
+  useEffect(() => {
+    if (!loading && horoscope) {
+      setTextVisible(false); // Сначала скрываем
+      setTimeout(() => {
+        setTextVisible(true); // Затем показываем с анимацией
+      }, 100);
+    } else {
+      setTextVisible(false);
+    }
+  }, [horoscope?.number, horoscope?.color, horoscope?.mood, loading]);
 
   const handleTabChange = (tabValue: string) => {
     dispatch(setType(tabValue as 'daily' | 'weekly' | 'monthly'));
@@ -223,7 +238,7 @@ export const HoroscopeSection = () => {
     transform: 'translate(-50%, -50%)',
     width: '100%',
     height: '100%',
-    pointerEvents: 'none'
+    pointerEvents: 'auto'
   };
 
   const createOrbitStyle = (radius: number, duration: number, startPosition: number = 0, zIndex: number = 1): React.CSSProperties => ({
@@ -238,27 +253,41 @@ export const HoroscopeSection = () => {
     zIndex: zIndex
   });
 
-  const createSunStyle = (duration: number, startPosition: number = 0): React.CSSProperties => ({
+  const createCounterRotateStyle = (duration: number, startPosition: number = 0): React.CSSProperties => ({
     position: 'absolute',
     top: '0',
     left: '50%',
-    maxWidth: 'none',
-    maxHeight: 'none',
-    objectFit: 'contain',
-    animation: `counter-rotate-${duration} ${duration}s linear infinite, sun-glow 3s ease-in-out infinite`,
-    animationDelay: `${-startPosition * duration / 360}s, 0s`
+    animation: `counter-rotate-${duration} ${duration}s linear infinite`,
+    animationDelay: `${-startPosition * duration / 360}s`
   });
 
-  const createMoonStyle = (duration: number, startPosition: number = 0): React.CSSProperties => ({
-    position: 'absolute',
-    top: '0',
-    left: '50%',
+  const createSunImageStyle = (): React.CSSProperties => ({
     maxWidth: 'none',
     maxHeight: 'none',
     objectFit: 'contain',
-    animation: `counter-rotate-${duration} ${duration}s linear infinite, moon-glow 4s ease-in-out infinite`,
-    animationDelay: `${-startPosition * duration / 360}s, 0s`
+    display: 'block',
+    animation: `sun-glow 3s ease-in-out infinite`,
+    transition: 'all 0.3s ease'
   });
+
+  const createMoonImageStyle = (): React.CSSProperties => ({
+    maxWidth: 'none',
+    maxHeight: 'none',
+    objectFit: 'contain',
+    display: 'block',
+    animation: `moon-glow 4s ease-in-out infinite`,
+    transition: 'all 0.3s ease'
+  });
+
+  const handleSunClick = () => {
+    setSunClicked(true);
+    setTimeout(() => setSunClicked(false), 1000); // Длительность анимации sun-bounce
+  };
+
+  const handleMoonClick = () => {
+    setMoonClicked(true);
+    setTimeout(() => setMoonClicked(false), 1200); // Длительность анимации moon-wiggle
+  };
 
   const createStarStyle = (duration: number, startPosition: number = 0, twinkleDelay: number = 0): React.CSSProperties => ({
     position: 'absolute',
@@ -267,6 +296,7 @@ export const HoroscopeSection = () => {
     maxWidth: 'none',
     maxHeight: 'none',
     objectFit: 'contain',
+    pointerEvents: 'none',
     animation: `star-twinkle 2s ease-in-out infinite, depth-orbit-${duration} ${duration}s linear infinite`,
     animationDelay: `${twinkleDelay}s, ${-startPosition * duration / 360}s`
   });
@@ -541,8 +571,133 @@ export const HoroscopeSection = () => {
             75% { transform: translateY(-15px) translateX(3px); }
           }
           
-          .animated-elements-container:hover * {
-            animation-play-state: paused !important;
+
+          
+          @keyframes sun-bounce {
+            0% { 
+              transform: scale(1) rotate(0deg);
+              filter: drop-shadow(0 0 10px #ffeb3b) drop-shadow(0 0 20px #ff9800) brightness(1);
+            }
+            6.25% { 
+              transform: scale(1.05) rotate(22.5deg);
+              filter: drop-shadow(0 0 15px #ffeb3b) drop-shadow(0 0 25px #ff9800) brightness(1.1);
+            }
+            12.5% { 
+              transform: scale(1.1) rotate(45deg);
+              filter: drop-shadow(0 0 20px #ffeb3b) drop-shadow(0 0 30px #ff9800) brightness(1.2);
+            }
+            18.75% { 
+              transform: scale(1.15) rotate(67.5deg);
+              filter: drop-shadow(0 0 22px #ffeb3b) drop-shadow(0 0 35px #ff9800) brightness(1.25);
+            }
+            25% { 
+              transform: scale(1.2) rotate(90deg);
+              filter: drop-shadow(0 0 25px #ffeb3b) drop-shadow(0 0 40px #ff9800) brightness(1.3);
+            }
+            31.25% { 
+              transform: scale(1.25) rotate(112.5deg);
+              filter: drop-shadow(0 0 26px #ffeb3b) drop-shadow(0 0 42px #ff9800) brightness(1.35);
+            }
+            37.5% { 
+              transform: scale(1.3) rotate(135deg);
+              filter: drop-shadow(0 0 28px #ffeb3b) drop-shadow(0 0 45px #ff9800) brightness(1.4);
+            }
+            43.75% { 
+              transform: scale(1.35) rotate(157.5deg);
+              filter: drop-shadow(0 0 29px #ffeb3b) drop-shadow(0 0 48px #ff9800) brightness(1.5);
+            }
+            50% { 
+              transform: scale(1.4) rotate(180deg);
+              filter: drop-shadow(0 0 30px #ffeb3b) drop-shadow(0 0 50px #ff9800) brightness(1.6);
+            }
+            56.25% { 
+              transform: scale(1.35) rotate(202.5deg);
+              filter: drop-shadow(0 0 29px #ffeb3b) drop-shadow(0 0 48px #ff9800) brightness(1.5);
+            }
+            62.5% { 
+              transform: scale(1.3) rotate(225deg);
+              filter: drop-shadow(0 0 28px #ffeb3b) drop-shadow(0 0 45px #ff9800) brightness(1.4);
+            }
+            68.75% { 
+              transform: scale(1.25) rotate(247.5deg);
+              filter: drop-shadow(0 0 26px #ffeb3b) drop-shadow(0 0 42px #ff9800) brightness(1.35);
+            }
+            75% { 
+              transform: scale(1.2) rotate(270deg);
+              filter: drop-shadow(0 0 25px #ffeb3b) drop-shadow(0 0 40px #ff9800) brightness(1.3);
+            }
+            81.25% { 
+              transform: scale(1.15) rotate(292.5deg);
+              filter: drop-shadow(0 0 22px #ffeb3b) drop-shadow(0 0 35px #ff9800) brightness(1.25);
+            }
+            87.5% { 
+              transform: scale(1.1) rotate(315deg);
+              filter: drop-shadow(0 0 20px #ffeb3b) drop-shadow(0 0 30px #ff9800) brightness(1.2);
+            }
+            93.75% { 
+              transform: scale(1.05) rotate(337.5deg);
+              filter: drop-shadow(0 0 15px #ffeb3b) drop-shadow(0 0 25px #ff9800) brightness(1.1);
+            }
+            100% { 
+              transform: scale(1) rotate(360deg);
+              filter: drop-shadow(0 0 10px #ffeb3b) drop-shadow(0 0 20px #ff9800) brightness(1);
+            }
+          }
+          
+          @keyframes moon-wiggle {
+            0%, 100% { 
+              transform: scale(1) rotate(0deg);
+              filter: drop-shadow(0 0 8px #e3f2fd) drop-shadow(0 0 15px #2196f3) brightness(1);
+            }
+            25% { 
+              transform: scale(1.3) rotate(-15deg);
+              filter: drop-shadow(0 0 20px #e3f2fd) drop-shadow(0 0 30px #2196f3) brightness(1.4);
+            }
+            50% { 
+              transform: scale(0.8) rotate(10deg);
+              filter: drop-shadow(0 0 5px #e3f2fd) drop-shadow(0 0 10px #2196f3) brightness(0.7);
+            }
+            75% { 
+              transform: scale(1.2) rotate(-5deg);
+              filter: drop-shadow(0 0 15px #e3f2fd) drop-shadow(0 0 25px #2196f3) brightness(1.2);
+            }
+          }
+          
+          .sun-clicked {
+            animation: sun-bounce 1s ease-out;
+            transform-origin: center;
+          }
+          
+          .moon-clicked {
+            animation: moon-wiggle 1.2s ease-out;
+            transform-origin: center;
+          }
+          
+          @keyframes text-appear {
+            0% { 
+              opacity: 0;
+              transform: translate(-50%, -50%) scale(0.8);
+              filter: blur(3px);
+            }
+            50% { 
+              opacity: 0.8;
+              transform: translate(-50%, -50%) scale(1.05);
+              filter: blur(1px);
+            }
+            100% { 
+              opacity: 1;
+              transform: translate(-50%, -50%) scale(1);
+              filter: blur(0px);
+            }
+          }
+          
+          .text-visible {
+            animation: text-appear 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+          }
+          
+          .text-hidden {
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0.8);
           }
         `}
       </style>
@@ -578,28 +733,64 @@ export const HoroscopeSection = () => {
             {/* Animated Elements */}
             <div className="animated-elements-container" style={animatedElementsContainerStyle}>
               {/* Sun - Outer orbit, left side */}
-              <div style={createOrbitStyle(isMobile ? 160 : 220, 40, 0, 10)}>
-                <img src={sunImage} alt="Sun" style={createSunStyle(40, 0)} />
+              <div style={{...createOrbitStyle(isMobile ? 180 : 240, 40, 0, 15), pointerEvents: 'none'}}>
+                <div style={{...createCounterRotateStyle(40, 0), pointerEvents: 'none'}}>
+                  <div 
+                    className={sunClicked ? 'sun-clicked' : ''}
+                    onClick={handleSunClick}
+                    style={{
+                      cursor: 'pointer',
+                      pointerEvents: 'auto',
+                      display: 'inline-block',
+                      padding: '10px',
+                      borderRadius: '50%'
+                    }}
+                  >
+                    <img 
+                      src={sunImage} 
+                      alt="Sun" 
+                      style={createSunImageStyle()} 
+                    />
+                  </div>
+                </div>
               </div>
               
               {/* Moon - Outer orbit, right side */}
-              <div style={createOrbitStyle(isMobile ? 160 : 220, 35, 180, 10)}>
-                <img src={moonImage} alt="Moon" style={createMoonStyle(35, 180)} />
+              <div style={{...createOrbitStyle(isMobile ? 130 : 190, 35, 180, 12), pointerEvents: 'none'}}>
+                <div style={{...createCounterRotateStyle(35, 180), pointerEvents: 'none'}}>
+                  <div 
+                    className={moonClicked ? 'moon-clicked' : ''}
+                    onClick={handleMoonClick}
+                    style={{
+                      cursor: 'pointer',
+                      pointerEvents: 'auto',
+                      display: 'inline-block',
+                      padding: '10px',
+                      borderRadius: '50%'
+                    }}
+                  >
+                    <img 
+                      src={moonImage} 
+                      alt="Moon" 
+                      style={createMoonImageStyle()} 
+                    />
+                  </div>
+                </div>
               </div>
               
               {/* Big Star - Inner orbit */}
-              <div style={createOrbitStyle(isMobile ? 90 : 140, 30, 90)}>
+              <div style={{...createOrbitStyle(isMobile ? 90 : 140, 30, 90, 8), pointerEvents: 'none'}}>
                 <img src={bigStarImage} alt="Big Star" style={createStarStyle(30, 90, 0)} />
               </div>
               
               {/* Star - Inner orbit */}
-              <div style={createOrbitStyle(isMobile ? 75 : 120, 25, 270)}>
-                <img src={starImage} alt="Star" style={createStarStyle(25, 270, 0.5)} />
+              <div style={{...createOrbitStyle(isMobile ? 75 : 120, 25, 270, 3), pointerEvents: 'none'}}>
+                <img src={starImage} alt="Star" style={createStarStyle(25, 270, 0)} />
               </div>
               
               {/* Star 2 - Inner orbit */}
-              <div style={createOrbitStyle(isMobile ? 85 : 130, 20, 45)}>
-                <img src={star2Image} alt="Star 2" style={createStarStyle(20, 45, 1)} />
+              <div style={{...createOrbitStyle(isMobile ? 85 : 130, 20, 45, 3), pointerEvents: 'none'}}>
+                <img src={star2Image} alt="Star 2" style={createStarStyle(20, 45, 0)} />
               </div>
               
               {/* Stardust particles */}
@@ -612,6 +803,7 @@ export const HoroscopeSection = () => {
                 backgroundColor: '#fff',
                 borderRadius: '50%',
                 boxShadow: '0 0 6px #fff',
+                pointerEvents: 'none',
                 animation: 'stardust 3s ease-in-out infinite, float 4s ease-in-out infinite',
                 animationDelay: '0s, 0.5s'
               }} />
@@ -625,6 +817,7 @@ export const HoroscopeSection = () => {
                 backgroundColor: '#ffeb3b',
                 borderRadius: '50%',
                 boxShadow: '0 0 4px #ffeb3b',
+                pointerEvents: 'none',
                 animation: 'stardust 2.5s ease-in-out infinite, float 5s ease-in-out infinite',
                 animationDelay: '1s, 1.5s'
               }} />
@@ -638,6 +831,7 @@ export const HoroscopeSection = () => {
                 backgroundColor: '#2196f3',
                 borderRadius: '50%',
                 boxShadow: '0 0 3px #2196f3',
+                pointerEvents: 'none',
                 animation: 'stardust 4s ease-in-out infinite, float 3s ease-in-out infinite',
                 animationDelay: '2s, 0s'
               }} />
@@ -651,6 +845,7 @@ export const HoroscopeSection = () => {
                 backgroundColor: '#fff',
                 borderRadius: '50%',
                 boxShadow: '0 0 5px #fff',
+                pointerEvents: 'none',
                 animation: 'stardust 3.5s ease-in-out infinite, float 6s ease-in-out infinite',
                 animationDelay: '0.5s, 2s'
               }} />
@@ -664,6 +859,7 @@ export const HoroscopeSection = () => {
                 backgroundColor: '#ff9800',
                 borderRadius: '50%',
                 boxShadow: '0 0 4px #ff9800',
+                pointerEvents: 'none',
                 animation: 'stardust 2s ease-in-out infinite, float 4.5s ease-in-out infinite',
                 animationDelay: '1.5s, 1s'
               }} />
@@ -671,7 +867,10 @@ export const HoroscopeSection = () => {
 
             {/* Text Overlay */}
             {!loading && horoscope && (
-              <div style={imageOverlayStyle}>
+              <div 
+                className={textVisible ? 'text-visible' : 'text-hidden'}
+                style={imageOverlayStyle}
+              >
                 {/* Lucky Number */}
                 <div style={luckyNumberStyle}>
                   {horoscope.number}
