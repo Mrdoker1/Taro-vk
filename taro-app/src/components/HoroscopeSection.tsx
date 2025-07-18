@@ -4,6 +4,11 @@ import { setType, fetchHoroscope } from '../store/slices/horoscopeSlice';
 import { Skeleton, Tabs, TabsItem, Popover, IconButton, Div } from '@vkontakte/vkui';
 import { Icon20QuestionOutline } from '@vkontakte/icons';
 import complexImage from '../assets/complex-image.svg';
+import sunImage from '../assets/sun.png';
+import moonImage from '../assets/moon.png';
+import bigStarImage from '../assets/big-star.png';
+import starImage from '../assets/star.png';
+import star2Image from '../assets/star-2.png';
 
 // Функция для преобразования hex цвета в текстовое описание
 const getColorDescription = (hexColor: string): string => {
@@ -210,6 +215,41 @@ export const HoroscopeSection = () => {
     textShadow: '1px 1px 2px rgba(0,0,0,0.7)'
   };
 
+  // Стили для анимированных элементов
+  const animatedElementsContainerStyle: React.CSSProperties = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: '100%',
+    height: '100%',
+    pointerEvents: 'none'
+  };
+
+  const createOrbitStyle = (radius: number, duration: number, startPosition: number = 0, zIndex: number = 1): React.CSSProperties => ({
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    width: radius * 2 + 'px',
+    height: radius * 2 + 'px',
+    transform: 'translate(-50%, -50%)',
+    animation: `orbit-${duration} ${duration}s linear infinite`,
+    animationDelay: `${-startPosition * duration / 360}s`,
+    zIndex: zIndex
+  });
+
+  const createFixedElementStyle = (duration: number, startPosition: number = 0): React.CSSProperties => ({
+    position: 'absolute',
+    top: '0',
+    left: '50%',
+    transform: 'translateX(-50%)',
+    maxWidth: 'none',
+    maxHeight: 'none',
+    objectFit: 'contain',
+    animation: `counter-rotate-${duration} ${duration}s linear infinite`,
+    animationDelay: `${-startPosition * duration / 360}s`
+  });
+
   const textContentStyle: React.CSSProperties = {
     flex: 1,
     display: 'flex',
@@ -336,6 +376,9 @@ export const HoroscopeSection = () => {
     colorNameStyle.fontSize = '14px';
     moodSymbolStyle.fontSize = '20px';
     
+    // Уменьшаем радиусы орбит для мобильной версии
+    // Адаптивные размеры применяются через функции createOrbitStyle и createElementStyle
+    
     textContentStyle.fontSize = '14px';
     textContentStyle.padding = '8px';
     textContentStyle.width = '100%';
@@ -354,9 +397,65 @@ export const HoroscopeSection = () => {
   }
 
   return (
-    <section className="HoroscopeSection" style={sectionStyle}>
-      {/* Background Image */}
-      <div style={backgroundStyle} />
+    <>
+      {/* CSS Animations */}
+      <style>
+        {`
+          @keyframes orbit-20 {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+          }
+          
+          @keyframes orbit-25 {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+          }
+          
+          @keyframes orbit-30 {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+          }
+          
+          @keyframes orbit-35 {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+          }
+          
+          @keyframes orbit-40 {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+          }
+          
+          @keyframes counter-rotate-20 {
+            from { transform: translateX(-50%) rotate(0deg); }
+            to { transform: translateX(-50%) rotate(-360deg); }
+          }
+          
+          @keyframes counter-rotate-25 {
+            from { transform: translateX(-50%) rotate(0deg); }
+            to { transform: translateX(-50%) rotate(-360deg); }
+          }
+          
+          @keyframes counter-rotate-30 {
+            from { transform: translateX(-50%) rotate(0deg); }
+            to { transform: translateX(-50%) rotate(-360deg); }
+          }
+          
+          @keyframes counter-rotate-35 {
+            from { transform: translateX(-50%) rotate(0deg); }
+            to { transform: translateX(-50%) rotate(-360deg); }
+          }
+          
+          @keyframes counter-rotate-40 {
+            from { transform: translateX(-50%) rotate(0deg); }
+            to { transform: translateX(-50%) rotate(-360deg); }
+          }
+        `}
+      </style>
+      
+      <section className="HoroscopeSection" style={sectionStyle}>
+        {/* Background Image */}
+        <div style={backgroundStyle} />
       
       {/* Header */}
       <div style={headerStyle}>
@@ -382,6 +481,34 @@ export const HoroscopeSection = () => {
               style={complexImageStyle}
             />
             
+            {/* Animated Elements */}
+            <div style={animatedElementsContainerStyle}>
+              {/* Sun - Outer orbit, left side */}
+              <div style={createOrbitStyle(isMobile ? 160 : 220, 40, 0, 10)}>
+                <img src={sunImage} alt="Sun" style={createFixedElementStyle(40, 0)} />
+              </div>
+              
+              {/* Moon - Outer orbit, right side */}
+              <div style={createOrbitStyle(isMobile ? 160 : 220, 35, 180, 10)}>
+                <img src={moonImage} alt="Moon" style={createFixedElementStyle(35, 180)} />
+              </div>
+              
+              {/* Big Star - Inner orbit */}
+              <div style={createOrbitStyle(isMobile ? 90 : 140, 30, 90)}>
+                <img src={bigStarImage} alt="Big Star" style={createFixedElementStyle(30, 90)} />
+              </div>
+              
+              {/* Star - Inner orbit */}
+              <div style={createOrbitStyle(isMobile ? 75 : 120, 25, 270)}>
+                <img src={starImage} alt="Star" style={createFixedElementStyle(25, 270)} />
+              </div>
+              
+              {/* Star 2 - Inner orbit */}
+              <div style={createOrbitStyle(isMobile ? 85 : 130, 20, 45)}>
+                <img src={star2Image} alt="Star 2" style={createFixedElementStyle(20, 45)} />
+              </div>
+            </div>
+
             {/* Text Overlay */}
             {!loading && horoscope && (
               <div style={imageOverlayStyle}>
@@ -562,5 +689,6 @@ export const HoroscopeSection = () => {
         </div>
       </div>
     </section>
+    </>
   );
 }; 
