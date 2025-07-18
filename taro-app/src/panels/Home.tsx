@@ -134,7 +134,7 @@ export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
         />
 
         <Div style={{ padding: '0 12px' }}>
-          <Group header={<Header size="s">Ваш гороскоп</Header>}>
+          <Group header={<Header size="s">Привет, это твой гороскоп на сегодня</Header>}>
             <Div style={{ padding: '12px 0' }}>
               <Tabs>
               {horoscopeTypes.map(({ value, label }) => (
@@ -209,64 +209,172 @@ export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
             </div>
           </Group>
 
-          <Group header={<Header size="s">Расклады Таро</Header>}>
-            <Card mode="shadow">
-              <Div style={{ padding: '16px' }}>
-                <Title level="3" style={{ marginBottom: '8px' }}>Попробуйте гадание на картах Таро</Title>
-                <Text style={{ marginBottom: '16px' }}>
-                  Выберите один из доступных раскладов и получите предсказание на интересующий вас вопрос.
-                </Text>
-                <Button 
-                  mode="primary" 
-                  size="m" 
-                  onClick={handleOpenSpreads}
-                  stretched
-                >
-                  Выбрать расклад
-                </Button>
+          <Group header={<Header size="s">🔮 Исследуй Таро</Header>}>
+            <div style={{ 
+              display: 'flex', 
+              gap: '12px', 
+              flexDirection: 'row',
+              overflowX: 'auto',
+              paddingBottom: '4px'
+            }}>
+              {/* Расклады Таро */}
+              <Card mode="shadow" style={{ flex: '1', minWidth: '200px' }}>
+                <Div style={{ padding: '16px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                    <span style={{ fontSize: '20px' }}>🃏</span>
+                    <Title level="3" style={{ margin: 0, fontSize: '16px' }}>Расклады Таро</Title>
+                  </div>
+                  <Text style={{ marginBottom: '16px', fontSize: '13px', lineHeight: '1.3' }}>
+                    Выберите один из доступных раскладов и получите предсказание на интересующий вас вопрос.
+                  </Text>
+                  <Button 
+                    mode="primary" 
+                    size="s" 
+                    onClick={handleOpenSpreads}
+                    stretched
+                  >
+                    Выбрать расклад
+                  </Button>
+                </Div>
+              </Card>
+
+              {/* Ежедневные аффирмации */}
+              <Card mode="shadow" style={{ flex: '1', minWidth: '200px' }}>
+                <Div style={{ padding: '16px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                    <span style={{ fontSize: '20px' }}>🌞</span>
+                    <Title level="3" style={{ margin: 0, fontSize: '16px' }}>Аффирмации</Title>
+                  </div>
+                  <Text style={{ marginBottom: '16px', fontSize: '13px', lineHeight: '1.3' }}>
+                    Позитивные утверждения помогут вам настроиться на успешный день и привлечь желаемое в свою жизнь.
+                  </Text>
+                  <Button 
+                    mode="primary" 
+                    size="s" 
+                    onClick={handleOpenAffirmations}
+                    stretched
+                  >
+                    Получить аффирмации
+                  </Button>
+                </Div>
+              </Card>
+
+              {/* Календарь активностей */}
+              <Card mode="shadow" style={{ flex: '1', minWidth: '200px' }}>
+                <Div style={{ padding: '16px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                    <span style={{ fontSize: '20px' }}>📅</span>
+                    <Title level="3" style={{ margin: 0, fontSize: '16px' }}>Духовный дневник</Title>
+                  </div>
+                  <Text style={{ marginBottom: '16px', fontSize: '13px', lineHeight: '1.3' }}>
+                    Отслеживайте свои расклады Таро, аффирмации и ведите заметки о своем духовном развитии.
+                  </Text>
+                  <Button 
+                    mode="primary" 
+                    size="s" 
+                    onClick={handleOpenCalendar}
+                    stretched
+                  >
+                    Открыть календарь
+                  </Button>
+                </Div>
+              </Card>
+            </div>
+          </Group>
+
+          {/* Баннер получения звезд */}
+          <Group>
+            <Card 
+              mode="shadow" 
+              style={{ 
+                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                border: 'none',
+                overflow: 'hidden'
+              }}
+            >
+              <Div style={{ padding: '20px' }}>
+                <div style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'space-between',
+                  gap: '24px',
+                  flexWrap: 'wrap'
+                }}>
+                  {/* Левая часть с контентом */}
+                  <div style={{ flex: '1', minWidth: '280px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
+                      <span style={{ fontSize: '24px' }}>⭐</span>
+                      <Title 
+                        level="2" 
+                        style={{ 
+                          color: 'white', 
+                          margin: 0,
+                          fontWeight: '600'
+                        }}
+                      >
+                        Получай звезды
+                      </Title>
+                    </div>
+                    
+                    <Text 
+                      style={{ 
+                        color: 'rgba(255, 255, 255, 0.9)', 
+                        marginBottom: '16px',
+                        lineHeight: '1.4',
+                        fontSize: '15px'
+                      }}
+                    >
+                      Зарабатывай звезды за активность и трать их на уникальные расклады, 
+                      коллекционные пины и магические артефакты.
+                    </Text>
+                    
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <span style={{ color: '#ffd700', fontSize: '16px' }}>•</span>
+                        <Text style={{ color: 'rgba(255, 255, 255, 0.85)', fontSize: '14px' }}>
+                          Проводи расклад дня +1 звезда
+                        </Text>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <span style={{ color: '#ffd700', fontSize: '16px' }}>•</span>
+                        <Text style={{ color: 'rgba(255, 255, 255, 0.85)', fontSize: '14px' }}>
+                          Напиши в дневник +1 звезда
+                        </Text>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Правая часть с кнопкой */}
+                  <div style={{ flex: '0 0 auto' }}>
+                    <Button
+                      mode="outline"
+                      size="m"
+                      style={{
+                        backgroundColor: 'rgba(255, 255, 255, 0.15)',
+                        border: '2px solid rgba(255, 255, 255, 0.3)',
+                        color: 'white',
+                        fontWeight: '500',
+                        backdropFilter: 'blur(10px)',
+                        transition: 'all 0.2s ease'
+                      }}
+                      onClick={() => {
+                        // TODO: Реализовать страницу с подробной информацией о звездах
+                        console.log('Узнать больше о звездах');
+                      }}
+                    >
+                      Узнать больше
+                    </Button>
+                  </div>
+                </div>
               </Div>
             </Card>
           </Group>
 
-          <Group header={<Header size="s">🌞 Ежедневные аффирмации</Header>}>
-            <Card mode="shadow">
-              <Div style={{ padding: '16px' }}>
-                <Title level="3" style={{ marginBottom: '8px' }}>Аффирмации на сегодня</Title>
-                <Text style={{ marginBottom: '16px' }}>
-                  Позитивные утверждения помогут вам настроиться на успешный день и привлечь желаемое в свою жизнь.
-                </Text>
-                <Button 
-                  mode="primary" 
-                  size="m" 
-                  onClick={handleOpenAffirmations}
-                  stretched
-                >
-                  Получить аффирмации
-                </Button>
-              </Div>
-            </Card>
-          </Group>
-
-          <Group header={<Header size="s">📅 Календарь активностей</Header>}>
-            <Card mode="shadow">
-              <Div style={{ padding: '16px' }}>
-                <Title level="3" style={{ marginBottom: '8px' }}>Ваш духовный дневник</Title>
-                <Text style={{ marginBottom: '16px' }}>
-                  Отслеживайте свои расклады Таро, аффирмации и ведите заметки о своем духовном развитии.
-                </Text>
-                <Button 
-                  mode="primary" 
-                  size="m" 
-                  onClick={handleOpenCalendar}
-                  stretched
-                >
-                  Открыть календарь
-                </Button>
-              </Div>
-            </Card>
-          </Group>
-
-          <Group header={<Header size="s">Ваши колоды</Header>}>
+          <Group header={
+            <Header size="s">
+              Твои колоды {!decksLoading && !decksError && decks.length > 0 && `(${decks.length})`}
+            </Header>
+          }>
             {decksLoading && (
               <Div style={{ display: 'flex', justifyContent: 'center', padding: '32px 0' }}>
                 <Spinner size="m" />
