@@ -67,6 +67,8 @@ const getColorDescription = (hexColor: string): string => {
 
 
 
+
+
 export const HoroscopeSection = () => {
   const dispatch = useAppDispatch();
   const { type, horoscope, loading, error, sign, lang } = useAppSelector((state) => state.horoscope);
@@ -161,7 +163,8 @@ export const HoroscopeSection = () => {
     flexShrink: 0,
     width: '450px',
     maxWidth: '450px',
-    margin: '0'
+    margin: '0',
+    position: 'relative'
   };
 
   const complexImageStyle: React.CSSProperties = {
@@ -170,6 +173,41 @@ export const HoroscopeSection = () => {
     objectFit: 'cover',
     maxWidth: '450px',
     borderRadius: '12px'
+  };
+
+  const imageOverlayStyle: React.CSSProperties = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    textAlign: 'center',
+    color: 'white',
+    zIndex: 10
+  };
+
+  const luckyNumberStyle: React.CSSProperties = {
+    fontFamily: 'Cormorant, serif',
+    fontWeight: 300,
+    fontSize: '64px',
+    letterSpacing: '0.1em',
+    marginBottom: '8px',
+    textShadow: '2px 2px 4px rgba(0,0,0,0.7)'
+  };
+
+  const colorNameStyle: React.CSSProperties = {
+    fontFamily: 'Jost, sans-serif',
+    fontWeight: 300,
+    fontSize: '16px',
+    letterSpacing: '0.1em',
+    textTransform: 'uppercase',
+    marginBottom: '8px',
+    textShadow: '1px 1px 2px rgba(0,0,0,0.7)'
+  };
+
+  const moodSymbolStyle: React.CSSProperties = {
+    fontFamily: 'Arial, sans-serif',
+    fontSize: '24px',
+    textShadow: '1px 1px 2px rgba(0,0,0,0.7)'
   };
 
   const textContentStyle: React.CSSProperties = {
@@ -293,6 +331,11 @@ export const HoroscopeSection = () => {
     complexImageStyle.objectFit = 'contain';
     complexImageStyle.maxWidth = '360px';
     
+    // Мобильные стили для оверлея
+    luckyNumberStyle.fontSize = '48px';
+    colorNameStyle.fontSize = '14px';
+    moodSymbolStyle.fontSize = '20px';
+    
     textContentStyle.fontSize = '14px';
     textContentStyle.padding = '8px';
     textContentStyle.width = '100%';
@@ -338,6 +381,26 @@ export const HoroscopeSection = () => {
               alt="Zodiac background"
               style={complexImageStyle}
             />
+            
+            {/* Text Overlay */}
+            {!loading && horoscope && (
+              <div style={imageOverlayStyle}>
+                {/* Lucky Number */}
+                <div style={luckyNumberStyle}>
+                  {horoscope.number}
+                </div>
+                
+                {/* Color Name */}
+                <div style={colorNameStyle}>
+                  {getColorDescription(horoscope.color)}
+                </div>
+                
+                {/* Mood */}
+                <div style={moodSymbolStyle}>
+                  {horoscope.mood}
+                </div>
+              </div>
+            )}
           </div>
           
           {/* Right side - Content */}
