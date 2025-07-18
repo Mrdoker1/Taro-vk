@@ -238,16 +238,37 @@ export const HoroscopeSection = () => {
     zIndex: zIndex
   });
 
-  const createFixedElementStyle = (duration: number, startPosition: number = 0): React.CSSProperties => ({
+  const createSunStyle = (duration: number, startPosition: number = 0): React.CSSProperties => ({
     position: 'absolute',
     top: '0',
     left: '50%',
-    transform: 'translateX(-50%)',
     maxWidth: 'none',
     maxHeight: 'none',
     objectFit: 'contain',
-    animation: `counter-rotate-${duration} ${duration}s linear infinite`,
-    animationDelay: `${-startPosition * duration / 360}s`
+    animation: `counter-rotate-${duration} ${duration}s linear infinite, sun-glow 3s ease-in-out infinite`,
+    animationDelay: `${-startPosition * duration / 360}s, 0s`
+  });
+
+  const createMoonStyle = (duration: number, startPosition: number = 0): React.CSSProperties => ({
+    position: 'absolute',
+    top: '0',
+    left: '50%',
+    maxWidth: 'none',
+    maxHeight: 'none',
+    objectFit: 'contain',
+    animation: `counter-rotate-${duration} ${duration}s linear infinite, moon-glow 4s ease-in-out infinite`,
+    animationDelay: `${-startPosition * duration / 360}s, 0s`
+  });
+
+  const createStarStyle = (duration: number, startPosition: number = 0, twinkleDelay: number = 0): React.CSSProperties => ({
+    position: 'absolute',
+    top: '0',
+    left: '50%',
+    maxWidth: 'none',
+    maxHeight: 'none',
+    objectFit: 'contain',
+    animation: `star-twinkle 2s ease-in-out infinite, depth-orbit-${duration} ${duration}s linear infinite`,
+    animationDelay: `${twinkleDelay}s, ${-startPosition * duration / 360}s`
   });
 
   const textContentStyle: React.CSSProperties = {
@@ -450,6 +471,79 @@ export const HoroscopeSection = () => {
             from { transform: translateX(-50%) rotate(0deg); }
             to { transform: translateX(-50%) rotate(-360deg); }
           }
+          
+          @keyframes sun-glow {
+            0%, 100% { 
+              filter: drop-shadow(0 0 10px #ffeb3b) drop-shadow(0 0 20px #ff9800) brightness(1);
+            }
+            50% { 
+              filter: drop-shadow(0 0 20px #ffeb3b) drop-shadow(0 0 30px #ff9800) brightness(1.2);
+            }
+          }
+          
+          @keyframes moon-glow {
+            0%, 100% { 
+              filter: drop-shadow(0 0 8px #e3f2fd) drop-shadow(0 0 15px #2196f3) brightness(1);
+            }
+            50% { 
+              filter: drop-shadow(0 0 15px #e3f2fd) drop-shadow(0 0 25px #2196f3) brightness(1.1);
+            }
+          }
+          
+          @keyframes star-twinkle {
+            0%, 100% { 
+              filter: brightness(1) drop-shadow(0 0 5px #fff);
+              transform: translateX(-50%) scale(1);
+            }
+            25% { 
+              filter: brightness(1.3) drop-shadow(0 0 10px #fff);
+              transform: translateX(-50%) scale(1.1);
+            }
+            75% { 
+              filter: brightness(0.8) drop-shadow(0 0 3px #fff);
+              transform: translateX(-50%) scale(0.9);
+            }
+          }
+          
+          @keyframes depth-orbit-20 {
+            0% { transform: translateX(-50%) rotate(0deg) scale(0.8); opacity: 0.7; }
+            25% { transform: translateX(-50%) rotate(-90deg) scale(1.1); opacity: 1; }
+            50% { transform: translateX(-50%) rotate(-180deg) scale(0.8); opacity: 0.7; }
+            75% { transform: translateX(-50%) rotate(-270deg) scale(1.1); opacity: 1; }
+            100% { transform: translateX(-50%) rotate(-360deg) scale(0.8); opacity: 0.7; }
+          }
+          
+          @keyframes depth-orbit-25 {
+            0% { transform: translateX(-50%) rotate(0deg) scale(0.9); opacity: 0.8; }
+            25% { transform: translateX(-50%) rotate(-90deg) scale(1.2); opacity: 1; }
+            50% { transform: translateX(-50%) rotate(-180deg) scale(0.9); opacity: 0.8; }
+            75% { transform: translateX(-50%) rotate(-270deg) scale(1.2); opacity: 1; }
+            100% { transform: translateX(-50%) rotate(-360deg) scale(0.9); opacity: 0.8; }
+          }
+          
+          @keyframes depth-orbit-30 {
+            0% { transform: translateX(-50%) rotate(0deg) scale(0.85); opacity: 0.75; }
+            25% { transform: translateX(-50%) rotate(-90deg) scale(1.15); opacity: 1; }
+            50% { transform: translateX(-50%) rotate(-180deg) scale(0.85); opacity: 0.75; }
+            75% { transform: translateX(-50%) rotate(-270deg) scale(1.15); opacity: 1; }
+            100% { transform: translateX(-50%) rotate(-360deg) scale(0.85); opacity: 0.75; }
+          }
+          
+          @keyframes stardust {
+            0%, 100% { opacity: 0.3; transform: scale(0.5); }
+            50% { opacity: 1; transform: scale(1); }
+          }
+          
+          @keyframes float {
+            0%, 100% { transform: translateY(0px) translateX(0px); }
+            25% { transform: translateY(-10px) translateX(5px); }
+            50% { transform: translateY(-5px) translateX(-8px); }
+            75% { transform: translateY(-15px) translateX(3px); }
+          }
+          
+          .animated-elements-container:hover * {
+            animation-play-state: paused !important;
+          }
         `}
       </style>
       
@@ -482,31 +576,97 @@ export const HoroscopeSection = () => {
             />
             
             {/* Animated Elements */}
-            <div style={animatedElementsContainerStyle}>
+            <div className="animated-elements-container" style={animatedElementsContainerStyle}>
               {/* Sun - Outer orbit, left side */}
               <div style={createOrbitStyle(isMobile ? 160 : 220, 40, 0, 10)}>
-                <img src={sunImage} alt="Sun" style={createFixedElementStyle(40, 0)} />
+                <img src={sunImage} alt="Sun" style={createSunStyle(40, 0)} />
               </div>
               
               {/* Moon - Outer orbit, right side */}
               <div style={createOrbitStyle(isMobile ? 160 : 220, 35, 180, 10)}>
-                <img src={moonImage} alt="Moon" style={createFixedElementStyle(35, 180)} />
+                <img src={moonImage} alt="Moon" style={createMoonStyle(35, 180)} />
               </div>
               
               {/* Big Star - Inner orbit */}
               <div style={createOrbitStyle(isMobile ? 90 : 140, 30, 90)}>
-                <img src={bigStarImage} alt="Big Star" style={createFixedElementStyle(30, 90)} />
+                <img src={bigStarImage} alt="Big Star" style={createStarStyle(30, 90, 0)} />
               </div>
               
               {/* Star - Inner orbit */}
               <div style={createOrbitStyle(isMobile ? 75 : 120, 25, 270)}>
-                <img src={starImage} alt="Star" style={createFixedElementStyle(25, 270)} />
+                <img src={starImage} alt="Star" style={createStarStyle(25, 270, 0.5)} />
               </div>
               
               {/* Star 2 - Inner orbit */}
               <div style={createOrbitStyle(isMobile ? 85 : 130, 20, 45)}>
-                <img src={star2Image} alt="Star 2" style={createFixedElementStyle(20, 45)} />
+                <img src={star2Image} alt="Star 2" style={createStarStyle(20, 45, 1)} />
               </div>
+              
+              {/* Stardust particles */}
+              <div style={{
+                position: 'absolute',
+                top: '20%',
+                left: '15%',
+                width: '4px',
+                height: '4px',
+                backgroundColor: '#fff',
+                borderRadius: '50%',
+                boxShadow: '0 0 6px #fff',
+                animation: 'stardust 3s ease-in-out infinite, float 4s ease-in-out infinite',
+                animationDelay: '0s, 0.5s'
+              }} />
+              
+              <div style={{
+                position: 'absolute',
+                top: '70%',
+                left: '80%',
+                width: '3px',
+                height: '3px',
+                backgroundColor: '#ffeb3b',
+                borderRadius: '50%',
+                boxShadow: '0 0 4px #ffeb3b',
+                animation: 'stardust 2.5s ease-in-out infinite, float 5s ease-in-out infinite',
+                animationDelay: '1s, 1.5s'
+              }} />
+              
+              <div style={{
+                position: 'absolute',
+                top: '30%',
+                left: '85%',
+                width: '2px',
+                height: '2px',
+                backgroundColor: '#2196f3',
+                borderRadius: '50%',
+                boxShadow: '0 0 3px #2196f3',
+                animation: 'stardust 4s ease-in-out infinite, float 3s ease-in-out infinite',
+                animationDelay: '2s, 0s'
+              }} />
+              
+              <div style={{
+                position: 'absolute',
+                top: '60%',
+                left: '10%',
+                width: '3px',
+                height: '3px',
+                backgroundColor: '#fff',
+                borderRadius: '50%',
+                boxShadow: '0 0 5px #fff',
+                animation: 'stardust 3.5s ease-in-out infinite, float 6s ease-in-out infinite',
+                animationDelay: '0.5s, 2s'
+              }} />
+              
+              <div style={{
+                position: 'absolute',
+                top: '15%',
+                left: '70%',
+                width: '2px',
+                height: '2px',
+                backgroundColor: '#ff9800',
+                borderRadius: '50%',
+                boxShadow: '0 0 4px #ff9800',
+                animation: 'stardust 2s ease-in-out infinite, float 4.5s ease-in-out infinite',
+                animationDelay: '1.5s, 1s'
+              }} />
             </div>
 
             {/* Text Overlay */}
