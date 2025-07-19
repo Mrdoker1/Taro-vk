@@ -343,9 +343,10 @@ export const HoroscopeSection = () => {
     flexDirection: 'column',
     fontSize: '16px',
     color: 'white',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     padding: '16px 24px',
-    minWidth: 0
+    minWidth: 0,
+    minHeight: '300px'
   };
 
 
@@ -420,7 +421,7 @@ export const HoroscopeSection = () => {
   const decorativeDividerStyle: React.CSSProperties = {
     width: '100%',
     marginTop: '8px',
-    opacity: 0.3,
+    opacity: 1,
     height: 'auto'
   };
 
@@ -953,24 +954,39 @@ export const HoroscopeSection = () => {
                     </div>
                   </div>
                 </div>
+
+                {/* Spacer для выравнивания декоративных элементов к низу */}
+                <div style={{ flex: 1 }}></div>
+
+                {/* Decorative Elements - прижаты к низу правой части */}
+                <div style={{
+                  marginTop: 'auto',
+                  paddingTop: '16px'
+                }}>
+                  <img
+                    src="https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/bf65c29bb76ac59b655e89bb29946e4f00f49a6d?placeholderIfAbsent=true"
+                    alt="Decorative divider"
+                    style={{
+                      ...decorativeDividerStyle,
+                      width: '100%',
+                      opacity: 1
+                    }}
+                  />
+                  
+                  <div style={{
+                    ...decorativeElementContainerStyle,
+                    marginTop: '6px'
+                  }}>
+                    <img
+                      src="https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/154f96a15bcd974fd38495f6f7aeec22f8b9613a?placeholderIfAbsent=true"
+                      alt="Decorative element"
+                      style={decorativeElementStyle}
+                    />
+                  </div>
+                </div>
               </>
             )}
           </div>
-        </div>
-        
-        {/* Decorative Elements */}
-        <img
-          src="https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/bf65c29bb76ac59b655e89bb29946e4f00f49a6d?placeholderIfAbsent=true"
-          alt="Decorative divider"
-          style={decorativeDividerStyle}
-        />
-        
-        <div style={decorativeElementContainerStyle}>
-          <img
-            src="https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/154f96a15bcd974fd38495f6f7aeec22f8b9613a?placeholderIfAbsent=true"
-            alt="Decorative element"
-            style={decorativeElementStyle}
-          />
         </div>
       </div>
     </section>
