@@ -411,9 +411,9 @@ export const HoroscopeSection = () => {
   };
 
   const decorativeElementStyle: React.CSSProperties = {
-    width: '60px',
-    height: 'auto',
-    opacity: 0.4
+    width: '90px',
+    height: '30px',
+    opacity: 1
   };
 
   // Адаптивные стили теперь управляются через CSS классы и медиа-запросы
