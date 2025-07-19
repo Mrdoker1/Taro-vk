@@ -1,5 +1,6 @@
 import { FC } from 'react';
 import { CustomButton } from './CustomButton';
+import bagImage from '../assets/bag.png';
 
 interface BannerStarsProps {
   onLearnMore?: () => void;
@@ -38,10 +39,10 @@ export const BannerStars: FC<BannerStarsProps> = ({ onLearnMore }) => {
         }}
       />
       
-      {/* Изображение звезды слева */}
+      {/* Изображение сумки слева */}
       <img
-        src="https://cdn.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/130889f3b0a7b90f273ee095699d0a367263ba0e?placeholderIfAbsent=true"
-        alt="Stars illustration"
+        src={bagImage}
+        alt="Bag illustration"
         style={{
           width: 'clamp(100px, 15vw, 180px)', // увеличенный размер
           height: 'clamp(100px, 15vw, 180px)', // увеличенный размер
