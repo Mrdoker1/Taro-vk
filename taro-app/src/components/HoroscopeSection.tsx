@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../store';
 import { setType, fetchHoroscope } from '../store/slices/horoscopeSlice';
-import { Skeleton, Tabs, TabsItem, Popover, IconButton, Div } from '@vkontakte/vkui';
-import { Icon20QuestionOutline } from '@vkontakte/icons';
+import { Skeleton, Tabs, TabsItem } from '@vkontakte/vkui';
+import { CustomTooltip } from './CustomTooltip';
 import complexImage from '../assets/complex-image.svg';
 import sunImage from '../assets/sun.png';
 import moonImage from '../assets/moon.png';
@@ -276,6 +276,27 @@ export const HoroscopeSection = () => {
     animationDelay: `${-startPosition * duration / 360}s`
   });
 
+  // Функции для обратного движения (против часовой стрелки)
+  const createReverseOrbitStyle = (radius: number, duration: number, startPosition: number = 0, zIndex: number = 1): React.CSSProperties => ({
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    width: radius * 2 + 'px',
+    height: radius * 2 + 'px',
+    transform: 'translate(-50%, -50%)',
+    animation: `orbit-reverse-${duration} ${duration}s linear infinite`,
+    animationDelay: `${-startPosition * duration / 360}s`,
+    zIndex: zIndex
+  });
+
+  const createReverseCounterRotateStyle = (duration: number, startPosition: number = 0): React.CSSProperties => ({
+    position: 'absolute',
+    top: '0',
+    left: '50%',
+    animation: `counter-rotate-reverse-${duration} ${duration}s linear infinite`,
+    animationDelay: `${-startPosition * duration / 360}s`
+  });
+
   const createSunImageStyle = (): React.CSSProperties => ({
     maxWidth: 'none',
     maxHeight: 'none',
@@ -296,7 +317,7 @@ export const HoroscopeSection = () => {
 
   const handleSunClick = () => {
     setSunClicked(true);
-    setTimeout(() => setSunClicked(false), 1000); // Длительность анимации sun-bounce
+    setTimeout(() => setSunClicked(false), 800); // Длительность анимации sun-bounce
   };
 
   const handleMoonClick = () => {
@@ -448,6 +469,22 @@ export const HoroscopeSection = () => {
             from { transform: translate(-50%, -50%) rotate(0deg); }
             to { transform: translate(-50%, -50%) rotate(360deg); }
           }
+
+          /* Обратные орбиты - против часовой стрелки */
+          @keyframes orbit-reverse-20 {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(-360deg); }
+          }
+          
+          @keyframes orbit-reverse-25 {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(-360deg); }
+          }
+          
+          @keyframes orbit-reverse-35 {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(-360deg); }
+          }
           
           @keyframes counter-rotate-20 {
             from { transform: translateX(-50%) rotate(0deg); }
@@ -472,6 +509,22 @@ export const HoroscopeSection = () => {
           @keyframes counter-rotate-40 {
             from { transform: translateX(-50%) rotate(0deg); }
             to { transform: translateX(-50%) rotate(-360deg); }
+          }
+
+          /* Обратные counter-rotate - для обратных орбит */
+          @keyframes counter-rotate-reverse-20 {
+            from { transform: translateX(-50%) rotate(0deg); }
+            to { transform: translateX(-50%) rotate(360deg); }
+          }
+          
+          @keyframes counter-rotate-reverse-25 {
+            from { transform: translateX(-50%) rotate(0deg); }
+            to { transform: translateX(-50%) rotate(360deg); }
+          }
+          
+          @keyframes counter-rotate-reverse-35 {
+            from { transform: translateX(-50%) rotate(0deg); }
+            to { transform: translateX(-50%) rotate(360deg); }
           }
           
           @keyframes sun-glow {
@@ -546,74 +599,8 @@ export const HoroscopeSection = () => {
 
           
           @keyframes sun-bounce {
-            0% { 
-              transform: scale(1) rotate(0deg);
-              filter: drop-shadow(0 0 10px #ffeb3b) drop-shadow(0 0 20px #ff9800) brightness(1);
-            }
-            6.25% { 
-              transform: scale(1.05) rotate(22.5deg);
-              filter: drop-shadow(0 0 15px #ffeb3b) drop-shadow(0 0 25px #ff9800) brightness(1.1);
-            }
-            12.5% { 
-              transform: scale(1.1) rotate(45deg);
-              filter: drop-shadow(0 0 20px #ffeb3b) drop-shadow(0 0 30px #ff9800) brightness(1.2);
-            }
-            18.75% { 
-              transform: scale(1.15) rotate(67.5deg);
-              filter: drop-shadow(0 0 22px #ffeb3b) drop-shadow(0 0 35px #ff9800) brightness(1.25);
-            }
-            25% { 
-              transform: scale(1.2) rotate(90deg);
-              filter: drop-shadow(0 0 25px #ffeb3b) drop-shadow(0 0 40px #ff9800) brightness(1.3);
-            }
-            31.25% { 
-              transform: scale(1.25) rotate(112.5deg);
-              filter: drop-shadow(0 0 26px #ffeb3b) drop-shadow(0 0 42px #ff9800) brightness(1.35);
-            }
-            37.5% { 
-              transform: scale(1.3) rotate(135deg);
-              filter: drop-shadow(0 0 28px #ffeb3b) drop-shadow(0 0 45px #ff9800) brightness(1.4);
-            }
-            43.75% { 
-              transform: scale(1.35) rotate(157.5deg);
-              filter: drop-shadow(0 0 29px #ffeb3b) drop-shadow(0 0 48px #ff9800) brightness(1.5);
-            }
-            50% { 
-              transform: scale(1.4) rotate(180deg);
-              filter: drop-shadow(0 0 30px #ffeb3b) drop-shadow(0 0 50px #ff9800) brightness(1.6);
-            }
-            56.25% { 
-              transform: scale(1.35) rotate(202.5deg);
-              filter: drop-shadow(0 0 29px #ffeb3b) drop-shadow(0 0 48px #ff9800) brightness(1.5);
-            }
-            62.5% { 
-              transform: scale(1.3) rotate(225deg);
-              filter: drop-shadow(0 0 28px #ffeb3b) drop-shadow(0 0 45px #ff9800) brightness(1.4);
-            }
-            68.75% { 
-              transform: scale(1.25) rotate(247.5deg);
-              filter: drop-shadow(0 0 26px #ffeb3b) drop-shadow(0 0 42px #ff9800) brightness(1.35);
-            }
-            75% { 
-              transform: scale(1.2) rotate(270deg);
-              filter: drop-shadow(0 0 25px #ffeb3b) drop-shadow(0 0 40px #ff9800) brightness(1.3);
-            }
-            81.25% { 
-              transform: scale(1.15) rotate(292.5deg);
-              filter: drop-shadow(0 0 22px #ffeb3b) drop-shadow(0 0 35px #ff9800) brightness(1.25);
-            }
-            87.5% { 
-              transform: scale(1.1) rotate(315deg);
-              filter: drop-shadow(0 0 20px #ffeb3b) drop-shadow(0 0 30px #ff9800) brightness(1.2);
-            }
-            93.75% { 
-              transform: scale(1.05) rotate(337.5deg);
-              filter: drop-shadow(0 0 15px #ffeb3b) drop-shadow(0 0 25px #ff9800) brightness(1.1);
-            }
-            100% { 
-              transform: scale(1) rotate(360deg);
-              filter: drop-shadow(0 0 10px #ffeb3b) drop-shadow(0 0 20px #ff9800) brightness(1);
-            }
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
           }
           
           @keyframes moon-wiggle {
@@ -636,7 +623,7 @@ export const HoroscopeSection = () => {
           }
           
           .sun-clicked {
-            animation: sun-bounce 1s ease-out;
+            animation: sun-bounce 0.8s ease-in-out;
             transform-origin: center;
           }
           
@@ -730,9 +717,9 @@ export const HoroscopeSection = () => {
                 </div>
               </div>
               
-              {/* Moon - Outer orbit, right side */}
-              <div style={{...createOrbitStyle(isVerySmallMobile ? 110 : isMobile ? 130 : 190, 35, 180, 12), pointerEvents: 'none'}}>
-                <div style={{...createCounterRotateStyle(35, 180), pointerEvents: 'none'}}>
+              {/* Moon - Outer orbit, right side - ОБРАТНОЕ НАПРАВЛЕНИЕ */}
+              <div style={{...createReverseOrbitStyle(isVerySmallMobile ? 110 : isMobile ? 130 : 190, 35, 180, 12), pointerEvents: 'none'}}>
+                <div style={{...createReverseCounterRotateStyle(35, 180), pointerEvents: 'none'}}>
                   <div 
                     className={moonClicked ? 'moon-clicked' : ''}
                     onClick={handleMoonClick}
@@ -758,13 +745,13 @@ export const HoroscopeSection = () => {
                 <img src={bigStarImage} alt="Big Star" style={createStarStyle(30, 90, 0)} />
               </div>
               
-              {/* Star - Inner orbit */}
-              <div style={{...createOrbitStyle(isVerySmallMobile ? 60 : isMobile ? 75 : 120, 25, 270, 3), pointerEvents: 'none'}}>
+              {/* Star - Inner orbit - ОБРАТНОЕ НАПРАВЛЕНИЕ */}
+              <div style={{...createReverseOrbitStyle(isVerySmallMobile ? 60 : isMobile ? 75 : 120, 25, 270, 3), pointerEvents: 'none'}}>
                 <img src={starImage} alt="Star" style={createStarStyle(25, 270, 0)} />
               </div>
               
-              {/* Star 2 - Inner orbit */}
-              <div style={{...createOrbitStyle(isVerySmallMobile ? 65 : isMobile ? 85 : 130, 20, 45, 3), pointerEvents: 'none'}}>
+              {/* Star 2 - Inner orbit - ОБРАТНОЕ НАПРАВЛЕНИЕ */}
+              <div style={{...createReverseOrbitStyle(isVerySmallMobile ? 65 : isMobile ? 85 : 130, 20, 45, 3), pointerEvents: 'none'}}>
                 <img src={star2Image} alt="Star 2" style={createStarStyle(20, 45, 0)} />
               </div>
               
@@ -913,22 +900,10 @@ export const HoroscopeSection = () => {
                   {/* Mood */}
                   <div style={infoRowStyle}>
                     <div style={{...labelStyle, display: 'flex', alignItems: 'center', gap: '4px'}}>
-                      <Popover
-                        content={
-                          <Div style={{ maxWidth: '250px', padding: '8px' }}>
-                            <div style={{ fontSize: '14px' }}>
-                              Эмоциональное состояние, которое будет преобладать в этот день
-                            </div>
-                          </Div>
-                        }
-                      >
-                        <IconButton
-                          hasActive={false}
-                          aria-label="Показать справку о настроении"
-                        >
-                          <Icon20QuestionOutline fill="var(--vkui--color_icon_accent)" />
-                        </IconButton>
-                      </Popover>
+                      <CustomTooltip
+                        content="Эмоциональное состояние, которое будет преобладать в этот день"
+                        ariaLabel="Показать справку о настроении"
+                      />
                       Настроение:
                     </div>
                     <div style={valueContainerStyle}>
@@ -939,22 +914,10 @@ export const HoroscopeSection = () => {
                   {/* Lucky Number */}
                   <div style={infoRowStyle}>
                     <div style={{...labelStyle, display: 'flex', alignItems: 'center', gap: '4px'}}>
-                      <Popover
-                        content={
-                          <Div style={{ maxWidth: '250px', padding: '8px' }}>
-                            <div style={{ fontSize: '14px' }}>
-                              Число, которое принесет удачу и поможет в принятии важных решений
-                            </div>
-                          </Div>
-                        }
-                      >
-                        <IconButton
-                          hasActive={false}
-                          aria-label="Показать справку о счастливом числе"
-                        >
-                          <Icon20QuestionOutline fill="var(--vkui--color_icon_accent)" />
-                        </IconButton>
-                      </Popover>
+                      <CustomTooltip
+                        content="Число, которое принесет удачу и поможет в принятии важных решений"
+                        ariaLabel="Показать справку о счастливом числе"
+                      />
                       Счастливое число:
                     </div>
                     <div style={valueContainerStyle}>
@@ -970,22 +933,10 @@ export const HoroscopeSection = () => {
                   {/* Color */}
                   <div style={infoRowStyle}>
                     <div style={{...labelStyle, display: 'flex', alignItems: 'center', gap: '4px'}}>
-                      <Popover
-                        content={
-                          <Div style={{ maxWidth: '250px', padding: '8px' }}>
-                            <div style={{ fontSize: '14px' }}>
-                              Цвет, который поможет привлечь позитивную энергию и удачу в этот день
-                            </div>
-                          </Div>
-                        }
-                      >
-                        <IconButton
-                          hasActive={false}
-                          aria-label="Показать справку о цвете дня"
-                        >
-                          <Icon20QuestionOutline fill="var(--vkui--color_icon_accent)" />
-                        </IconButton>
-                      </Popover>
+                      <CustomTooltip
+                        content="Цвет, который поможет привлечь позитивную энергию и удачу в этот день"
+                        ariaLabel="Показать справку о цвете дня"
+                      />
                       Цвет дня:
                     </div>
                     <div style={valueContainerStyle}>

@@ -9,10 +9,8 @@ import {
   Button,
   FormItem,
   Switch,
-  Popover,
-  IconButton,
 } from '@vkontakte/vkui';
-import { Icon20QuestionOutline } from '@vkontakte/icons';
+import { CustomTooltip } from '../components/CustomTooltip';
 import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
 import { useAppDispatch, useAppSelector } from '../store';
 import { setSign, setLanguage } from '../store/slices/horoscopeSlice';
@@ -115,22 +113,10 @@ export const Settings: FC<SettingsProps> = ({ id }) => {
                 <div style={{ fontWeight: 'medium' }}>
                   Выбирать карты из списка самому
                 </div>
-                <Popover
-                  content={
-                    <Div style={{ maxWidth: '250px', padding: '8px' }}>
-                      <div style={{ fontSize: '14px' }}>
-                        Включает режим ручного выбора карт вместо перетаскивания
-                      </div>
-                    </Div>
-                  }
-                >
-                  <IconButton
-                    hasActive={false}
-                    aria-label="Показать справку о настройке выбора карт"
-                  >
-                    <Icon20QuestionOutline fill="var(--vkui--color_icon_accent)" />
-                  </IconButton>
-                </Popover>
+                <CustomTooltip
+                  content="Включает режим ручного выбора карт вместо перетаскивания"
+                  ariaLabel="Показать справку о настройке выбора карт"
+                />
               </div>
               <Switch
                 checked={useManualCardSelection}

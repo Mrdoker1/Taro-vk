@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../store';
 import { fetchPromptTemplate } from '../store/slices/promptSlice';
 import { generateText, clearGeneratedText } from '../store/slices/generationSlice';
-import { Spinner, Button, Div, Title, Text, Group, Textarea, FormItem, Card, Select, Popover, IconButton, Accordion } from '@vkontakte/vkui';
-import { Icon20QuestionOutline, Icon24Download, Icon24Share } from '@vkontakte/icons';
+import { Spinner, Button, Div, Title, Text, Group, Textarea, FormItem, Card, Select, Accordion } from '@vkontakte/vkui';
+import { Icon24Download, Icon24Share } from '@vkontakte/icons';
+import { CustomTooltip } from './CustomTooltip';
 import { fetchDeckDetails } from '../store/slices/taroDecksSlice';
 import { saveTarotReadingToCalendar } from '../utils/calendarUtils';
 import bridge from '../bridge';
@@ -425,35 +426,18 @@ ${cardsText}
                   }}
                 >
                   {parsedInterpretation && cardInterpretation && (
-                    <Popover
-                      content={
-                        <Div style={{ 
-                          maxWidth: '300px', 
-                          padding: '12px',
-                          transform: card.isReversed ? 'rotate(180deg)' : 'none'
-                        }}>
-                          <Text weight="2" style={{ marginBottom: '8px' }}>
-                            {positionInfo?.label || `Позиция ${card.position}`}
-                          </Text>
-                          <Text>{cardInterpretation.interpretation}</Text>
-                        </Div>
-                      }
-                    >
-                      <div style={{ 
-                        position: 'absolute', 
-                        top: '5px', 
-                        right: '5px',
-                        transform: card.isReversed ? 'rotate(180deg)' : 'none',
-                        zIndex: 1
-                      }}>
-                        <IconButton 
-                          hasActive={false} 
-                          aria-label={`Показать толкование карты ${cardInfo?.name || card.cardId} в позиции ${positionInfo?.label || `Позиция ${card.position}`}`}
-                        >
-                          <Icon20QuestionOutline fill="var(--vkui--color_icon_accent)" />
-                        </IconButton>
-                      </div>
-                    </Popover>
+                    <div style={{ 
+                      position: 'absolute', 
+                      top: '5px', 
+                      right: '5px',
+                      transform: card.isReversed ? 'rotate(180deg)' : 'none',
+                      zIndex: 1
+                    }}>
+                      <CustomTooltip
+                        content={`${positionInfo?.label || `Позиция ${card.position}`}: ${cardInterpretation.interpretation}`}
+                        ariaLabel={`Показать толкование карты ${cardInfo?.name || card.cardId} в позиции ${positionInfo?.label || `Позиция ${card.position}`}`}
+                      />
+                    </div>
                   )}
                   
                   <Text style={{ 

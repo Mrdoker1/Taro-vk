@@ -26,6 +26,7 @@ import { AppHeader } from '../components/AppHeader';
 import { Footer } from '../components/Footer';
 import { StarButton } from '../components/StarButton';
 import { HoroscopeSection } from '../components/HoroscopeSection';
+import { ExploreSection } from '../components/ExploreSection';
 
 
 
@@ -123,78 +124,13 @@ export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
         <Div style={{ padding: '0 12px' }}>
           <HoroscopeSection />
 
-          <Group header={<Header size="s">🔮 Исследуй Таро</Header>}>
-            <div style={{ 
-              display: 'flex', 
-              gap: '12px', 
-              flexDirection: 'row',
-              overflowX: 'auto',
-              paddingBottom: '4px'
-            }}>
-              {/* Расклады Таро */}
-              <Card mode="shadow" style={{ flex: '1', minWidth: '200px' }}>
-                <Div style={{ padding: '16px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                    <span style={{ fontSize: '20px' }}>🃏</span>
-                    <Title level="3" style={{ margin: 0, fontSize: '16px' }}>Расклады Таро</Title>
-                  </div>
-                  <Text style={{ marginBottom: '16px', fontSize: '13px', lineHeight: '1.3' }}>
-                    Выберите один из доступных раскладов и получите предсказание на интересующий вас вопрос.
-                  </Text>
-                  <Button 
-                    mode="primary" 
-                    size="s" 
-                    onClick={handleOpenSpreads}
-                    stretched
-                  >
-                    Выбрать расклад
-                  </Button>
-                </Div>
-              </Card>
-
-              {/* Ежедневные аффирмации */}
-              <Card mode="shadow" style={{ flex: '1', minWidth: '200px' }}>
-                <Div style={{ padding: '16px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                    <span style={{ fontSize: '20px' }}>🌞</span>
-                    <Title level="3" style={{ margin: 0, fontSize: '16px' }}>Аффирмации</Title>
-                  </div>
-                  <Text style={{ marginBottom: '16px', fontSize: '13px', lineHeight: '1.3' }}>
-                    Позитивные утверждения помогут вам настроиться на успешный день и привлечь желаемое в свою жизнь.
-                  </Text>
-                  <Button 
-                    mode="primary" 
-                    size="s" 
-                    onClick={handleOpenAffirmations}
-                    stretched
-                  >
-                    Получить аффирмации
-                  </Button>
-                </Div>
-              </Card>
-
-              {/* Календарь активностей */}
-              <Card mode="shadow" style={{ flex: '1', minWidth: '200px' }}>
-                <Div style={{ padding: '16px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                    <span style={{ fontSize: '20px' }}>📅</span>
-                    <Title level="3" style={{ margin: 0, fontSize: '16px' }}>Духовный дневник</Title>
-                  </div>
-                  <Text style={{ marginBottom: '16px', fontSize: '13px', lineHeight: '1.3' }}>
-                    Отслеживайте свои расклады Таро, аффирмации и ведите заметки о своем духовном развитии.
-                  </Text>
-                  <Button 
-                    mode="primary" 
-                    size="s" 
-                    onClick={handleOpenCalendar}
-                    stretched
-                  >
-                    Открыть календарь
-                  </Button>
-                </Div>
-              </Card>
-            </div>
-          </Group>
+          <div style={{ marginTop: '24px' }}>
+            <ExploreSection 
+              onOpenSpreads={handleOpenSpreads}
+              onOpenAffirmations={handleOpenAffirmations}
+              onOpenCalendar={handleOpenCalendar}
+            />
+          </div>
 
           {/* Баннер получения звезд */}
           <Group>
