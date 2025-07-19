@@ -126,7 +126,7 @@ export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
         <Div style={{ padding: '0 12px' }}>
           <HoroscopeSection />
 
-          <div style={{ marginTop: '24px' }}>
+          <div style={{ marginTop: '12px' }}>
             <ExploreSection 
               onOpenSpreads={handleOpenSpreads}
               onOpenAffirmations={handleOpenAffirmations}
@@ -135,7 +135,7 @@ export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
           </div>
 
           {/* Баннер получения звезд */}
-          <div style={{ marginTop: '24px' }}>
+          <div style={{ marginTop: '12px' }}>
             <BannerStars 
               onLearnMore={() => {
                 // TODO: Реализовать страницу с подробной информацией о звездах
