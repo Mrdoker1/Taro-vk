@@ -40,14 +40,14 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
     if (variant === 'primary') {
       return {
         ...baseStyles,
-        border: '3px solid rgba(227, 199, 122, 1)',
+        border: '3px solid #978041',
         background: isHovered 
-          ? 'linear-gradient(135deg, rgba(227, 199, 122, 1) 0%, rgba(218, 165, 32, 1) 100%)'
-          : 'linear-gradient(135deg, rgba(227, 199, 122, 0.9) 0%, rgba(218, 165, 32, 0.9) 100%)',
-        color: '#1a1a1a',
+          ? 'linear-gradient(90deg, #CFAE1D 0%, #714F0D 100%)'
+          : 'linear-gradient(90deg, #CFAE1D 0%, #714F0D 100%)',
+        color: 'white',
         boxShadow: isHovered 
-          ? '0 0 20px rgba(227, 199, 122, 0.6), 0 0 40px rgba(227, 199, 122, 0.4), 0 0 60px rgba(227, 199, 122, 0.2)'
-          : '0 0 10px rgba(227, 199, 122, 0.3)',
+          ? '0 0 20px rgba(227, 199, 122, 0.6), 0 0 40px rgba(227, 199, 122, 0.4), 0 0 60px rgba(227, 199, 122, 0.2), inset 0 0 0 3px rgba(0, 0, 0, 0.3)'
+          : '0 0 10px rgba(227, 199, 122, 0.3), inset 0 0 0 3px rgba(0, 0, 0, 0.3)',
         transform: isActive ? 'scale(0.98)' : (isHovered ? 'translateY(-2px) scale(1.02)' : 'none'),
       };
     }
@@ -62,7 +62,6 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
         ? '0 0 15px rgba(151, 128, 65, 0.5), 0 0 30px rgba(151, 128, 65, 0.3), inset 0 0 15px rgba(151, 128, 65, 0.1)'
         : '0 0 5px rgba(151, 128, 65, 0.2)',
       transform: isActive ? 'scale(0.97)' : (isHovered ? 'translateY(-1px) scale(1.01)' : 'none'),
-      textShadow: isHovered ? '0 0 10px rgba(255, 255, 255, 0.8)' : 'none',
     };
   };
 

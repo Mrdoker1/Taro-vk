@@ -28,6 +28,8 @@ import { StarButton } from '../components/StarButton';
 import { HoroscopeSection } from '../components/HoroscopeSection';
 import { ExploreSection } from '../components/ExploreSection';
 
+import { BannerStars } from '../components/BannerStars';
+
 
 
 export interface HomeProps extends NavIdProps {
@@ -133,92 +135,14 @@ export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
           </div>
 
           {/* Баннер получения звезд */}
-          <Group>
-            <Card 
-              mode="shadow" 
-              style={{ 
-                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                border: 'none',
-                overflow: 'hidden'
+          <div style={{ marginTop: '24px' }}>
+            <BannerStars 
+              onLearnMore={() => {
+                // TODO: Реализовать страницу с подробной информацией о звездах
+                console.log('Узнать больше о звездах');
               }}
-            >
-              <Div style={{ padding: '20px' }}>
-                <div style={{ 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  justifyContent: 'space-between',
-                  gap: '24px',
-                  flexWrap: 'wrap'
-                }}>
-                  {/* Левая часть с контентом */}
-                  <div style={{ flex: '1', minWidth: '280px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-                      <span style={{ fontSize: '24px' }}>⭐</span>
-                      <Title 
-                        level="2" 
-                        style={{ 
-                          color: 'white', 
-                          margin: 0,
-                          fontWeight: '600'
-                        }}
-                      >
-                        Получай звезды
-                      </Title>
-                    </div>
-                    
-                    <Text 
-                      style={{ 
-                        color: 'rgba(255, 255, 255, 0.9)', 
-                        marginBottom: '16px',
-                        lineHeight: '1.4',
-                        fontSize: '15px'
-                      }}
-                    >
-                      Зарабатывай звезды за активность и трать их на уникальные расклады, 
-                      коллекционные пины и магические артефакты.
-                    </Text>
-                    
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <span style={{ color: '#ffd700', fontSize: '16px' }}>•</span>
-                        <Text style={{ color: 'rgba(255, 255, 255, 0.85)', fontSize: '14px' }}>
-                          Проводи расклад дня +1 звезда
-                        </Text>
-                      </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <span style={{ color: '#ffd700', fontSize: '16px' }}>•</span>
-                        <Text style={{ color: 'rgba(255, 255, 255, 0.85)', fontSize: '14px' }}>
-                          Напиши в дневник +1 звезда
-                        </Text>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  {/* Правая часть с кнопкой */}
-                  <div style={{ flex: '0 0 auto' }}>
-                    <Button
-                      mode="outline"
-                      size="m"
-                      style={{
-                        backgroundColor: 'rgba(255, 255, 255, 0.15)',
-                        border: '2px solid rgba(255, 255, 255, 0.3)',
-                        color: 'white',
-                        fontWeight: '500',
-                        backdropFilter: 'blur(10px)',
-                        transition: 'all 0.2s ease'
-                      }}
-                      onClick={() => {
-                        // TODO: Реализовать страницу с подробной информацией о звездах
-                        console.log('Узнать больше о звездах');
-                      }}
-                    >
-                      Узнать больше
-                    </Button>
-                  </div>
-                </div>
-              </Div>
-            </Card>
-          </Group>
+            />
+          </div>
 
           <Group header={
             <Header size="s">
