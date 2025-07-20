@@ -1,8 +1,9 @@
 import React, { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../store';
 import { setType, fetchHoroscope } from '../store/slices/horoscopeSlice';
-import { Skeleton, Tabs, TabsItem } from '@vkontakte/vkui';
+import { Tabs, TabsItem } from '@vkontakte/vkui';
 import { CustomTooltip } from './CustomTooltip';
+import { MagicLoader } from './MagicLoader';
 import complexImage from '../assets/complex-image.svg';
 import sunImage from '../assets/sun.png';
 import moonImage from '../assets/moon.png';
@@ -350,12 +351,6 @@ export const HoroscopeSection = () => {
   };
 
 
-
-  const loadingContainerStyle: React.CSSProperties = {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '8px'
-  };
 
   const errorContainerStyle: React.CSSProperties = {
     backgroundColor: 'rgba(239, 68, 68, 0.2)',
@@ -872,15 +867,7 @@ export const HoroscopeSection = () => {
             
             {/* Content */}
             {loading && (
-              <div style={loadingContainerStyle}>
-                <Skeleton width="100%" height={16} />
-                <Skeleton width="90%" height={16} />
-                <Skeleton width="95%" height={16} />
-                                 <div style={{ display: 'flex', gap: '12px', marginTop: '12px' }}>
-                   <Skeleton width={80} height={20} />
-                   <Skeleton width={80} height={20} />
-                 </div>
-              </div>
+              <MagicLoader text="Читаем звезды..." size="m" />
             )}
             
             {error && (

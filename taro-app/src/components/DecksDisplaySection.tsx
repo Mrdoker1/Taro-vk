@@ -1,6 +1,7 @@
 import React from 'react';
 import { CustomButton } from './CustomButton';
 import { CustomTooltip } from './CustomTooltip';
+import { MagicLoader } from './MagicLoader';
 import { useAppSelector } from '../store';
 import { TaroDeck } from '../store/slices/taroDecksSlice';
 
@@ -239,9 +240,7 @@ export const DecksDisplaySection: React.FC<DecksDisplaySectionProps> = ({ onView
   // Упрощенная логика состояний
   const renderContent = () => {
     if (decksLoading) {
-      return <div style={{ ...contentStyle, justifyContent: 'center', alignItems: 'center', color: TEXT_COLOR, fontSize: isSmallMobile ? '14px' : '16px', fontFamily: FONT_FAMILY }}>
-        Загрузка колод...
-      </div>;
+      return <MagicLoader text="Подготавливаем колоды..." size="m" />;
     }
 
     if (decksError) {
