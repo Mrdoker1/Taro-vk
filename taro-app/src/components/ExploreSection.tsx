@@ -48,6 +48,7 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
       minWidth: isMobile ? 'auto' : '240px',
       maxWidth: isMobile ? 'calc(100% - 8px)' : '320px',
       width: isMobile ? 'auto' : 'auto',
+      height: isMobile ? 'auto' : 'fit-content',
       backgroundColor: 'transparent',
       margin: isMobile ? '0 4px' : '0'
     }}>
@@ -65,7 +66,7 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
         <div style={{
           position: 'relative',
           width: isMobile ? '100%' : '100%',
-          height: isMobile ? '120px' : 'auto',
+          height: isMobile ? '120px' : '100%',
           aspectRatio: isMobile ? 'auto' : '1.663',
           flexShrink: 0
         }}>
