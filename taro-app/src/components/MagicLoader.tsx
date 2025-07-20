@@ -48,32 +48,61 @@ export const MagicLoader: FC<MagicLoaderProps> = ({
         alignItems: 'center',
         justifyContent: 'center'
       }}>
-        {/* Внешнее кольцо */}
+        {/* Фоновый круг с градиентом */}
         <div style={{
           position: 'absolute',
           width: '100%',
           height: '100%',
-          border: '2px solid transparent',
-          borderTopColor: 'var(--vkui--color_accent)',
           borderRadius: '50%',
-          animation: 'magicSpin 2s linear infinite'
+          background: 'conic-gradient(from 0deg, var(--vkui--color_accent), var(--vkui--color_accent_orange), var(--vkui--color_accent), transparent)',
+          animation: 'magicRotate 2s linear infinite',
+          opacity: 0.6
         }} />
         
-        {/* Внутреннее кольцо */}
+        {/* Внутренний круг */}
         <div style={{
           position: 'absolute',
-          width: '75%',
-          height: '75%',
-          border: '2px solid transparent',
-          borderRightColor: 'var(--vkui--color_accent_orange)',
+          width: '80%',
+          height: '80%',
           borderRadius: '50%',
-          animation: 'magicSpinReverse 1.5s linear infinite'
+          background: 'transparent',
+          animation: 'magicPulse 1.5s ease-in-out infinite alternate'
+        }} />
+        
+        {/* Орбитальные точки */}
+        <div style={{
+          position: 'absolute',
+          width: '6px',
+          height: '6px',
+          borderRadius: '50%',
+          background: 'var(--vkui--color_accent)',
+          top: '2px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          animation: 'magicOrbit 3s linear infinite'
+        }} />
+        
+        <div style={{
+          position: 'absolute',
+          width: '4px',
+          height: '4px',
+          borderRadius: '50%',
+          background: 'var(--vkui--color_accent_orange)',
+          bottom: '2px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          animation: 'magicOrbitReverse 2.5s linear infinite'
         }} />
         
         {/* Центральная звезда */}
         <div style={{
           fontSize: currentSize.iconSize,
-          animation: 'magicPulse 1s ease-in-out infinite alternate'
+          animation: 'magicTwinkle 1s ease-in-out infinite alternate',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          position: 'relative',
+          zIndex: 1
         }}>
           ✨
         </div>
@@ -91,19 +120,29 @@ export const MagicLoader: FC<MagicLoaderProps> = ({
 
       {/* CSS анимации */}
       <style>{`
-        @keyframes magicSpin {
+        @keyframes magicRotate {
           0% { transform: rotate(0deg); }
           100% { transform: rotate(360deg); }
         }
         
-        @keyframes magicSpinReverse {
-          0% { transform: rotate(360deg); }
-          100% { transform: rotate(0deg); }
+        @keyframes magicPulse {
+          0% { transform: scale(0.9); opacity: 0.7; }
+          100% { transform: scale(1); opacity: 0.9; }
         }
         
-        @keyframes magicPulse {
-          0% { transform: scale(1); opacity: 0.8; }
-          100% { transform: scale(1.2); opacity: 1; }
+        @keyframes magicOrbit {
+          0% { transform: translateX(-50%) rotate(0deg) translateY(-${parseInt(currentSize.containerSize) / 2 - 3}px) rotate(0deg); }
+          100% { transform: translateX(-50%) rotate(360deg) translateY(-${parseInt(currentSize.containerSize) / 2 - 3}px) rotate(-360deg); }
+        }
+        
+        @keyframes magicOrbitReverse {
+          0% { transform: translateX(-50%) rotate(360deg) translateY(${parseInt(currentSize.containerSize) / 2 - 3}px) rotate(-360deg); }
+          100% { transform: translateX(-50%) rotate(0deg) translateY(${parseInt(currentSize.containerSize) / 2 - 3}px) rotate(0deg); }
+        }
+        
+        @keyframes magicTwinkle {
+          0% { opacity: 0.8; transform: scale(1); }
+          100% { opacity: 1; transform: scale(1.1); }
         }
       `}</style>
     </div>
