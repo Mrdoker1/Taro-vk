@@ -1,20 +1,12 @@
 import { FC, useEffect } from 'react';
 import {
   Panel,
-  Header,
   Div,
   NavIdProps,
-  Text,
-  Group,
   Avatar,
   Button,
   ConfigProvider,
   Cell,
-  Card,
-  CardGrid,
-  Title,
-  Placeholder,
-  Spinner,
 } from '@vkontakte/vkui';
 import { UserInfo } from '@vkontakte/vk-bridge';
 import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
@@ -27,6 +19,7 @@ import { Footer } from '../components/Footer';
 import { StarButton } from '../components/StarButton';
 import { HoroscopeSection } from '../components/HoroscopeSection';
 import { ExploreSection } from '../components/ExploreSection';
+import { DecksDisplaySection } from '../components/DecksDisplaySection';
 
 import { BannerStars } from '../components/BannerStars';
 
@@ -40,7 +33,6 @@ export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
   const { photo_200, first_name } = { ...fetchedUser };
   const routeNavigator = useRouteNavigator();
   const dispatch = useAppDispatch();
-  const { decks, decksLoading, decksError } = useAppSelector((state) => state.taroDecks);
   const { lang } = useAppSelector((state) => state.horoscope);
 
   useEffect(() => {
@@ -144,71 +136,8 @@ export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
             />
           </div>
 
-          <Group header={
-            <Header size="s">
-              Твои колоды {!decksLoading && !decksError && decks.length > 0 && `(${decks.length})`}
-            </Header>
-          }>
-            {decksLoading && (
-              <Div style={{ display: 'flex', justifyContent: 'center', padding: '32px 0' }}>
-                <Spinner size="m" />
-              </Div>
-            )}
-            
-            {decksError && (
-              <Placeholder>
-                <Text style={{ color: 'red' }}>{decksError}</Text>
-              </Placeholder>
-            )}
-            
-            {!decksLoading && !decksError && decks.length === 0 && (
-              <Placeholder>
-                Колоды не найдены
-              </Placeholder>
-            )}
-            
-            {!decksLoading && !decksError && decks.length > 0 && (
-              <CardGrid size="l">
-                {decks.map(deck => (
-                  <Card key={deck.id} mode="shadow">
-                    <Div style={{ padding: '16px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                        {deck.coverImageUrl && (
-                          <img 
-                            src={deck.coverImageUrl} 
-                            alt={deck.name} 
-                            style={{ 
-                              width: '60px', 
-                              height: '90px', 
-                              objectFit: 'cover', 
-                              borderRadius: '8px' 
-                            }}
-                          />
-                        )}
-                        <div style={{ flex: 1 }}>
-                          <Title level="3" style={{ marginBottom: '8px' }}>{deck.name}</Title>
-                          <Text style={{ marginBottom: '8px' }}>{deck.description}</Text>
-                          <Text style={{ color: 'var(--vkui--color_text_secondary)' }}>
-                            Карт: {deck.cardsCount}
-                          </Text>
-                        </div>
-                      </div>
-                      <Div style={{ display: 'flex', justifyContent: 'flex-end', padding: '8px 0 0 0' }}>
-                        <Button 
-                          mode="primary" 
-                          size="m" 
-                          disabled={!deck.available}
-                          onClick={() => handleDeckDetails(deck.id)}
-                        >
-                          Подробнее
-                        </Button>
-                      </Div>
-                    </Div>
-                  </Card>
-                ))}
-              </CardGrid>
-            )}
-          </Group>
+          {/* Секция с колодами */}
+          <DecksDisplaySection onViewDeckDetails={handleDeckDetails} />
         </Div>
         
         <Footer 
