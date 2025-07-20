@@ -37,6 +37,7 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
   }, []);
 
   const isMobile = windowWidth < 768;
+  const isVerySmallMobile = windowWidth < 480;
 
   return (
     <div style={{
@@ -56,15 +57,15 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
         overflow: 'hidden',
         backgroundColor: 'transparent',
         display: 'flex',
-        flexDirection: isMobile ? 'row' : 'column',
+        flexDirection: isMobile ? 'column' : 'column',
         alignItems: isMobile ? 'stretch' : 'stretch',
-        height: isMobile ? '160px' : 'auto'
+        height: 'auto'
       }}>
         {/* Изображение карточки */}
         <div style={{
           position: 'relative',
-          width: isMobile ? '160px' : '100%',
-          height: isMobile ? '100%' : 'auto',
+          width: isMobile ? '100%' : '100%',
+          height: isMobile ? '120px' : 'auto',
           aspectRatio: isMobile ? 'auto' : '1.663',
           flexShrink: 0
         }}>
@@ -122,7 +123,7 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
             justifyContent: isMobile ? 'center' : 'flex-start'
           }}>
             <h3 style={{
-              fontSize: isMobile ? '20px' : '24px',
+              fontSize: isVerySmallMobile ? '18px' : isMobile ? '20px' : '24px',
               fontWeight: '500',
               lineHeight: '1.3',
               margin: isMobile ? '0 0 4px 0' : '0 0 12px 0',
@@ -153,7 +154,7 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
             style={{
               width: isMobile ? 'auto' : '100%',
               maxWidth: isMobile ? 'none' : '280px',
-              alignSelf: isMobile ? 'flex-end' : 'center'
+              alignSelf: 'flex-end'
             }}
           >
             {buttonText}
@@ -236,7 +237,7 @@ export const ExploreSection: React.FC<ExploreSectionProps> = ({
     minWidth: 0,
     fontFamily: 'Jost',
     fontWeight: 400,
-    fontSize: 'clamp(16px, 4vw, 24px)',
+    fontSize: isVerySmallMobile ? '18px' : isMobile ? '20px' : '24px',
     lineHeight: 1.2,
     margin: 0
   };

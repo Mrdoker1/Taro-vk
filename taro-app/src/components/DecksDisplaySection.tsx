@@ -39,7 +39,7 @@ const DeckCard: React.FC<DeckCardProps> = ({ deck, onViewDetails }) => {
     border: `1px solid ${BORDER_COLOR}`,
     borderRadius: '4px',
     display: 'flex',
-    minHeight: isSmallMobile ? '180px' : '218px',
+    minHeight: isSmallMobile ? '160px' : '180px',
     width: '100%',
     alignItems: 'center',
     gap: isMobile ? '8px' : '16px',
@@ -50,9 +50,9 @@ const DeckCard: React.FC<DeckCardProps> = ({ deck, onViewDetails }) => {
   };
 
   const imageStyle: React.CSSProperties = {
-    minWidth: isSmallMobile ? '120px' : '160px',
-    minHeight: isSmallMobile ? '160px' : '200px',
-    width: isSmallMobile ? '120px' : '160px',
+    minWidth: isSmallMobile ? '150px' : '200px',
+    minHeight: isSmallMobile ? '155px' : '200px',
+    width: isSmallMobile ? '150px' : '200px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -63,21 +63,22 @@ const DeckCard: React.FC<DeckCardProps> = ({ deck, onViewDetails }) => {
 
   const contentStyle: React.CSSProperties = {
     display: 'flex',
-    minWidth: isMobile ? '200px' : '240px',
+    minWidth: 0,
     alignItems: 'center',
     gap: isMobile ? '12px' : '24px',
     flex: 1,
     padding: isMobile ? '12px' : '32px',
-    flexWrap: isMobile ? 'wrap' : 'nowrap'
+    flexWrap: isMobile ? 'wrap' : 'nowrap',
+    overflow: 'hidden'
   };
 
   const textStyles: React.CSSProperties = {
-    minWidth: isMobile ? '160px' : '240px',
-    fontSize: '16px',
+    minWidth: 0,
     color: TEXT_COLOR,
     fontWeight: 400,
     flex: 1,
-    fontFamily: FONT_FAMILY
+    fontFamily: FONT_FAMILY,
+    overflow: 'hidden'
   };
 
   return (
@@ -114,8 +115,8 @@ const DeckCard: React.FC<DeckCardProps> = ({ deck, onViewDetails }) => {
             src={deck.coverImageUrl || '/placeholder-deck.png'}
             alt={`${deck.name} deck`}
             style={{
-              width: '100px',
-              height: '150px',
+              width: isSmallMobile ? '130px' : '180px',
+              height: isSmallMobile ? '135px' : '180px',
               objectFit: 'contain',
               position: 'relative',
               zIndex: 2,
@@ -133,7 +134,7 @@ const DeckCard: React.FC<DeckCardProps> = ({ deck, onViewDetails }) => {
           <div style={textStyles}>
             <h3 style={{
               color: TEXT_COLOR,
-              fontSize: isSmallMobile ? '20px' : isMobile ? '24px' : '32px',
+              fontSize: isSmallMobile ? '18px' : isMobile ? '20px' : '24px',
               fontWeight: 500,
               lineHeight: 1.2,
               margin: '0 0 12px 0',
@@ -144,14 +145,16 @@ const DeckCard: React.FC<DeckCardProps> = ({ deck, onViewDetails }) => {
             <p style={{
               margin: '0 0 12px 0',
               lineHeight: 1.3,
-              fontSize: isSmallMobile ? '14px' : '16px'
+              fontSize: isSmallMobile ? '14px' : isMobile ? '15px' : '16px',
+              fontFamily: FONT_FAMILY
             }}>
               {deck.description}
             </p>
             <div style={{
               margin: 0,
-              fontSize: isSmallMobile ? '14px' : '16px',
-              color: 'rgba(255, 255, 255, 0.8)'
+              fontSize: isSmallMobile ? '14px' : isMobile ? '15px' : '16px',
+              color: 'rgba(255, 255, 255, 0.8)',
+              fontFamily: FONT_FAMILY
             }}>
               Карт: {deck.cardsCount}
             </div>
@@ -160,7 +163,7 @@ const DeckCard: React.FC<DeckCardProps> = ({ deck, onViewDetails }) => {
           <div style={{
             display: 'flex',
             flexDirection: 'column',
-            alignItems: isMobile ? 'flex-end' : 'center',
+            alignItems: 'flex-end',
             justifyContent: 'center',
             width: isMobile ? '100%' : '217px',
             marginTop: isMobile ? '12px' : '0',
@@ -199,7 +202,7 @@ export const DecksDisplaySection: React.FC<DecksDisplaySectionProps> = ({ onView
     flexDirection: 'column',
     borderRadius: '16px',
     position: 'relative',
-    minHeight: '610px',
+    minHeight: 'auto',
     width: '100%',
     overflow: 'hidden',
     padding: isSmallMobile ? '12px' : isMobile ? '16px' : '32px',
@@ -236,19 +239,19 @@ export const DecksDisplaySection: React.FC<DecksDisplaySectionProps> = ({ onView
   // Упрощенная логика состояний
   const renderContent = () => {
     if (decksLoading) {
-      return <div style={{ ...contentStyle, justifyContent: 'center', alignItems: 'center', color: TEXT_COLOR, fontSize: '16px', fontFamily: FONT_FAMILY }}>
+      return <div style={{ ...contentStyle, justifyContent: 'center', alignItems: 'center', color: TEXT_COLOR, fontSize: isSmallMobile ? '14px' : '16px', fontFamily: FONT_FAMILY }}>
         Загрузка колод...
       </div>;
     }
 
     if (decksError) {
-      return <div style={{ ...contentStyle, justifyContent: 'center', alignItems: 'center', color: '#ff6b6b', fontSize: '16px', fontFamily: FONT_FAMILY, textAlign: 'center', padding: '20px' }}>
+      return <div style={{ ...contentStyle, justifyContent: 'center', alignItems: 'center', color: '#ff6b6b', fontSize: isSmallMobile ? '14px' : '16px', fontFamily: FONT_FAMILY, textAlign: 'center', padding: '20px' }}>
         Ошибка загрузки колод: {decksError}
       </div>;
     }
 
     if (!decks || decks.length === 0) {
-      return <div style={{ ...contentStyle, justifyContent: 'center', alignItems: 'center', color: 'rgba(255, 255, 255, 0.7)', fontSize: '16px', fontFamily: FONT_FAMILY, textAlign: 'center' }}>
+      return <div style={{ ...contentStyle, justifyContent: 'center', alignItems: 'center', color: 'rgba(255, 255, 255, 0.7)', fontSize: isSmallMobile ? '14px' : '16px', fontFamily: FONT_FAMILY, textAlign: 'center' }}>
         Колоды не найдены
       </div>;
     }
@@ -285,7 +288,7 @@ export const DecksDisplaySection: React.FC<DecksDisplaySectionProps> = ({ onView
           minWidth: 0,
           fontFamily: FONT_FAMILY,
           fontWeight: 400,
-          fontSize: 'clamp(16px, 4vw, 24px)',
+          fontSize: isSmallMobile ? '18px' : isMobile ? '20px' : '24px',
           lineHeight: 1.2,
           margin: 0
         }}>

@@ -113,7 +113,7 @@ export const HoroscopeSection = () => {
     } else {
       setTextVisible(false);
     }
-  }, [horoscope?.number, horoscope?.color, horoscope?.mood, loading]);
+  }, [horoscope, loading]);
 
   const handleTabChange = (tabValue: string) => {
     dispatch(setType(tabValue as 'daily' | 'weekly' | 'monthly'));
@@ -157,7 +157,7 @@ export const HoroscopeSection = () => {
     gap: '12px',
     fontSize: '18px',
     color: 'white',
-    fontWeight: 500,
+    fontWeight: 400,
     lineHeight: 1.2,
     flexWrap: 'wrap'
   };
@@ -174,7 +174,7 @@ export const HoroscopeSection = () => {
     minWidth: 0,
     fontFamily: 'Jost',
     fontWeight: 400,
-    fontSize: 'clamp(16px, 4vw, 24px)', // Адаптивный размер шрифта
+    fontSize: isVerySmallMobile ? '18px' : isMobile ? '20px' : '24px',
     lineHeight: 1.2,
     margin: 0
   };

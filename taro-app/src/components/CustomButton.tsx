@@ -39,6 +39,15 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
   const isMobile = windowWidth < 768;
   const isTouch = typeof window !== 'undefined' && 'ontouchstart' in window;
 
+  // Функция для мобильного размера шрифта
+  const getMobileFontSize = () => {
+    if (!isMobile) return '14px';
+    if (mobileSize === 'xs') return '12px';
+    if (mobileSize === 's') return '12px';
+    if (mobileSize === 'm') return '12px';
+    return size === 's' ? '12px' : '12px';
+  };
+
   const getButtonStyles = (): React.CSSProperties => {
     // Адаптивные размеры для мобильных
     const getMobileMinHeight = () => {
@@ -47,14 +56,6 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
       if (mobileSize === 's') return '32px';
       if (mobileSize === 'm') return '36px';
       return size === 's' ? '32px' : size === 'm' ? '36px' : '40px';
-    };
-
-    const getMobileFontSize = () => {
-      if (!isMobile) return '14px';
-      if (mobileSize === 'xs') return '10px';
-      if (mobileSize === 's') return '11px';
-      if (mobileSize === 'm') return '12px';
-      return size === 's' ? '11px' : '13px';
     };
 
     const getMobilePadding = () => {
@@ -159,7 +160,11 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
         onTouchEnd={() => !disabled && setIsActive(false)}
       >
         <div style={getSparkleEffect()} />
-        <span style={{ position: 'relative', zIndex: 1 }}>
+        <span style={{ 
+          position: 'relative', 
+          zIndex: 1,
+          fontSize: isMobile ? getMobileFontSize() : undefined
+        }}>
           {children}
         </span>
       </Button>

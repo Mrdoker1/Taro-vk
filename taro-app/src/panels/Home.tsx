@@ -1,4 +1,4 @@
-import { FC, useEffect } from 'react';
+import { FC, useEffect, useState } from 'react';
 import {
   Panel,
   Div,
@@ -8,6 +8,12 @@ import {
   ConfigProvider,
   Cell,
 } from '@vkontakte/vkui';
+import { 
+  Icon28Cards2Outline,
+  Icon28MessageOutline,
+  Icon28CalendarOutline,
+  Icon28SettingsOutline,
+} from '@vkontakte/icons';
 import { UserInfo } from '@vkontakte/vk-bridge';
 import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
 import { useAppDispatch, useAppSelector } from '../store';
@@ -34,10 +40,22 @@ export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
   const routeNavigator = useRouteNavigator();
   const dispatch = useAppDispatch();
   const { lang } = useAppSelector((state) => state.horoscope);
+  const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1200);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     dispatch(fetchDecks({ lang }));
   }, [dispatch, lang]);
+
+  const isMobile = windowWidth < 768;
 
 
 
@@ -86,6 +104,7 @@ export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
                 mode="tertiary"
                 size="s"
                 onClick={handleOpenSpreads}
+                before={<Icon28Cards2Outline width={isMobile ? 16 : 20} height={isMobile ? 16 : 20} />}
               >
                 Расклады
               </Button>
@@ -93,6 +112,7 @@ export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
                 mode="tertiary"
                 size="s"
                 onClick={handleOpenAffirmations}
+                before={<Icon28MessageOutline width={isMobile ? 16 : 20} height={isMobile ? 16 : 20} />}
               >
                 Аффирмации
               </Button>
@@ -100,6 +120,7 @@ export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
                 mode="tertiary"
                 size="s"
                 onClick={handleOpenCalendar}
+                before={<Icon28CalendarOutline width={isMobile ? 16 : 20} height={isMobile ? 16 : 20} />}
               >
                 Календарь
               </Button>
@@ -107,6 +128,7 @@ export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
                 mode="tertiary"
                 size="s"
                 onClick={handleOpenSettings}
+                before={<Icon28SettingsOutline width={isMobile ? 16 : 20} height={isMobile ? 16 : 20} />}
               >
                 Настройки
               </Button>
