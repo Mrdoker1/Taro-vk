@@ -42,7 +42,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({ left, center, right }) => 
           <div style={{ 
             display: 'flex', 
             alignItems: 'center',
-            maxWidth: '500px',
+            maxWidth: '400px',
             width: '100%',
             justifyContent: 'space-between'
           }}>

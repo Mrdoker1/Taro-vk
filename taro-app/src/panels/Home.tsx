@@ -104,7 +104,7 @@ export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
                 mode="tertiary"
                 size="s"
                 onClick={handleOpenSpreads}
-                before={<Icon28Cards2Outline width={isMobile ? 16 : 20} height={isMobile ? 16 : 20} />}
+                before={isMobile ? <Icon28Cards2Outline width={16} height={16} /> : undefined}
               >
                 Расклады
               </Button>
@@ -112,7 +112,7 @@ export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
                 mode="tertiary"
                 size="s"
                 onClick={handleOpenAffirmations}
-                before={<Icon28MessageOutline width={isMobile ? 16 : 20} height={isMobile ? 16 : 20} />}
+                before={isMobile ? <Icon28MessageOutline width={16} height={16} /> : undefined}
               >
                 Аффирмации
               </Button>
@@ -120,7 +120,7 @@ export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
                 mode="tertiary"
                 size="s"
                 onClick={handleOpenCalendar}
-                before={<Icon28CalendarOutline width={isMobile ? 16 : 20} height={isMobile ? 16 : 20} />}
+                before={isMobile ? <Icon28CalendarOutline width={16} height={16} /> : undefined}
               >
                 Календарь
               </Button>
@@ -128,7 +128,7 @@ export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
                 mode="tertiary"
                 size="s"
                 onClick={handleOpenSettings}
-                before={<Icon28SettingsOutline width={isMobile ? 16 : 20} height={isMobile ? 16 : 20} />}
+                before={isMobile ? <Icon28SettingsOutline width={16} height={16} /> : undefined}
               >
                 Настройки
               </Button>
