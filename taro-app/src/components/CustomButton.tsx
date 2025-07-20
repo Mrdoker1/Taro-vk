@@ -9,6 +9,7 @@ interface CustomButtonProps {
   size?: 's' | 'm' | 'l';
   stretched?: boolean;
   style?: React.CSSProperties;
+  mobileSize?: 'xs' | 's' | 'm'; // новый проп для мобильных размеров
 }
 
 export const CustomButton: React.FC<CustomButtonProps> = ({
@@ -18,50 +19,98 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
   disabled = false,
   size = 'm',
   stretched = false,
-  style = {}
+  style = {},
+  mobileSize
 }) => {
   const [isHovered, setIsHovered] = React.useState(false);
   const [isActive, setIsActive] = React.useState(false);
+  const [windowWidth, setWindowWidth] = React.useState(typeof window !== 'undefined' ? window.innerWidth : 1200);
+
+  // Отслеживание размера окна
+  React.useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const isMobile = windowWidth < 768;
+  const isTouch = typeof window !== 'undefined' && 'ontouchstart' in window;
 
   const getButtonStyles = (): React.CSSProperties => {
+    // Адаптивные размеры для мобильных
+    const getMobileMinHeight = () => {
+      if (!isMobile) return '44px';
+      if (mobileSize === 'xs') return '28px';
+      if (mobileSize === 's') return '32px';
+      if (mobileSize === 'm') return '36px';
+      return size === 's' ? '32px' : size === 'm' ? '36px' : '40px';
+    };
+
+    const getMobileFontSize = () => {
+      if (!isMobile) return '14px';
+      if (mobileSize === 'xs') return '10px';
+      if (mobileSize === 's') return '11px';
+      if (mobileSize === 'm') return '12px';
+      return size === 's' ? '11px' : '13px';
+    };
+
+    const getMobilePadding = () => {
+      if (!isMobile) return undefined;
+      if (mobileSize === 'xs') return '2px 6px';
+      if (mobileSize === 's') return '4px 8px';
+      if (mobileSize === 'm') return '6px 12px';
+      return size === 's' ? '4px 8px' : undefined;
+    };
+
     const baseStyles: React.CSSProperties = {
-      minHeight: '44px',
+      minHeight: getMobileMinHeight(),
       textTransform: 'uppercase',
-      fontSize: '14px',
+      fontSize: getMobileFontSize(),
       fontWeight: '500',
       borderRadius: '3px',
       position: 'relative',
       overflow: 'hidden',
-      transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+      transition: isTouch ? 'none' : 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
       cursor: disabled ? 'not-allowed' : 'pointer',
+      padding: getMobilePadding(),
       ...style
     };
+
+    // Отключаем hover эффекты на мобильных/touch устройствах
+    const shouldShowHoverEffects = !isTouch && isHovered;
 
     if (variant === 'primary') {
       return {
         ...baseStyles,
-        border: '3px solid #978041',
-        background: isHovered 
+        border: isMobile ? '2px solid #978041' : '3px solid #978041',
+        background: shouldShowHoverEffects 
           ? 'linear-gradient(90deg, #CFAE1D 0%, #714F0D 100%)'
           : 'linear-gradient(90deg, #CFAE1D 0%, #714F0D 100%)',
         color: 'white',
-        boxShadow: isHovered 
+        boxShadow: shouldShowHoverEffects 
           ? '0 0 20px rgba(227, 199, 122, 0.6), 0 0 40px rgba(227, 199, 122, 0.4), 0 0 60px rgba(227, 199, 122, 0.2), inset 0 0 0 3px rgba(0, 0, 0, 0.3)'
-          : '0 0 10px rgba(227, 199, 122, 0.3), inset 0 0 0 3px rgba(0, 0, 0, 0.3)',
-        transform: isActive ? 'scale(0.98)' : (isHovered ? 'translateY(-2px) scale(1.02)' : 'none'),
+          : isMobile 
+            ? '0 0 5px rgba(227, 199, 122, 0.2), inset 0 0 0 2px rgba(0, 0, 0, 0.3)'
+            : '0 0 10px rgba(227, 199, 122, 0.3), inset 0 0 0 3px rgba(0, 0, 0, 0.3)',
+        transform: isActive ? 'scale(0.98)' : (shouldShowHoverEffects ? 'translateY(-2px) scale(1.02)' : 'none'),
       };
     }
 
     // Secondary style с магическими эффектами
     return {
       ...baseStyles,
-      border: '3px solid rgba(151, 128, 65, 1)',
-      backgroundColor: isHovered ? 'rgba(151, 128, 65, 0.15)' : 'transparent',
+      border: isMobile ? '2px solid rgba(151, 128, 65, 1)' : '3px solid rgba(151, 128, 65, 1)',
+      backgroundColor: shouldShowHoverEffects ? 'rgba(151, 128, 65, 0.15)' : 'transparent',
       color: 'white',
-      boxShadow: isHovered 
+      boxShadow: shouldShowHoverEffects 
         ? '0 0 15px rgba(151, 128, 65, 0.5), 0 0 30px rgba(151, 128, 65, 0.3), inset 0 0 15px rgba(151, 128, 65, 0.1)'
-        : '0 0 5px rgba(151, 128, 65, 0.2)',
-      transform: isActive ? 'scale(0.97)' : (isHovered ? 'translateY(-1px) scale(1.01)' : 'none'),
+        : isMobile 
+          ? '0 0 3px rgba(151, 128, 65, 0.15)'
+          : '0 0 5px rgba(151, 128, 65, 0.2)',
+      transform: isActive ? 'scale(0.97)' : (shouldShowHoverEffects ? 'translateY(-1px) scale(1.01)' : 'none'),
     };
   };
 
@@ -71,10 +120,10 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
     left: 0,
     right: 0,
     bottom: 0,
-    background: isHovered 
+    background: (isHovered && !isTouch) 
       ? 'linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.3) 50%, transparent 70%)'
       : 'none',
-    animation: isHovered ? 'magicSparkle 2s infinite' : 'none',
+    animation: (isHovered && !isTouch) ? 'magicSparkle 2s infinite' : 'none',
     pointerEvents: 'none',
     borderRadius: '3px'
   });
@@ -102,10 +151,12 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
         disabled={disabled}
         stretched={stretched}
         style={getButtonStyles()}
-        onMouseEnter={() => !disabled && setIsHovered(true)}
-        onMouseLeave={() => !disabled && setIsHovered(false)}
+        onMouseEnter={() => !disabled && !isTouch && setIsHovered(true)}
+        onMouseLeave={() => !disabled && !isTouch && setIsHovered(false)}
         onMouseDown={() => !disabled && setIsActive(true)}
         onMouseUp={() => !disabled && setIsActive(false)}
+        onTouchStart={() => !disabled && setIsActive(true)}
+        onTouchEnd={() => !disabled && setIsActive(false)}
       >
         <div style={getSparkleEffect()} />
         <span style={{ position: 'relative', zIndex: 1 }}>
@@ -114,4 +165,4 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
       </Button>
     </>
   );
-}; 
+};

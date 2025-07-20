@@ -160,7 +160,7 @@ const DeckCard: React.FC<DeckCardProps> = ({ deck, onViewDetails }) => {
           <div style={{
             display: 'flex',
             flexDirection: 'column',
-            alignItems: 'center',
+            alignItems: isMobile ? 'flex-end' : 'center',
             justifyContent: 'center',
             width: isMobile ? '100%' : '217px',
             marginTop: isMobile ? '12px' : '0',
@@ -169,11 +169,12 @@ const DeckCard: React.FC<DeckCardProps> = ({ deck, onViewDetails }) => {
             <CustomButton
               variant="secondary"
               size="m"
+              mobileSize="xs"
               onClick={() => onViewDetails(deck.id)}
               disabled={!deck.available}
               style={{
                 width: '100%',
-                maxWidth: isMobile ? '200px' : '217px'
+                maxWidth: isMobile ? '160px' : '217px'
               }}
             >
               подробнее

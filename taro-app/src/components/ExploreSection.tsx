@@ -24,28 +24,50 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
   buttonText,
   onButtonClick
 }) => {
+  const [windowWidth, setWindowWidth] = React.useState(typeof window !== 'undefined' ? window.innerWidth : 1200);
+
+  // Отслеживание размера окна
+  React.useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const isMobile = windowWidth < 768;
+
   return (
     <div style={{
       border: '1px solid rgba(227, 199, 122, 0.15)',
-      borderRadius: '500px 500px 4px 4px',
+      borderRadius: isMobile ? '8px' : '500px 500px 4px 4px',
       padding: '8px',
-      flex: '1',
-      minWidth: '240px',
-      maxWidth: '320px',
-      backgroundColor: 'transparent'
+      flex: isMobile ? 'none' : '1',
+      minWidth: isMobile ? 'auto' : '240px',
+      maxWidth: isMobile ? 'calc(100% - 8px)' : '320px',
+      width: isMobile ? 'auto' : 'auto',
+      backgroundColor: 'transparent',
+      margin: isMobile ? '0 4px' : '0'
     }}>
       <div style={{
         border: '1px solid rgba(227, 199, 122, 0.15)',
-        borderRadius: '500px 500px 0px 0px',
+        borderRadius: isMobile ? '0px' : '500px 500px 0px 0px',
         overflow: 'hidden',
-        backgroundColor: 'transparent'
+        backgroundColor: 'transparent',
+        display: 'flex',
+        flexDirection: isMobile ? 'row' : 'column',
+        alignItems: isMobile ? 'stretch' : 'stretch',
+        height: isMobile ? '160px' : 'auto'
       }}>
-        {/* Верхняя часть с изображением */}
+        {/* Изображение карточки */}
         <div style={{
           position: 'relative',
-          aspectRatio: '1.663'
+          width: isMobile ? '160px' : '100%',
+          height: isMobile ? '100%' : 'auto',
+          aspectRatio: isMobile ? 'auto' : '1.663',
+          flexShrink: 0
         }}>
-          {/* Изображение карточки */}
           <img 
             src={
               title === 'Гадание на картах Таро' ? exploreAImage :
@@ -56,56 +78,68 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
               width: '100%',
               height: '100%',
               objectFit: 'cover',
-              position: 'absolute',
-              top: 0,
-              left: 0
+              borderRadius: isMobile ? '4px' : '0'
             }}
           />
           
-          {/* Тултип в правом нижнем углу */}
-          <div style={{
-            position: 'absolute',
-            bottom: '8px',
-            right: '8px'
-          }}>
-            <CustomTooltip
-              content={
-                title === 'Гадание на картах Таро' ? 
-                  'Выберите расклад карт Таро для получения предсказания и ответов на ваши вопросы' :
-                 title === 'Аффирмации' ?
-                  'Получите позитивные утверждения для настройки на успешный день и привлечения желаемого' :
-                  'Ведите духовный дневник, отслеживайте расклады и аффирмации для своего развития'
-              }
-              ariaLabel={`Показать справку о разделе ${title}`}
-            />
-          </div>
+          {/* Тултип в правом нижнем углу - только для десктопа */}
+          {!isMobile && (
+            <div style={{
+              position: 'absolute',
+              bottom: '8px',
+              right: '8px'
+            }}>
+              <CustomTooltip
+                content={
+                  title === 'Гадание на картах Таро' ? 
+                    'Выберите расклад карт Таро для получения предсказания и ответов на ваши вопросы' :
+                   title === 'Аффирмации' ?
+                    'Получите позитивные утверждения для настройки на успешный день и привлечения желаемого' :
+                    'Ведите духовный дневник, отслеживайте расклады и аффирмации для своего развития'
+                }
+                ariaLabel={`Показать справку о разделе ${title}`}
+              />
+            </div>
+          )}
         </div>
         
-        {/* Нижняя часть с контентом */}
+        {/* Контент */}
         <div style={{
-          padding: '32px 14px',
-          textAlign: 'center',
-          backgroundColor: 'transparent'
+          padding: isMobile ? '12px 16px' : '32px 14px',
+          textAlign: isMobile ? 'left' : 'center',
+          backgroundColor: 'transparent',
+          flex: isMobile ? 1 : 'none',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: isMobile ? 'space-between' : 'center'
         }}>
           <div style={{
-            maxWidth: '283px',
-            margin: '0 auto'
+            maxWidth: isMobile ? 'none' : '283px',
+            margin: isMobile ? '0' : '0 auto',
+            flex: isMobile ? 1 : 'none',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: isMobile ? 'center' : 'flex-start'
           }}>
             <h3 style={{
-              fontSize: '24px',
+              fontSize: isMobile ? '20px' : '24px',
               fontWeight: '500',
-              lineHeight: '1.4',
-              margin: '0 0 12px 0',
+              lineHeight: '1.3',
+              margin: isMobile ? '0 0 4px 0' : '0 0 12px 0',
               color: 'white'
             }}>
               {title}
             </h3>
             <p style={{
-              fontSize: '16px',
+              fontSize: isMobile ? '14px' : '16px',
               fontWeight: '300',
               lineHeight: '1.3',
-              margin: '0 0 24px 0',
-              color: 'white'
+              margin: isMobile ? '0 0 8px 0' : '0 0 24px 0',
+              color: 'white',
+              display: isMobile ? '-webkit-box' : 'block',
+              WebkitLineClamp: isMobile ? 3 : 'none',
+              WebkitBoxOrient: isMobile ? 'vertical' : 'unset',
+              overflow: isMobile ? 'hidden' : 'visible'
             }}>
               {description}
             </p>
@@ -114,10 +148,12 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
           <CustomButton
             variant="secondary"
             size="m"
+            mobileSize="xs"
             onClick={onButtonClick}
             style={{
-              width: '100%',
-              maxWidth: '280px'
+              width: isMobile ? 'auto' : '100%',
+              maxWidth: isMobile ? 'none' : '280px',
+              alignSelf: isMobile ? 'flex-end' : 'center'
             }}
           >
             {buttonText}
@@ -254,9 +290,11 @@ export const ExploreSection: React.FC<ExploreSectionProps> = ({
         <div style={{
           position: 'relative',
           display: 'flex',
-          gap: '32px',
-          flexWrap: 'wrap',
-          justifyContent: 'center'
+          gap: isMobile ? '16px' : '32px',
+          flexDirection: isMobile ? 'column' : 'row',
+          flexWrap: isMobile ? 'nowrap' : 'wrap',
+          justifyContent: 'center',
+          padding: isMobile ? '0' : '0'
         }}>
           {features.map((feature, index) => (
             <FeatureCard

@@ -119,9 +119,10 @@ export const BannerStars: FC<BannerStarsProps> = ({ onLearnMore }) => {
         <CustomButton
           variant="primary"
           size="m"
+          mobileSize="xs"
           onClick={onLearnMore}
           style={{
-            minWidth: 'clamp(140px, 25vw, 180px)', // адаптивная ширина
+            minWidth: 'clamp(120px, 20vw, 160px)', // уменьшили минимальную ширину для мобильных
             flexShrink: 0,
             zIndex: 10,
           }}
