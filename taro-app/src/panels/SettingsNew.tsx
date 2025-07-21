@@ -4,7 +4,6 @@ import {
   Div,
   NavIdProps,
   ConfigProvider,
-  Button,
 } from '@vkontakte/vkui';
 import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
 import { useAppDispatch, useAppSelector } from '../store';
@@ -72,17 +71,82 @@ export const Settings: FC<SettingsProps> = ({ id }) => {
     routeNavigator.push(`/${DEFAULT_VIEW_PANELS.LEGAL_INFO}`);
   };
 
+  const handleOpenSpreads = () => {
+    routeNavigator.push(`/spreads`);
+  };
+
+  const handleOpenAffirmations = () => {
+    routeNavigator.push(`/affirmation`);
+  };
+
+  const handleOpenCalendar = () => {
+    routeNavigator.push(`/calendar`);
+  };
+
+  const handleOpenHome = () => {
+    routeNavigator.push(`/`);
+  };
+
   return (
     <ConfigProvider hasCustomPanelHeaderAfter={false}>
       <Panel id={id}>
         <AppHeader
-          left={
-            <Button
-              mode="tertiary"
-              onClick={() => routeNavigator.back()}
-            >
-              Назад
-            </Button>
+          left={<div />}
+          center={
+            <>
+              <button
+                onClick={handleOpenHome}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: '#ffffff',
+                  fontSize: '14px',
+                  fontFamily: 'Jost',
+                  cursor: 'pointer'
+                }}
+              >
+                Главная
+              </button>
+              <button
+                onClick={handleOpenSpreads}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: '#ffffff',
+                  fontSize: '14px',
+                  fontFamily: 'Jost',
+                  cursor: 'pointer'
+                }}
+              >
+                Расклады
+              </button>
+              <button
+                onClick={handleOpenAffirmations}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: '#ffffff',
+                  fontSize: '14px',
+                  fontFamily: 'Jost',
+                  cursor: 'pointer'
+                }}
+              >
+                Аффирмации
+              </button>
+              <button
+                onClick={handleOpenCalendar}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: '#ffffff',
+                  fontSize: '14px',
+                  fontFamily: 'Jost',
+                  cursor: 'pointer'
+                }}
+              >
+                Календарь
+              </button>
+            </>
           }
           right={<StarButton size="s" />}
         />
@@ -99,13 +163,14 @@ export const Settings: FC<SettingsProps> = ({ id }) => {
             borderRadius: '12px',
             overflow: 'hidden',
             position: 'relative',
+            minHeight: '570px',
             padding: '32px'
           }}>
             {/* Заголовок секции */}
             <div style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '12px',
+              gap: '24px',
               marginBottom: '32px'
             }}>
               <img
@@ -119,13 +184,10 @@ export const Settings: FC<SettingsProps> = ({ id }) => {
               />
               <h1 style={{
                 color: '#ffffff',
-                fontSize: '24px',
-                fontWeight: '400',
+                fontSize: '32px',
+                fontWeight: '600',
                 margin: 0,
-                fontFamily: 'Jost',
-                lineHeight: 1.2,
-                flex: 1,
-                minWidth: 0
+                fontFamily: 'Jost, -apple-system, BlinkMacSystemFont, sans-serif'
               }}>
                 Настройки
               </h1>
@@ -161,8 +223,8 @@ export const Settings: FC<SettingsProps> = ({ id }) => {
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
-              gap: '16px',
-              maxWidth: '280px',
+              gap: '24px',
+              maxWidth: '300px',
               margin: '0 auto'
             }}>
               <CustomSelect
@@ -185,6 +247,7 @@ export const Settings: FC<SettingsProps> = ({ id }) => {
                 checked={useManualCardSelection}
                 onChange={handleManualCardSelectionChange}
                 label="Выбирать карты из списка самому"
+                description="Включает режим ручного выбора карт вместо перетаскивания"
                 tooltip="Когда включено, вы сможете выбирать карты из списка вместо использования drag-and-drop"
               />
             </div>
