@@ -47,6 +47,7 @@ export const Footer: FC<FooterProps> = ({ onAboutApp, onLegalInfo }) => {
           mode="tertiary"
           size="s"
           onClick={onAboutApp}
+          style={{ color: '#ffffff' }}
         >
           О приложении
         </Button>
@@ -54,6 +55,7 @@ export const Footer: FC<FooterProps> = ({ onAboutApp, onLegalInfo }) => {
           mode="tertiary"
           size="s"
           onClick={onLegalInfo}
+          style={{ color: '#ffffff' }}
         >
           Правовая информация
         </Button>

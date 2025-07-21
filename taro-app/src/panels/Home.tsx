@@ -105,6 +105,7 @@ export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
                 size="s"
                 onClick={handleOpenSpreads}
                 before={isMobile ? <Icon28Cards2Outline width={16} height={16} /> : undefined}
+                style={{ color: '#ffffff' }}
               >
                 Расклады
               </Button>
@@ -113,6 +114,7 @@ export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
                 size="s"
                 onClick={handleOpenAffirmations}
                 before={isMobile ? <Icon28MessageOutline width={16} height={16} /> : undefined}
+                style={{ color: '#ffffff' }}
               >
                 Аффирмации
               </Button>
@@ -121,6 +123,7 @@ export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
                 size="s"
                 onClick={handleOpenCalendar}
                 before={isMobile ? <Icon28CalendarOutline width={16} height={16} /> : undefined}
+                style={{ color: '#ffffff' }}
               >
                 Календарь
               </Button>
@@ -129,6 +132,7 @@ export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
                 size="s"
                 onClick={handleOpenSettings}
                 before={isMobile ? <Icon28SettingsOutline width={16} height={16} /> : undefined}
+                style={{ color: '#ffffff' }}
               >
                 Настройки
               </Button>

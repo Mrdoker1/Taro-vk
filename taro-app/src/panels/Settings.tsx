@@ -110,7 +110,11 @@ export const Settings: FC<SettingsProps> = ({ id }) => {
           <FormItem>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <div style={{ fontWeight: 'medium' }}>
+                <div style={{ 
+                  fontWeight: 'medium',
+                  color: '#ffffff',
+                  fontSize: '16px'
+                }}>
                   Выбирать карты из списка самому
                 </div>
                 <CustomTooltip

@@ -4,6 +4,30 @@
 :root {
   --vkui--color_background: #0E0B1D !important;
   --vkui--color_background_content: #0E0B1D !important;
+  --vkui--color_text_primary: #ffffff !important;
+  --vkui--color_text_secondary: rgba(255, 255, 255, 0.7) !important;
+  --vkui--color_accent: #3f8ae0 !important;
+  --vkui--color_accent_orange: #ff6b35 !important;
+}
+
+/* Фиксы для Safari и мобильных устройств */
+@supports (-webkit-touch-callout: none) {
+  /* Safari-специфичные фиксы */
+  :root {
+    --vkui--color_text_primary: #ffffff !important;
+    --vkui--color_text_secondary: rgba(255, 255, 255, 0.7) !important;
+  }
+  
+  /* Фикс для кнопок меню в Safari */
+  .vkuiButton--mode-tertiary {
+    color: #ffffff !important;
+  }
+  
+  /* Фикс для текста в настройках */
+  .vkuiFormItem div,
+  .vkuiFormItem span {
+    color: #ffffff !important;
+  }
 }
 
 /* Применение шрифта Jost ко всему приложению */
@@ -14,16 +38,21 @@
 /* Основные элементы */
 body {
   font-family: 'Jost', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  color: #ffffff !important;
+  background-color: #0E0B1D !important;
 }
 
 /* Переопределение для VK UI компонентов */
 .vkui__root {
   font-family: 'Jost', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  color: #ffffff !important;
+  background-color: #0E0B1D !important;
 }
 
 /* Заголовки */
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Jost', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  color: #ffffff !important;
 }
 
 /* Кнопки и интерактивные элементы */
@@ -34,6 +63,7 @@ button, input, textarea, select {
 /* Текстовые элементы */
 p, span, div, a {
   font-family: 'Jost', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  color: inherit;
 }
 
 /* Переопределение для всех VK UI компонентов */
@@ -44,4 +74,104 @@ p, span, div, a {
 /* Переопределение фона панелей VK UI */
 .vkuiPanel__in {
   background-color: #0E0B1D !important;
+}
+
+/* Фиксы для кнопок меню */
+.vkuiButton--mode-tertiary {
+  color: #ffffff !important;
+}
+
+.vkuiButton--mode-tertiary:hover {
+  color: #ffffff !important;
+}
+
+.vkuiButton--mode-tertiary:active {
+  color: #ffffff !important;
+}
+
+.vkuiButton--mode-tertiary:focus {
+  color: #ffffff !important;
+}
+
+/* Фиксы для текста в формах */
+.vkuiFormItem,
+.vkuiFormItem div,
+.vkuiFormItem span,
+.vkuiFormItem label {
+  color: #ffffff !important;
+}
+
+/* Фиксы для всех текстовых элементов */
+.vkuiText,
+.vkuiTitle,
+.vkuiSubhead,
+.vkuiHeadline,
+.vkuiCaption {
+  color: #ffffff !important;
+}
+
+/* Фиксы для ячеек и списков */
+.vkuiCell,
+.vkuiCell__main,
+.vkuiCell__content,
+.vkuiRichCell,
+.vkuiRichCell__main,
+.vkuiRichCell__content {
+  color: #ffffff !important;
+}
+
+/* Фиксы для селектов и инпутов */
+.vkuiSelect,
+.vkuiSelect__container,
+.vkuiSelect__control,
+.vkuiInput,
+.vkuiInput__el {
+  color: #ffffff !important;
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Фиксы для мобильного Safari */
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  .vkuiButton--mode-tertiary {
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+  }
+  
+  div, span, p, a, button {
+    color: inherit !important;
+    -webkit-text-fill-color: inherit !important;
+  }
+}
+
+/* Универсальные фиксы для всех браузеров */
+* {
+  color: inherit !important;
+}
+
+/* Принудительное задание цвета для всех кнопок */
+button {
+  color: #ffffff !important;
+}
+
+/* Принудительное задание белого цвета для всех VK UI компонентов */
+[class*="vkui"] button,
+[class*="vkui"] div,
+[class*="vkui"] span,
+[class*="vkui"] p,
+[class*="vkui"] a {
+  color: #ffffff !important;
+}
+
+/* Дополнительные фиксы для Safari на iOS */
+@supports (-webkit-appearance: none) {
+  * {
+    -webkit-text-fill-color: unset !important;
+    color: inherit !important;
+  }
+  
+  .vkuiButton--mode-tertiary,
+  button[class*="tertiary"] {
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+  }
 }
