@@ -1,13 +1,15 @@
-import { FC, useState } from 'react';
+import { FC, useState, useEffect } from 'react';
 import {
   Panel,
   NavIdProps,
-  Group,
   Div,
   Button,
+  ConfigProvider,
 } from '@vkontakte/vkui';
 import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
-import { TaroSpreads as TaroSpreadsComponent } from '../components/TaroSpreads';
+import { useAppDispatch, useAppSelector } from '../store';
+import { fetchSpreads } from '../store/slices/taroSpreadsSlice';
+import { SpreadsDisplaySection } from '../components/SpreadsDisplaySection';
 import { TaroSpreadDetails } from '../components/TaroSpreadDetails';
 import { Footer } from '../components/Footer';
 import { StarButton } from '../components/StarButton';
@@ -18,7 +20,13 @@ export interface TaroSpreadsProps extends NavIdProps {}
 
 export const TaroSpreads: FC<TaroSpreadsProps> = ({ id }) => {
   const routeNavigator = useRouteNavigator();
+  const dispatch = useAppDispatch();
+  const { lang } = useAppSelector((state) => state.horoscope);
   const [selectedSpreadId, setSelectedSpreadId] = useState<string | null>(null);
+
+  useEffect(() => {
+    dispatch(fetchSpreads({ lang }));
+  }, [dispatch, lang]);
 
   const handleSelectSpread = (spreadId: string) => {
     setSelectedSpreadId(spreadId);
@@ -41,37 +49,41 @@ export const TaroSpreads: FC<TaroSpreadsProps> = ({ id }) => {
   };
 
   return (
-    <Panel id={id}>
-      <AppHeader
-        left={
-          <Button
-            mode="tertiary"
-            onClick={handleBack}
-          >
-            {selectedSpreadId ? 'К раскладам' : 'Назад'}
-          </Button>
-        }
-        right={<StarButton size="s" />}
-      />
+    <ConfigProvider hasCustomPanelHeaderAfter={false}>
+      <Panel id={id}>
+        <AppHeader
+          left={
+            <Button
+              mode="tertiary"
+              onClick={handleBack}
+            >
+              {selectedSpreadId ? 'К раскладам' : 'Назад'}
+            </Button>
+          }
+          right={<StarButton size="s" />}
+        />
 
-      <Group>
-        <Div>
+        <Div style={{ 
+          padding: '20px',
+          display: 'flex',
+          justifyContent: 'center'
+        }}>
           {selectedSpreadId ? (
             <TaroSpreadDetails 
               spreadId={selectedSpreadId} 
               onBack={handleBack}
             />
           ) : (
-            <TaroSpreadsComponent onSelectSpread={handleSelectSpread} />
+            <SpreadsDisplaySection onSelectSpread={handleSelectSpread} />
           )}
         </Div>
-      </Group>
 
-      <Footer 
-        onAboutApp={handleAboutApp}
-        onLegalInfo={handleLegalInfo}
-      />
-    </Panel>
+        <Footer 
+          onAboutApp={handleAboutApp}
+          onLegalInfo={handleLegalInfo}
+        />
+      </Panel>
+    </ConfigProvider>
   );
 };
 
