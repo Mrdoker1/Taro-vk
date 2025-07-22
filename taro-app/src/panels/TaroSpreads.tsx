@@ -64,7 +64,7 @@ export const TaroSpreads: FC<TaroSpreadsProps> = ({ id }) => {
         />
 
         <Div style={{ 
-          padding: '20px',
+          padding: '20px 12px',
           display: 'flex',
           justifyContent: 'center'
         }}>

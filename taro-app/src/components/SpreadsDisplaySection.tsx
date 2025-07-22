@@ -127,14 +127,15 @@ const SpreadCard: React.FC<SpreadCardProps> = ({ spread, onSelectSpread }) => {
               fontWeight: 500,
               color: TEXT_COLOR,
               fontFamily: FONT_FAMILY,
-              textAlign: 'left'
+              textAlign: 'left',
+              marginBottom: '12px',
             }}>
               {spread.name}
             </h3>
             <p style={{
-              fontSize: isSmallMobile ? '14px' : '16px',
+              fontSize: isSmallMobile ? '14px' : '14px',
               lineHeight: 1.2,
-              margin: '0 0 24px 0',
+              margin: '0 0 8px 0',
               color: 'rgba(255, 255, 255, 0.9)',
               fontFamily: FONT_FAMILY,
               textAlign: 'left'
@@ -281,15 +282,6 @@ export const SpreadsDisplaySection: React.FC<SpreadsDisplaySectionProps> = ({ on
           />
         </div>
 
-        {/* Разделитель */}
-        <div style={{
-          width: '100%',
-          height: '2px',
-          background: 'url(https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/bf65c29bb76ac59b655e89bb29946e4f00f49a6d) center/cover',
-          marginBottom: '24px',
-          position: 'relative'
-        }} />
-
         <div style={contentWrapperStyle}>
           <div style={{
             display: 'flex',
@@ -338,15 +330,6 @@ export const SpreadsDisplaySection: React.FC<SpreadsDisplaySectionProps> = ({ on
             }}
           />
         </div>
-
-        {/* Разделитель */}
-        <div style={{
-          width: '100%',
-          height: '2px',
-          background: 'url(https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/bf65c29bb76ac59b655e89bb29946e4f00f49a6d) center/cover',
-          marginBottom: '24px',
-          position: 'relative'
-        }} />
 
         <div style={contentWrapperStyle}>
           <div style={{
@@ -398,15 +381,6 @@ export const SpreadsDisplaySection: React.FC<SpreadsDisplaySectionProps> = ({ on
         />
       </div>
 
-      {/* Разделитель */}
-      <div style={{
-        width: '100%',
-        height: '2px',
-        background: 'url(https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/bf65c29bb76ac59b655e89bb29946e4f00f49a6d) center/cover',
-        marginBottom: '24px',
-        position: 'relative'
-      }} />
-
       {/* Контент секции */}
       <div style={contentWrapperStyle}>
         {spreads.length === 0 ? (
@@ -438,22 +412,13 @@ export const SpreadsDisplaySection: React.FC<SpreadsDisplaySectionProps> = ({ on
             ))}
           </div>
         )}
-        
-        {/* Нижний разделитель */}
-        <div style={{
-          width: '100%',
-          height: '2px',
-          background: 'url(https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/bf65c29bb76ac59b655e89bb29946e4f00f49a6d) center/cover',
-          marginTop: '32px',
-          marginBottom: '16px',
-          position: 'relative'
-        }} />
 
         {/* Нижний декоративный элемент */}
         <div style={{
           display: 'flex',
           justifyContent: 'center',
-          position: 'relative'
+          position: 'relative',
+          marginTop: '16px',
         }}>
           <img
             src="https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/154f96a15bcd974fd38495f6f7aeec22f8b9613a"
