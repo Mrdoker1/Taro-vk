@@ -5,7 +5,8 @@ import {
   Button,
 } from '@vkontakte/vkui';
 import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
-import { useAppSelector } from '../store';
+import { useAppSelector, useAppDispatch } from '../store';
+import { clearUserQuestion } from '../store/slices/appSlice';
 import { CardSelector } from '../components/CardSelector';
 import { TaroReading } from '../components/TaroReading';
 import { Footer } from '../components/Footer';
@@ -28,6 +29,7 @@ export interface SelectedCard {
 
 export const TaroReadingPanel: FC<TaroReadingPanelProps> = ({ id, spreadId, deckId }) => {
   const routeNavigator = useRouteNavigator();
+  const dispatch = useAppDispatch();
   const [currentStep, setCurrentStep] = useState<ReadingStep>('SELECT_CARDS');
   const [selectedCards, setSelectedCards] = useState<SelectedCard[]>([]);
   
@@ -38,6 +40,8 @@ export const TaroReadingPanel: FC<TaroReadingPanelProps> = ({ id, spreadId, deck
     if (currentStep === 'VIEW_READING') {
       setCurrentStep('SELECT_CARDS');
     } else {
+      // Очищаем вопрос при выходе из гадания
+      dispatch(clearUserQuestion());
       routeNavigator.back();
     }
   };

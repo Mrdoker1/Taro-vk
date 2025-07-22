@@ -8,6 +8,7 @@ import { Persik, Home, NewPage, Settings, DeckDetails, CardDetails, TaroSpreads,
 import { DEFAULT_VIEW_PANELS } from './routes';
 import bridge from './bridge';
 import { store } from './store';
+import { loadUserQuestion } from './store/slices/appSlice';
 
 export const App = () => {
   const { panel: activePanel = DEFAULT_VIEW_PANELS.HOME } = useActiveVkuiLocation();
@@ -24,6 +25,11 @@ export const App = () => {
         const user = await bridge.send('VKWebAppGetUserInfo');
         console.log('Получены данные пользователя:', user);
         setUser(user);
+        
+        // Загружаем сохраненный вопрос пользователя
+        console.log('Загружаем сохраненный вопрос пользователя...');
+        store.dispatch(loadUserQuestion());
+        
         setPopout(null);
       } catch (error) {
         console.error('Ошибка при получении данных пользователя:', error);

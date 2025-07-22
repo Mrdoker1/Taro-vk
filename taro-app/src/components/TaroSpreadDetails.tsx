@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../store';
 import { fetchSpreadDetails } from '../store/slices/taroSpreadsSlice';
 import { fetchDecks } from '../store/slices/taroDecksSlice';
-import { setUserQuestion } from '../store/slices/appSlice';
+import { setUserQuestion, loadUserQuestion } from '../store/slices/appSlice';
 import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
 import { CustomSelect } from './CustomSelect';
 import { CustomTextarea } from './CustomTextarea';
@@ -35,6 +35,11 @@ export const TaroSpreadDetails: React.FC<TaroSpreadDetailsProps> = ({
   // Получаем список колод
   useEffect(() => {
     dispatch(fetchDecks({ lang: 'russian' }));
+  }, [dispatch]);
+
+  // Загружаем сохраненный вопрос пользователя
+  useEffect(() => {
+    dispatch(loadUserQuestion());
   }, [dispatch]);
 
   // Устанавливаем первую доступную колоду по умолчанию
