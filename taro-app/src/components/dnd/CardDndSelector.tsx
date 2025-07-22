@@ -358,10 +358,10 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
             <div>
               <h3 style={{ 
                 marginBottom: 16, 
-                fontSize: '18px', 
+                fontSize: '16px', 
                 textAlign: 'center',
                 color: '#ffffff',
-                fontWeight: '500',
+                fontWeight: '300',
                 margin: '0 0 16px 0',
                 fontFamily: 'Jost, -apple-system, BlinkMacSystemFont, sans-serif'
               }}>
