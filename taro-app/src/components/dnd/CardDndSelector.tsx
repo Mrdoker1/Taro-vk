@@ -7,6 +7,7 @@ import DroppablePosition from './DroppablePosition';
 import DraggableCard from './DraggableCard';
 import { CustomButton } from '../CustomButton';
 import { InstructionsPanel } from '../InstructionsPanel';
+import shuffleIcon from '../../assets/shuffle.svg';
 
 interface CardDndSelectorProps {
   spreadName: string;
@@ -677,8 +678,9 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
                       size="m"
                       onClick={handleShuffle}
                       disabled={isShuffling}
+                      icon={shuffleIcon}
                     >
-                      {isShuffling ? '🔄 Перетасовываем...' : '🔀 Перетасовать карты'}
+                      {isShuffling ? 'Перетасовываем...' : 'Перетасовать карты'}
                     </CustomButton>
                   )}
                   

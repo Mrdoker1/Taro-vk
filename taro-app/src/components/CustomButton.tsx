@@ -10,6 +10,8 @@ interface CustomButtonProps {
   stretched?: boolean;
   style?: React.CSSProperties;
   mobileSize?: 'xs' | 's' | 'm'; // новый проп для мобильных размеров
+  icon?: React.ReactNode; // Новый проп для иконки слева от текста
+  iconSize?: number; // Размер иконки (по умолчанию будет зависеть от размера кнопки)
 }
 
 export const CustomButton: React.FC<CustomButtonProps> = ({
@@ -20,7 +22,9 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
   size = 'm',
   stretched = false,
   style = {},
-  mobileSize
+  mobileSize,
+  icon,
+  iconSize
 }) => {
   const [isHovered, setIsHovered] = React.useState(false);
   const [isActive, setIsActive] = React.useState(false);
@@ -46,6 +50,18 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
     if (mobileSize === 's') return '12px';
     if (mobileSize === 'm') return '12px';
     return size === 's' ? '12px' : '12px';
+  };
+
+  // Функция для определения размера иконки
+  const getIconSize = () => {
+    if (iconSize) return iconSize;
+    if (isMobile) {
+      if (mobileSize === 'xs') return 14;
+      if (mobileSize === 's') return 16;
+      if (mobileSize === 'm') return 18;
+      return size === 's' ? 16 : 18;
+    }
+    return size === 's' ? 18 : size === 'm' ? 20 : 22;
   };
 
   const getButtonStyles = (): React.CSSProperties => {
@@ -163,8 +179,34 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
         <span style={{ 
           position: 'relative', 
           zIndex: 1,
-          fontSize: isMobile ? getMobileFontSize() : undefined
+          fontSize: isMobile ? getMobileFontSize() : undefined,
+          display: 'flex',
+          alignItems: 'center',
+          gap: icon ? (isMobile ? '6px' : '8px') : '0'
         }}>
+          {icon && (
+            <span style={{ 
+              display: 'flex', 
+              alignItems: 'center',
+              width: getIconSize(),
+              height: getIconSize(),
+              flexShrink: 0
+            }}>
+              {typeof icon === 'string' ? (
+                <img 
+                  src={icon} 
+                  alt="" 
+                  style={{ 
+                    width: '100%', 
+                    height: '100%',
+                    objectFit: 'contain'
+                  }} 
+                />
+              ) : (
+                icon
+              )}
+            </span>
+          )}
           {children}
         </span>
       </Button>
