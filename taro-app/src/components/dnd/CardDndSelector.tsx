@@ -84,7 +84,6 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
   const [selectedCards, setSelectedCards] = useState<SelectedCard[]>([]);
   const [activeDragCard, setActiveDragCard] = useState<{id: string; cardData: CardData} | null>(null);
   const [isMobile, setIsMobile] = useState<boolean>(false);
-  const [showMobileTip, setShowMobileTip] = useState<boolean>(true);
   const [activeControlsPosition, setActiveControlsPosition] = useState<number | null>(null);
   const [isShuffling, setIsShuffling] = useState<boolean>(false);
   
@@ -273,7 +272,6 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
     }}>
       <div style={{
         width: '100%',
-        maxWidth: '1200px',
         background: 'url(https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/3b830249f16752184ecb361cce592c7795bcf9ad) center/cover',
         borderRadius: '12px',
         overflow: 'hidden',
@@ -348,30 +346,6 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
           marginBottom: '32px'
         }} />
         
-        {/* Инструкция для мобильных устройств */}
-        {isMobile && showMobileTip && (
-          <div style={{
-            backgroundColor: 'rgba(0, 123, 255, 0.1)',
-            borderRadius: '8px',
-            padding: '8px 12px',
-            margin: '4px 0 24px',
-            fontSize: '13px'
-          }}>
-            <Text style={{ textAlign: 'center', fontWeight: 'medium', color: '#ffffff' }}>
-              Чтобы переместить карту, коснитесь её и удерживайте, затем перетащите на нужную позицию расклада
-              <div style={{ marginTop: '8px', display: 'flex', justifyContent: 'center' }}>
-                <CustomButton 
-                  variant="secondary"
-                  size="s"
-                  onClick={() => setShowMobileTip(false)}
-                >
-                  ОК
-                </CustomButton>
-              </div>
-            </Text>
-          </div>
-        )}
-        
         <DndContext 
           sensors={sensors}
           onDragStart={handleDragStart}
@@ -389,7 +363,7 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
                 margin: '0 0 16px 0',
                 fontFamily: 'Jost, -apple-system, BlinkMacSystemFont, sans-serif'
               }}>
-                Перетащите карты из колоды на позиции:
+                Ваш вопрос
               </h3>
               
               {/* Добавляем информацию о трёх точках для управления картой */}
@@ -403,16 +377,6 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
                   Нажмите на три точки в углу карты для настройки карты
                 </Text>
               )}
-              
-              {/* Уведомление о том, что размещенные карты нельзя перетаскивать */}
-              <Text style={{ 
-                fontSize: '13px', 
-                textAlign: 'center', 
-                color: 'rgba(255, 255, 255, 0.7)',
-                marginBottom: '16px' 
-              }}>
-                Для изменения позиции карты воспользуйтесь кнопкой "Удалить" и выберите новую карту из колоды
-              </Text>
               
               <div style={{ 
                 display: 'flex', 

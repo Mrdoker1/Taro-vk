@@ -46,9 +46,6 @@ export const DroppablePosition: React.FC<DroppablePositionProps> = ({
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
-      <Text weight="1" style={{ textAlign: 'center', marginBottom: '2px', fontSize: '14px' }}>
-        {label}
-      </Text>
       <div 
         ref={setNodeRef} 
         style={{ ...style, ...pulseAnimation }}
@@ -69,7 +66,7 @@ export const DroppablePosition: React.FC<DroppablePositionProps> = ({
             fontWeight: isOver ? 'bold' : 'normal',
             zIndex: 5
           }}>
-            {isOccupied ? 'Позиция занята' : 'Перетащите карту сюда'}
+            {isOccupied ? 'Позиция занята' : label}
           </Text>
         )}
         <div style={{ 
