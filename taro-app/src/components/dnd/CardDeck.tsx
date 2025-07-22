@@ -10,9 +10,10 @@ interface CardDeckProps {
   }[];
   usedCardIds: string[];
   isShuffling?: boolean;
+  backImageUrl?: string; // Упрощаем название
 }
 
-export const CardDeck: React.FC<CardDeckProps> = ({ cards, usedCardIds, isShuffling = false }) => {
+export const CardDeck: React.FC<CardDeckProps> = ({ cards, usedCardIds, isShuffling = false, backImageUrl }) => {
   // Карты, которые еще не использованы
   const availableCards = cards.filter(card => !usedCardIds.includes(card.id));
   
@@ -48,7 +49,10 @@ export const CardDeck: React.FC<CardDeckProps> = ({ cards, usedCardIds, isShuffl
                 width: '150px',
                 height: '230px',
                 borderRadius: '8px',
-                background: 'linear-gradient(135deg, #7B68EE, #4B0082)',
+                background: backImageUrl ? `url(${backImageUrl})` : 'linear-gradient(135deg, #7B68EE, #4B0082)',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat',
                 transform: `translate(${(i + 1) * 3}px, ${(i + 1) * 3}px)`,
                 boxShadow: '0px 2px 6px rgba(0, 0, 0, 0.2)',
                 zIndex: 10 - i,
@@ -83,11 +87,15 @@ export const CardDeck: React.FC<CardDeckProps> = ({ cards, usedCardIds, isShuffl
               zIndex: 15,
               width: '150px',
               height: '230px',
+              borderRadius: '18px',
+              overflow: 'hidden',
               animation: isShuffling ? 'shuffleTopCard 0.8s ease-in-out' : 'none'
             }}>
               <DraggableCard
                 id={`draggable-${topCard.id}`}
                 cardData={topCard}
+                preview={false} // Явно указываем, что показываем рубашку
+                backImageUrl={backImageUrl}
               />
             </div>
           )}

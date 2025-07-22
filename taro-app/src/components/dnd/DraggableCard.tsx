@@ -12,6 +12,7 @@ interface DraggableCardProps {
   preview?: boolean;
   isReversed?: boolean;
   disabled?: boolean;
+  backImageUrl?: string; // Упрощаем название - это рубашка карты
 }
 
 export const DraggableCard: React.FC<DraggableCardProps> = ({ 
@@ -19,7 +20,8 @@ export const DraggableCard: React.FC<DraggableCardProps> = ({
   cardData, 
   preview = false,
   isReversed = false,
-  disabled = false
+  disabled = false,
+  backImageUrl
 }) => {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
     id,
@@ -57,7 +59,10 @@ export const DraggableCard: React.FC<DraggableCardProps> = ({
 
   // Стиль обратной стороны карты
   const backStyle: React.CSSProperties = {
-    background: 'linear-gradient(135deg, #7B68EE, #4B0082)',
+    background: backImageUrl ? `url(${backImageUrl})` : 'linear-gradient(135deg, #7B68EE, #4B0082)',
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat',
     borderRadius: '8px',
     width: '100%',
     height: '100%',
@@ -100,7 +105,13 @@ export const DraggableCard: React.FC<DraggableCardProps> = ({
         e.stopPropagation();
       }}
     >
-      <Card mode="shadow" style={{ width: '100%', height: '100%', overflow: 'hidden', ...cardRotation }}>
+      <Card mode="shadow" style={{ 
+        width: '100%', 
+        height: '100%', 
+        overflow: 'hidden',
+        borderRadius: '18px', // Увеличиваем закругление для карт в колоде
+        ...cardRotation 
+      }}>
         {preview ? (
           <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             {cardData.image ? (
@@ -118,7 +129,9 @@ export const DraggableCard: React.FC<DraggableCardProps> = ({
           </div>
         ) : (
           <div style={backStyle}>
-            <div style={{ transform: 'rotate(45deg)', fontSize: '2rem' }}>∞</div>
+            {!backImageUrl && (
+              <div style={{ transform: 'rotate(45deg)', fontSize: '2rem' }}>∞</div>
+            )}
           </div>
         )}
       </Card>

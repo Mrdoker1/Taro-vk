@@ -20,7 +20,9 @@ interface CardDndSelectorProps {
     position: number;
     label: string;
   }[];
+  spreadGrid?: number[][];  // Добавляем структуру сетки расклада
   userQuestion?: string;
+  backImageUrl?: string; // Упрощаем название
   onCardsSelected: (cards: { position: number; cardId: string; isReversed: boolean }[]) => void;
   onBack?: () => void;
   onShuffleCards?: () => void;
@@ -79,7 +81,9 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
   deckName,
   cards,
   positions,
+  spreadGrid = [[1]], // Дефолтное значение для одной карты
   userQuestion = '',
+  backImageUrl,
   onCardsSelected,
   onBack,
   onShuffleCards
@@ -265,6 +269,179 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
     }
   };
 
+  // Функция для рендеринга сетки карт в соответствии со структурой расклада
+  const renderSpreadGrid = () => {
+    if (!spreadGrid || spreadGrid.length === 0) {
+      // Фоллбэк: если нет сетки, отображаем позиции в ряд
+      return (
+        <div style={{ 
+          display: 'flex', 
+          flexWrap: 'wrap', 
+          gap: '12px',
+          justifyContent: 'center',
+          alignItems: 'center'
+        }}>
+          {positions.map(({ position, label }) => {
+            const selectedCard = selectedCards.find(card => card.position === position);
+            const isOccupied = !!selectedCard;
+            const showControls = activeControlsPosition === position;
+            
+            return renderCardPosition(position, label, selectedCard, isOccupied, showControls);
+          })}
+        </div>
+      );
+    }
+
+    // Рендерим сетку согласно структуре расклада
+    return (
+      <div style={{ 
+        display: 'flex', 
+        flexDirection: 'column',
+        gap: isMobile ? '8px' : '12px',
+        alignItems: 'center'
+      }}>
+        {spreadGrid.map((row, rowIndex) => (
+          <div 
+            key={rowIndex}
+            style={{ 
+              display: 'flex', 
+              gap: isMobile ? '8px' : '12px',
+              justifyContent: 'center',
+              flexWrap: isMobile ? 'wrap' : 'nowrap' // На мобильных разрешаем перенос
+            }}
+          >
+            {row.map((position) => {
+              const positionData = positions.find(p => p.position === position);
+              if (!positionData) return null;
+              
+              const selectedCard = selectedCards.find(card => card.position === position);
+              const isOccupied = !!selectedCard;
+              const showControls = activeControlsPosition === position;
+              
+              return renderCardPosition(position, positionData.label, selectedCard, isOccupied, showControls);
+            })}
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  // Функция для рендеринга отдельной позиции карты
+  const renderCardPosition = (position: number, label: string, selectedCard: SelectedCard | undefined, isOccupied: boolean, showControls: boolean) => {
+    return (
+      <div key={`position-${position}`} style={{ 
+        marginBottom: 8,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center'
+      }}>
+        <DroppablePosition
+          id={`position-${position}`}
+          label={label}
+          isOccupied={isOccupied}
+        >
+          {selectedCard && (
+            <div style={{ width: '100%', height: '100%', position: 'relative' }}>
+              <DraggableCard
+                id={`placed-${selectedCard.cardId}-${position}`}
+                cardData={getCardById(selectedCard.cardId) || { id: selectedCard.cardId, name: 'Карта' }}
+                preview={true}
+                isReversed={selectedCard.isReversed}
+                disabled={true}
+              />
+              
+              {/* Кнопка с иконкой настроек для открытия панели управления */}
+              <div style={{ 
+                position: 'absolute', 
+                top: '6px', 
+                right: '6px', 
+                zIndex: 60,
+              }}>
+                <IconButton
+                  onClick={() => toggleControls(position)}
+                  style={{
+                    backgroundColor: showControls ? 'rgba(0, 123, 255, 0.8)' : 'rgba(0, 0, 0, 0.4)',
+                    borderRadius: '50%',
+                    padding: '6px',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                    transition: 'background-color 0.3s ease'
+                  }}
+                >
+                  <Icon24Settings fill="#ffffff" width={18} height={18} />
+                </IconButton>
+              </div>
+              
+              {/* Панель управления с анимацией */}
+              <AnimatedPanel
+                visible={showControls}
+                style={{ 
+                  position: 'absolute', 
+                  bottom: '0', 
+                  left: '0', 
+                  right: '0',
+                  padding: '8px 6px 6px',
+                  borderBottomLeftRadius: '8px',
+                  borderBottomRightRadius: '8px',
+                  background: 'linear-gradient(to top, rgba(0,0,0,0.8) 60%, rgba(0,0,0,0.5) 85%, rgba(0,0,0,0) 100%)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '8px',
+                  zIndex: 50
+                }}
+              >
+                {/* Блок с переключателем и подписью */}
+                <div style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center',
+                  width: '100%',
+                  backgroundColor: 'rgba(255,255,255,0.15)',
+                  padding: '6px',
+                  borderRadius: '6px'
+                }}>
+                  <Switch 
+                    checked={selectedCard.isReversed}
+                    onChange={() => {
+                      handleCardReversedToggle(position);
+                    }}
+                    style={{ position: 'relative', zIndex: 55 }}
+                  />
+                  <Text style={{ 
+                    color: 'white', 
+                    marginLeft: '8px', 
+                    fontSize: '13px', 
+                    fontWeight: 'medium',
+                    position: 'relative',
+                    zIndex: 55
+                  }}>
+                    {selectedCard.isReversed ? 'Перевёрнута' : 'Прямая'}
+                  </Text>
+                </div>
+                
+                {/* Кнопка удаления */}
+                <CustomButton 
+                  variant="secondary"
+                  size="s"
+                  onClick={() => {
+                    handleRemoveCard(position);
+                    setActiveControlsPosition(null);
+                  }}
+                  style={{ 
+                    width: '100px',
+                    position: 'relative',
+                    zIndex: 55
+                  }}
+                >
+                  Удалить
+                </CustomButton>
+              </AnimatedPanel>
+            </div>
+          )}
+        </DroppablePosition>
+      </div>
+    );
+  };
+
   // Функция для перетасовки с анимацией
   const handleShuffle = () => {
     setIsShuffling(true);
@@ -369,8 +546,8 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
           <div style={{ 
             display: 'flex', 
             gap: '32px', 
-            alignItems: 'flex-start',
-            flexDirection: isMobile ? 'column' : 'row'
+            alignItems: 'center',
+            flexDirection: 'row' // Всегда горизонтальное расположение
           }}>
             {/* Левая колонка - Вопрос и колода */}
             <div style={{ 
@@ -418,7 +595,47 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
                 alignItems: 'center', 
                 gap: '16px'
               }}>
-                <CardDeck cards={cards} usedCardIds={usedCardIds} isShuffling={isShuffling} />
+                <div style={{ position: 'relative' }}>
+                  <CardDeck cards={cards} usedCardIds={usedCardIds} isShuffling={isShuffling} backImageUrl={backImageUrl} />
+                  
+                  {/* Анимированная рука для подсказки драг-н-дропа */}
+                  {cards.length > 0 && Object.keys(selectedCards).length === 0 && (
+                    <div style={{
+                      position: 'absolute',
+                      top: '50%',
+                      right: '-80px',
+                      transform: 'translateY(-50%)',
+                      fontSize: '28px',
+                      animation: 'dragAndDropHint 3s ease-in-out infinite',
+                      pointerEvents: 'none',
+                      zIndex: 10
+                    }}>
+                      <div style={{ 
+                        position: 'relative',
+                        filter: 'drop-shadow(2px 2px 4px rgba(0,0,0,0.3))'
+                      }}>
+                        {/* Карта */}
+                        <span style={{
+                          position: 'absolute',
+                          top: '0',
+                          left: '0',
+                          zIndex: 1
+                        }}>
+                          🃏
+                        </span>
+                        {/* Рука поверх карты */}
+                        <span style={{
+                          position: 'relative',
+                          top: '-2px',
+                          left: '8px',
+                          zIndex: 2
+                        }}>
+                          🤏
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                </div>
                 
                 {/* Кнопка перетасовки карт */}
                 {onShuffleCards && (
@@ -441,7 +658,9 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
             <div style={{ 
               flex: '1',
               display: 'flex', 
-              flexDirection: 'column'
+              flexDirection: 'column',
+              alignItems: 'center',
+              height: '100%' // Полная высота
             }}>
               {/* Добавляем информацию о трёх точках для управления картой */}
               {isMobile && (
@@ -451,137 +670,22 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
                   color: 'rgba(255, 255, 255, 0.7)',
                   marginBottom: '12px' 
                 }}>
-                  Нажмите на три точки в углу карты для настройки карты
+                  Перетащите карты сюда
                 </Text>
               )}
               
+              {/* Контейнер для карт с фиксированной шириной */}
               <div style={{ 
                 display: 'flex', 
-                flexWrap: 'wrap', 
-                gap: '12px',
+                flexDirection: 'column',
                 justifyContent: 'center',
                 alignItems: 'center',
-                marginBottom: '32px',
-                minHeight: '200px'
+                height: '100%', // Высота на весь доступный контейнер
+                width: '100%',
+                margin: '0',
+                padding: '0'
               }}>
-                {positions.map(({ position, label }) => {
-                  const selectedCard = selectedCards.find(card => card.position === position);
-                  const isOccupied = !!selectedCard;
-                  const showControls = activeControlsPosition === position;
-                  
-                  return (
-                    <div key={`position-${position}`} style={{ 
-                      marginBottom: 8,
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center'
-                    }}>
-                      <DroppablePosition
-                        id={`position-${position}`}
-                        label={label}
-                        isOccupied={isOccupied}
-                      >
-                        {selectedCard && (
-                          <div style={{ width: '100%', height: '100%', position: 'relative' }}>
-                            <DraggableCard
-                              id={`placed-${selectedCard.cardId}-${position}`}
-                              cardData={getCardById(selectedCard.cardId) || { id: selectedCard.cardId, name: 'Карта' }}
-                              preview={true}
-                              isReversed={selectedCard.isReversed}
-                              disabled={true}
-                            />
-                            
-                            {/* Кнопка с иконкой настроек для открытия панели управления */}
-                            <div style={{ 
-                              position: 'absolute', 
-                              top: '6px', 
-                              right: '6px', 
-                              zIndex: 60,
-                            }}>
-                              <IconButton
-                                onClick={() => toggleControls(position)}
-                                style={{
-                                  backgroundColor: showControls ? 'rgba(0, 123, 255, 0.8)' : 'rgba(0, 0, 0, 0.4)',
-                                  borderRadius: '50%',
-                                  padding: '6px',
-                                  boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
-                                  transition: 'background-color 0.3s ease'
-                                }}
-                              >
-                                <Icon24Settings fill="#ffffff" width={18} height={18} />
-                              </IconButton>
-                            </div>
-                            
-                            {/* Панель управления с анимацией */}
-                            <AnimatedPanel
-                              visible={showControls}
-                              style={{ 
-                                position: 'absolute', 
-                                bottom: '0', 
-                                left: '0', 
-                                right: '0',
-                                padding: '8px 6px 6px',
-                                borderBottomLeftRadius: '8px',
-                                borderBottomRightRadius: '8px',
-                                background: 'linear-gradient(to top, rgba(0,0,0,0.8) 60%, rgba(0,0,0,0.5) 85%, rgba(0,0,0,0) 100%)',
-                                display: 'flex',
-                                flexDirection: 'column',
-                                gap: '8px',
-                                zIndex: 50
-                              }}
-                            >
-                              {/* Блок с переключателем и подписью */}
-                              <div style={{ 
-                                display: 'flex', 
-                                alignItems: 'center', 
-                                justifyContent: 'center',
-                                width: '100%',
-                                backgroundColor: 'rgba(255,255,255,0.15)',
-                                padding: '6px',
-                                borderRadius: '6px'
-                              }}>
-                                <Switch 
-                                  checked={selectedCard.isReversed}
-                                  onChange={() => {
-                                    handleCardReversedToggle(position);
-                                  }}
-                                  style={{ position: 'relative', zIndex: 55 }}
-                                />
-                                <Text style={{ 
-                                  color: 'white', 
-                                  marginLeft: '8px', 
-                                  fontSize: '13px', 
-                                  fontWeight: 'medium',
-                                  position: 'relative',
-                                  zIndex: 55
-                                }}>
-                                  {selectedCard.isReversed ? 'Перевёрнута' : 'Прямая'}
-                                </Text>
-                              </div>
-                              
-                              {/* Кнопка удаления */}
-                              <CustomButton 
-                                variant="secondary"
-                                size="s"
-                                onClick={() => {
-                                  handleRemoveCard(position);
-                                  setActiveControlsPosition(null);
-                                }}
-                                style={{ 
-                                  width: '100px',
-                                  position: 'relative',
-                                  zIndex: 55
-                                }}
-                              >
-                                Удалить
-                              </CustomButton>
-                            </AnimatedPanel>
-                          </div>
-                        )}
-                      </DroppablePosition>
-                    </div>
-                  );
-                })}
+                {renderSpreadGrid()}
               </div>
             </div>
           </div>
@@ -595,11 +699,15 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
                 transform: 'scale(1)', // Убираем дополнительное масштабирование
                 transition: 'all 0.2s ease', // Плавная анимация изменения размера
                 filter: 'drop-shadow(0 8px 16px rgba(0, 0, 0, 0.3))', // Добавляем тень для объёма
+                borderRadius: '18px',
+                overflow: 'hidden',
                 zIndex: 9999
               }}>
                 <DraggableCard
                   id={activeDragCard.id}
                   cardData={activeDragCard.cardData}
+                  preview={false} // Явно указываем, что показываем рубашку при перетаскивании
+                  backImageUrl={backImageUrl}
                 />
               </div>
             )}

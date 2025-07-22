@@ -171,7 +171,9 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
         deckName={currentDeck.name}
         cards={cards}
         positions={getPositionsForDnd()}
+        spreadGrid={currentSpread.grid} // Передаем структуру сетки расклада
         userQuestion={userQuestion}
+        backImageUrl={currentDeck.coverImageUrl} // Используем coverImageUrl как рубашку карты
         onCardsSelected={onCardsSelected}
         onBack={onBack}
         onShuffleCards={shuffleCards}
@@ -201,6 +203,7 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
               <Card key={position} mode="shadow" style={{ 
                 marginBottom: 16, 
                 padding: 16,
+                borderRadius: '12px', // Добавляем закругление
                 backgroundColor: 'var(--vkui--color_background_content)'
               }}>
                 <Title level="3" style={{ marginBottom: 8 }}>
