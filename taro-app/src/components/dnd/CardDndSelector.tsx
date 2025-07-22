@@ -353,38 +353,80 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
           onDragStart={handleDragStart}
           onDragEnd={handleDragEnd}
         >
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-            {/* Схема расклада - показываем ПЕРВЫМ */}
-            <div>
-              <h3 style={{ 
-                marginBottom: 16, 
-                fontSize: '16px', 
-                textAlign: 'center',
-                color: '#ffffff',
-                fontWeight: '300',
-                margin: '0 0 16px 0',
-                fontFamily: 'Jost, -apple-system, BlinkMacSystemFont, sans-serif'
-              }}>
-                Ваш вопрос
-              </h3>
-              
-              {/* Отображаем вопрос пользователя */}
-              {userQuestion && (
-                <div style={{ 
-                  marginBottom: '16px',
-                  textAlign: 'center'
+          <div style={{ 
+            display: 'flex', 
+            gap: '32px', 
+            alignItems: 'flex-start',
+            flexDirection: isMobile ? 'column' : 'row'
+          }}>
+            {/* Левая колонка - Вопрос и колода */}
+            <div style={{ 
+              flex: isMobile ? '1' : '0 0 300px',
+              display: 'flex', 
+              flexDirection: 'column', 
+              gap: '24px' 
+            }}>
+              {/* Секция с вопросом */}
+              <div>
+                <h3 style={{ 
+                  marginBottom: 16, 
+                  fontSize: '16px', 
+                  textAlign: 'center',
+                  color: '#ffffff',
+                  fontWeight: '300',
+                  margin: '0 0 16px 0',
+                  fontFamily: 'Jost, -apple-system, BlinkMacSystemFont, sans-serif'
                 }}>
-                  <Text style={{ 
-                    color: 'rgba(255, 255, 255, 0.9)',
-                    fontSize: '24px',
-                    fontStyle: 'italic',
-                    fontFamily: 'Jost, -apple-system, BlinkMacSystemFont, sans-serif'
+                  Ваш вопрос
+                </h3>
+                
+                {/* Отображаем вопрос пользователя */}
+                {userQuestion && (
+                  <div style={{ 
+                    marginBottom: '24px',
+                    textAlign: 'center'
                   }}>
-                    "{userQuestion}"
-                  </Text>
-                </div>
-              )}
-              
+                    <Text style={{ 
+                      color: 'rgba(255, 255, 255, 0.9)',
+                      fontSize: '24px',
+                      fontStyle: 'italic',
+                      fontFamily: 'Jost, -apple-system, BlinkMacSystemFont, sans-serif'
+                    }}>
+                      "{userQuestion}"
+                    </Text>
+                  </div>
+                )}
+              </div>
+
+              {/* Колода карт */}
+              <div style={{ 
+                display: 'flex', 
+                flexDirection: 'column', 
+                alignItems: 'center', 
+                gap: '16px'
+              }}>
+                <CardDeck cards={cards} usedCardIds={usedCardIds} isShuffling={isShuffling} />
+                
+                {/* Кнопка перетасовки карт */}
+                {onShuffleCards && (
+                  <CustomButton 
+                    variant="secondary"
+                    size="m"
+                    onClick={handleShuffle}
+                    disabled={isShuffling}
+                  >
+                    {isShuffling ? '🔄 Перетасовываем...' : '🔀 Перетасовать карты'}
+                  </CustomButton>
+                )}
+              </div>
+            </div>
+
+            {/* Правая колонка - Позиции для карт */}
+            <div style={{ 
+              flex: '1',
+              display: 'flex', 
+              flexDirection: 'column'
+            }}>
               {/* Добавляем информацию о трёх точках для управления картой */}
               {isMobile && (
                 <Text style={{ 
@@ -401,7 +443,10 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
                 display: 'flex', 
                 flexWrap: 'wrap', 
                 gap: '12px',
-                justifyContent: 'center'
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginBottom: '32px',
+                minHeight: '200px'
               }}>
                 {positions.map(({ position, label }) => {
                   const selectedCard = selectedCards.find(card => card.position === position);
@@ -523,35 +568,12 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
                 })}
               </div>
             </div>
-            
-            {/* Колода карт - показываем ВТОРЫМ */}
-            <div style={{ 
-              display: 'flex', 
-              flexDirection: 'column', 
-              alignItems: 'center', 
-              gap: '16px', 
-              marginTop: 24 
-            }}>
-              <CardDeck cards={cards} usedCardIds={usedCardIds} isShuffling={isShuffling} />
-              
-              {/* Кнопка перетасовки карт */}
-              {onShuffleCards && (
-                <CustomButton 
-                  variant="secondary"
-                  size="m"
-                  onClick={handleShuffle}
-                  disabled={isShuffling}
-                >
-                  {isShuffling ? '🔄 Перетасовываем...' : '🔀 Перетасовать карты'}
-                </CustomButton>
-              )}
-            </div>
           </div>
           
           {/* Оверлей для перетаскивания */}
           <DragOverlay>
             {activeDragCard && (
-              <div style={{ width: '150px', height: '230px' }}>
+              <div style={{ width: '100px', height: '150px' }}>
                 <DraggableCard
                   id={activeDragCard.id}
                   cardData={activeDragCard.cardData}
@@ -560,32 +582,6 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
             )}
           </DragOverlay>
         </DndContext>
-        
-        {/* Кнопки действий */}
-        <div style={{ 
-          display: 'flex', 
-          gap: '16px', 
-          marginTop: 32,
-          justifyContent: 'center'
-        }}>
-          <CustomButton 
-            variant="secondary"
-            size="m"
-            onClick={onBack}
-            style={{ minWidth: '120px' }}
-          >
-            Назад
-          </CustomButton>
-          <CustomButton 
-            variant="primary"
-            size="m"
-            onClick={handleSubmit}
-            disabled={!isReadyToSubmit()}
-            style={{ minWidth: '120px' }}
-          >
-            Продолжить
-          </CustomButton>
-        </div>
         
         {/* Нижний разделитель */}
         <div style={{
@@ -610,6 +606,32 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
               objectFit: 'contain'
             }}
           />
+        </div>
+
+        {/* Кнопки действий под декоративным элементом */}
+        <div style={{ 
+          display: 'flex', 
+          gap: '16px',
+          justifyContent: 'flex-end',
+          marginTop: '24px'
+        }}>
+          <CustomButton 
+            variant="secondary"
+            size="m"
+            onClick={onBack}
+            style={{ minWidth: '120px' }}
+          >
+            Назад
+          </CustomButton>
+          <CustomButton 
+            variant="primary"
+            size="m"
+            onClick={handleSubmit}
+            disabled={!isReadyToSubmit()}
+            style={{ minWidth: '120px' }}
+          >
+            Продолжить
+          </CustomButton>
         </div>
       </div>
       
