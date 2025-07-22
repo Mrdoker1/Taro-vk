@@ -4,12 +4,14 @@ interface AppState {
   isLoading: boolean;
   error: string | null;
   useManualCardSelection: boolean;
+  userQuestion: string;
 }
 
 const initialState: AppState = {
   isLoading: false,
   error: null,
   useManualCardSelection: false,
+  userQuestion: '',
 };
 
 const appSlice = createSlice({
@@ -25,8 +27,11 @@ const appSlice = createSlice({
     setUseManualCardSelection: (state, action: PayloadAction<boolean>) => {
       state.useManualCardSelection = action.payload;
     },
+    setUserQuestion: (state, action: PayloadAction<string>) => {
+      state.userQuestion = action.payload;
+    },
   },
 });
 
-export const { setLoading, setError, setUseManualCardSelection } = appSlice.actions;
+export const { setLoading, setError, setUseManualCardSelection, setUserQuestion } = appSlice.actions;
 export default appSlice.reducer; 

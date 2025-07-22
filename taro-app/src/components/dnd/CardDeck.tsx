@@ -1,5 +1,5 @@
 import React from 'react';
-import { Title, Text } from '@vkontakte/vkui';
+import { Text } from '@vkontakte/vkui';
 import DraggableCard from './DraggableCard';
 
 interface CardDeckProps {
@@ -9,11 +9,10 @@ interface CardDeckProps {
     image?: string;
   }[];
   usedCardIds: string[];
-  title?: string;
   isShuffling?: boolean;
 }
 
-export const CardDeck: React.FC<CardDeckProps> = ({ cards, usedCardIds, title = 'Колода карт', isShuffling = false }) => {
+export const CardDeck: React.FC<CardDeckProps> = ({ cards, usedCardIds, isShuffling = false }) => {
   // Карты, которые еще не использованы
   const availableCards = cards.filter(card => !usedCardIds.includes(card.id));
   
@@ -27,8 +26,6 @@ export const CardDeck: React.FC<CardDeckProps> = ({ cards, usedCardIds, title = 
       alignItems: 'center',
       gap: '8px'
     }}>
-      <Title level="3" style={{ textAlign: 'center', fontSize: '16px', marginBottom: '0' }}>{title}</Title>
-      
       {availableCards.length === 0 ? (
         <Text style={{ textAlign: 'center', color: 'var(--vkui--color_text_secondary)' }}>
           Все карты колоды использованы

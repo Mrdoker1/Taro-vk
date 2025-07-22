@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../store';
 import { fetchSpreadDetails } from '../store/slices/taroSpreadsSlice';
 import { fetchDecks } from '../store/slices/taroDecksSlice';
+import { setUserQuestion } from '../store/slices/appSlice';
 import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
 import { CustomSelect } from './CustomSelect';
 import { CustomTextarea } from './CustomTextarea';
@@ -21,8 +22,8 @@ export const TaroSpreadDetails: React.FC<TaroSpreadDetailsProps> = ({
   const routeNavigator = useRouteNavigator();
   const { currentSpread, spreadLoading, spreadError } = useAppSelector((state) => state.taroSpreads);
   const { decks, decksLoading } = useAppSelector((state) => state.taroDecks);
+  const { userQuestion } = useAppSelector((state) => state.app);
   const [selectedDeckId, setSelectedDeckId] = useState<string>('');
-  const [userQuestion, setUserQuestion] = useState<string>('');
 
   // Получаем данные расклада
   useEffect(() => {
@@ -65,7 +66,7 @@ export const TaroSpreadDetails: React.FC<TaroSpreadDetailsProps> = ({
 
   // Функция для перехода к гаданию с выбранным раскладом и колодой
   const handleStartReading = () => {
-    if (selectedDeckId && currentSpread) {
+    if (selectedDeckId && currentSpread && userQuestion.trim()) {
       routeNavigator.push(`/reading/${spreadId}/${selectedDeckId}`);
     }
   };
@@ -242,7 +243,7 @@ export const TaroSpreadDetails: React.FC<TaroSpreadDetailsProps> = ({
         <CustomTextarea
           label="Введите свой вопрос"
           value={userQuestion}
-          onChange={setUserQuestion}
+          onChange={(value) => dispatch(setUserQuestion(value))}
           placeholder="Введите вопрос, на который хотите получить ответ..."
           rows={3}
         />
@@ -266,13 +267,15 @@ export const TaroSpreadDetails: React.FC<TaroSpreadDetailsProps> = ({
           <CustomButton 
             onClick={handleStartReading}
             variant="primary"
-            disabled={!currentSpread.available || currentSpread.paid || !selectedDeckId || availableDecks.length === 0}
+            disabled={!currentSpread.available || currentSpread.paid || !selectedDeckId || availableDecks.length === 0 || !userQuestion.trim()}
           >
             {currentSpread.paid 
               ? 'Платный расклад' 
               : availableDecks.length === 0 
                 ? 'Нет доступных колод'
-                : 'Начать гадание'
+                : !userQuestion.trim()
+                  ? 'Введите вопрос'
+                  : 'Начать гадание'
             }
           </CustomButton>
         </div>

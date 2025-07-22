@@ -8,6 +8,7 @@ import CardDndSelector from './dnd/CardDndSelector';
 interface CardSelectorProps {
   spreadId: string;
   deckId: string;
+  userQuestion?: string;
   onCardsSelected: (cards: { position: number; cardId: string; isReversed: boolean }[]) => void;
   onBack?: () => void;
 }
@@ -21,6 +22,7 @@ interface SelectedCard {
 export const CardSelector: React.FC<CardSelectorProps> = ({ 
   spreadId, 
   deckId,
+  userQuestion = '',
   onCardsSelected,
   onBack 
 }) => {
@@ -169,6 +171,7 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
         deckName={currentDeck.name}
         cards={cards}
         positions={getPositionsForDnd()}
+        userQuestion={userQuestion}
         onCardsSelected={onCardsSelected}
         onBack={onBack}
         onShuffleCards={shuffleCards}

@@ -19,6 +19,7 @@ interface CardDndSelectorProps {
     position: number;
     label: string;
   }[];
+  userQuestion?: string;
   onCardsSelected: (cards: { position: number; cardId: string; isReversed: boolean }[]) => void;
   onBack?: () => void;
   onShuffleCards?: () => void;
@@ -77,6 +78,7 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
   deckName,
   cards,
   positions,
+  userQuestion = '',
   onCardsSelected,
   onBack,
   onShuffleCards
@@ -365,6 +367,23 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
               }}>
                 Ваш вопрос
               </h3>
+              
+              {/* Отображаем вопрос пользователя */}
+              {userQuestion && (
+                <div style={{ 
+                  marginBottom: '16px',
+                  textAlign: 'center'
+                }}>
+                  <Text style={{ 
+                    color: 'rgba(255, 255, 255, 0.9)',
+                    fontSize: '24px',
+                    fontStyle: 'italic',
+                    fontFamily: 'Jost, -apple-system, BlinkMacSystemFont, sans-serif'
+                  }}>
+                    "{userQuestion}"
+                  </Text>
+                </div>
+              )}
               
               {/* Добавляем информацию о трёх точках для управления картой */}
               {isMobile && (

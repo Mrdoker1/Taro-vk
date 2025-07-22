@@ -5,6 +5,7 @@ import {
   Button,
 } from '@vkontakte/vkui';
 import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
+import { useAppSelector } from '../store';
 import { CardSelector } from '../components/CardSelector';
 import { TaroReading } from '../components/TaroReading';
 import { Footer } from '../components/Footer';
@@ -29,6 +30,9 @@ export const TaroReadingPanel: FC<TaroReadingPanelProps> = ({ id, spreadId, deck
   const routeNavigator = useRouteNavigator();
   const [currentStep, setCurrentStep] = useState<ReadingStep>('SELECT_CARDS');
   const [selectedCards, setSelectedCards] = useState<SelectedCard[]>([]);
+  
+  // Получаем вопрос из глобального store
+  const { userQuestion } = useAppSelector((state) => state.app);
 
   const handleBack = () => {
     if (currentStep === 'VIEW_READING') {
@@ -69,6 +73,7 @@ export const TaroReadingPanel: FC<TaroReadingPanelProps> = ({ id, spreadId, deck
         <CardSelector
           spreadId={spreadId}
           deckId={deckId}
+          userQuestion={userQuestion}
           onCardsSelected={handleCardsSelected}
           onBack={handleBack}
         />
