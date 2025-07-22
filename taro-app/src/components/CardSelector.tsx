@@ -164,19 +164,15 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
   // Выбор режима селектора карт - если не включен ручной режим, показываем перетаскивание
   if (!useManualCardSelection) {
     return (
-      <Group>
-        <Div>
-          <CardDndSelector
-            spreadName={currentSpread.name}
-            deckName={currentDeck.name}
-            cards={cards}
-            positions={getPositionsForDnd()}
-            onCardsSelected={onCardsSelected}
-            onBack={onBack}
-            onShuffleCards={shuffleCards}
-          />
-        </Div>
-      </Group>
+      <CardDndSelector
+        spreadName={currentSpread.name}
+        deckName={currentDeck.name}
+        cards={cards}
+        positions={getPositionsForDnd()}
+        onCardsSelected={onCardsSelected}
+        onBack={onBack}
+        onShuffleCards={shuffleCards}
+      />
     );
   }
 

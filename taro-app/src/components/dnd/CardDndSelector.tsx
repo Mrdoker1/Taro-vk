@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { DndContext, DragOverlay, DragEndEvent, DragStartEvent, useSensor, useSensors, PointerSensor, TouchSensor, MouseSensor } from '@dnd-kit/core';
-import { Group, Div, Title, Text, Button, Switch, IconButton } from '@vkontakte/vkui';
+import { Text, Switch, IconButton } from '@vkontakte/vkui';
 import { Icon24Settings } from '@vkontakte/icons';
 import CardDeck from './CardDeck';
 import DroppablePosition from './DroppablePosition';
 import DraggableCard from './DraggableCard';
+import { CustomButton } from '../CustomButton';
 
 interface CardDndSelectorProps {
   spreadName: string;
@@ -86,6 +87,22 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
   const [showMobileTip, setShowMobileTip] = useState<boolean>(true);
   const [activeControlsPosition, setActiveControlsPosition] = useState<number | null>(null);
   const [isShuffling, setIsShuffling] = useState<boolean>(false);
+  
+  // Функция для определения иконки расклада по названию
+  const getSpreadIcon = (spreadName: string): string => {
+    const name = spreadName.toLowerCase();
+    
+    if (name.includes('одна карта') || name.includes('one card') || name.includes('карта дня')) {
+      return 'https://i.ibb.co/fz2F7zv7/one-card.png';
+    } else if (name.includes('три карты') || name.includes('three card') || name.includes('прошлое настоящее будущее')) {
+      return 'https://i.ibb.co/Q7GphGLZ/three-card.png';
+    } else if (name.includes('ло шу') || name.includes('loshu') || name.includes('lo shu')) {
+      return 'https://i.ibb.co/KxnrVrd6/loshu.png';
+    }
+    
+    // Иконка по умолчанию (можно использовать одну из существующих)
+    return 'https://i.ibb.co/fz2F7zv7/one-card.png';
+  };
   
   // Определяем, является ли устройство мобильным
   useEffect(() => {
@@ -249,14 +266,87 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
   };
   
   return (
-    <Group>
-      <Div style={{ paddingTop: 0, paddingBottom: 0 }}>
-        <Title level="2" style={{ textAlign: 'center', marginBottom: 8, fontSize: '20px' }}>
-          Выберите карты для расклада
-        </Title>
-        <Text style={{ marginBottom: 4, textAlign: 'center', fontSize: '14px' }}>
-          {`${spreadName} - ${deckName}`}
-        </Text>
+    <div style={{ 
+      padding: '20px',
+      display: 'flex',
+      justifyContent: 'center'
+    }}>
+      <div style={{
+        width: '100%',
+        maxWidth: '1200px',
+        background: 'url(https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/3b830249f16752184ecb361cce592c7795bcf9ad) center/cover',
+        borderRadius: '12px',
+        overflow: 'hidden',
+        position: 'relative',
+        minHeight: '600px',
+        padding: '32px'
+      }}>
+        {/* Заголовок секции */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '12px',
+          marginBottom: '16px',
+          position: 'relative'
+        }}>
+          <img
+            src={getSpreadIcon(spreadName)}
+            alt="Tarot spread icon"
+            style={{
+              width: '60px',
+              height: '60px',
+              objectFit: 'contain',
+              flexShrink: 0
+            }}
+          />
+          <div>
+            <h1 style={{
+              color: '#ffffff',
+              fontSize: '24px',
+              fontWeight: '400',
+              margin: 0,
+              fontFamily: 'Jost, -apple-system, BlinkMacSystemFont, sans-serif',
+              lineHeight: 1.2
+            }}>
+              Выберите карты для расклада
+            </h1>
+            <Text style={{ 
+              color: 'rgba(255, 255, 255, 0.9)', 
+              fontSize: '14px',
+              marginTop: '4px',
+              fontFamily: 'Jost, -apple-system, BlinkMacSystemFont, sans-serif',
+              lineHeight: 1.2
+            }}>
+              {`${spreadName} - ${deckName}`}
+            </Text>
+          </div>
+        </div>
+
+        {/* Декоративный элемент */}
+        <div style={{
+          display: 'flex',
+          justifyContent: 'center',
+          marginBottom: '16px',
+          position: 'relative'
+        }}>
+          <img
+            src="https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/a73aa4a82442cd6022e0ae5e650a0c240ffa4f01"
+            alt="Decorative element"
+            style={{
+              width: '90px',
+              height: 'auto',
+              objectFit: 'contain'
+            }}
+          />
+        </div>
+
+        {/* Разделитель */}
+        <div style={{
+          width: '100%',
+          height: '2px',
+          background: 'url(https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/bf65c29bb76ac59b655e89bb29946e4f00f49a6d) center/cover',
+          marginBottom: '32px'
+        }} />
         
         {/* Инструкция для мобильных устройств */}
         {isMobile && showMobileTip && (
@@ -264,19 +354,20 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
             backgroundColor: 'rgba(0, 123, 255, 0.1)',
             borderRadius: '8px',
             padding: '8px 12px',
-            margin: '4px 0 8px',
+            margin: '4px 0 24px',
             fontSize: '13px'
           }}>
-            <Text style={{ textAlign: 'center', fontWeight: 'medium' }}>
+            <Text style={{ textAlign: 'center', fontWeight: 'medium', color: '#ffffff' }}>
               Чтобы переместить карту, коснитесь её и удерживайте, затем перетащите на нужную позицию расклада
-              <Button 
-                mode="tertiary" 
-                size="s" 
-                onClick={() => setShowMobileTip(false)}
-                style={{ marginLeft: 8 }}
-              >
-                ОК
-              </Button>
+              <div style={{ marginTop: '8px', display: 'flex', justifyContent: 'center' }}>
+                <CustomButton 
+                  variant="secondary"
+                  size="s"
+                  onClick={() => setShowMobileTip(false)}
+                >
+                  ОК
+                </CustomButton>
+              </div>
             </Text>
           </div>
         )}
@@ -286,19 +377,27 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
           onDragStart={handleDragStart}
           onDragEnd={handleDragEnd}
         >
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
             {/* Схема расклада - показываем ПЕРВЫМ */}
             <div>
-              <Title level="3" style={{ marginBottom: 12, fontSize: '16px', textAlign: 'center' }}>
+              <h3 style={{ 
+                marginBottom: 16, 
+                fontSize: '18px', 
+                textAlign: 'center',
+                color: '#ffffff',
+                fontWeight: '500',
+                margin: '0 0 16px 0',
+                fontFamily: 'Jost, -apple-system, BlinkMacSystemFont, sans-serif'
+              }}>
                 Перетащите карты из колоды на позиции:
-              </Title>
+              </h3>
               
               {/* Добавляем информацию о трёх точках для управления картой */}
               {isMobile && (
                 <Text style={{ 
                   fontSize: '13px', 
                   textAlign: 'center', 
-                  color: 'var(--vkui--color_text_secondary)',
+                  color: 'rgba(255, 255, 255, 0.7)',
                   marginBottom: '12px' 
                 }}>
                   Нажмите на три точки в углу карты для настройки карты
@@ -309,8 +408,8 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
               <Text style={{ 
                 fontSize: '13px', 
                 textAlign: 'center', 
-                color: 'var(--vkui--color_text_secondary)',
-                marginBottom: '12px' 
+                color: 'rgba(255, 255, 255, 0.7)',
+                marginBottom: '16px' 
               }}>
                 Для изменения позиции карты воспользуйтесь кнопкой "Удалить" и выберите новую карту из колоды
               </Text>
@@ -417,26 +516,21 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
                               </div>
                               
                               {/* Кнопка удаления */}
-                              <Button 
-                                mode="tertiary" 
-                                size="s" 
-                                appearance="negative"
+                              <CustomButton 
+                                variant="secondary"
+                                size="s"
                                 onClick={() => {
                                   handleRemoveCard(position);
                                   setActiveControlsPosition(null);
                                 }}
-                                stretched
                                 style={{ 
-                                  padding: '2px 0',
-                                  margin: '0 auto',
-                                  maxWidth: '100px',
-                                  minHeight: '28px',
+                                  width: '100px',
                                   position: 'relative',
                                   zIndex: 55
                                 }}
                               >
                                 Удалить
-                              </Button>
+                              </CustomButton>
                             </AnimatedPanel>
                           </div>
                         )}
@@ -448,19 +542,25 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
             </div>
             
             {/* Колода карт - показываем ВТОРЫМ */}
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px', marginTop: 16 }}>
+            <div style={{ 
+              display: 'flex', 
+              flexDirection: 'column', 
+              alignItems: 'center', 
+              gap: '16px', 
+              marginTop: 24 
+            }}>
               <CardDeck cards={cards} usedCardIds={usedCardIds} isShuffling={isShuffling} />
               
               {/* Кнопка перетасовки карт */}
               {onShuffleCards && (
-                <Button 
-                  mode="secondary" 
-                  size="m" 
+                <CustomButton 
+                  variant="secondary"
+                  size="m"
                   onClick={handleShuffle}
                   disabled={isShuffling}
                 >
                   {isShuffling ? '🔄 Перетасовываем...' : '🔀 Перетасовать карты'}
-                </Button>
+                </CustomButton>
               )}
             </div>
           </div>
@@ -478,21 +578,57 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
           </DragOverlay>
         </DndContext>
         
-        <Div style={{ display: 'flex', gap: '12px', marginTop: 16 }}>
-          <Button size="m" mode="secondary" onClick={onBack} stretched>
+        {/* Кнопки действий */}
+        <div style={{ 
+          display: 'flex', 
+          gap: '16px', 
+          marginTop: 32,
+          justifyContent: 'center'
+        }}>
+          <CustomButton 
+            variant="secondary"
+            size="m"
+            onClick={onBack}
+            style={{ minWidth: '120px' }}
+          >
             Назад
-          </Button>
-          <Button 
-            size="m" 
-            mode="primary" 
+          </CustomButton>
+          <CustomButton 
+            variant="primary"
+            size="m"
             onClick={handleSubmit}
-            stretched
             disabled={!isReadyToSubmit()}
+            style={{ minWidth: '120px' }}
           >
             Продолжить
-          </Button>
-        </Div>
-      </Div>
+          </CustomButton>
+        </div>
+        
+        {/* Нижний разделитель */}
+        <div style={{
+          width: '100%',
+          height: '2px',
+          background: 'url(https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/bf65c29bb76ac59b655e89bb29946e4f00f49a6d) center/cover',
+          marginTop: '32px',
+          marginBottom: '16px'
+        }} />
+
+        {/* Нижний декоративный элемент */}
+        <div style={{
+          display: 'flex',
+          justifyContent: 'center'
+        }}>
+          <img
+            src="https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/154f96a15bcd974fd38495f6f7aeec22f8b9613a"
+            alt="Decorative element"
+            style={{
+              width: '90px',
+              height: 'auto',
+              objectFit: 'contain'
+            }}
+          />
+        </div>
+      </div>
       
       {/* Добавляем невидимый элемент для блокировки scroll во время drag&drop на мобильных */}
       {activeDragCard && (
@@ -509,7 +645,7 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
           onTouchMove={(e) => e.preventDefault()}
         />
       )}
-    </Group>
+    </div>
   );
 };
 
