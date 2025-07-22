@@ -30,7 +30,7 @@ export const DraggableCard: React.FC<DraggableCardProps> = ({
   // Создаем стили для перетаскиваемой карты с улучшениями для мобильного взаимодействия
   const style: React.CSSProperties = {
     transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : undefined,
-    opacity: isDragging ? 0.8 : 1,
+    opacity: isDragging ? 0 : 1, // Полностью скрываем оригинальную карту при перетаскивании
     cursor: disabled ? 'default' : 'grab',
     position: 'relative',
     width: '100%',

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { DndContext, DragOverlay, DragEndEvent, DragStartEvent, useSensor, useSensors, PointerSensor, TouchSensor, MouseSensor } from '@dnd-kit/core';
+import { DndContext, DragOverlay, DragEndEvent, DragStartEvent, DragOverEvent, useSensor, useSensors, PointerSensor, TouchSensor, MouseSensor } from '@dnd-kit/core';
 import { Text, Switch, IconButton } from '@vkontakte/vkui';
 import { Icon24Settings } from '@vkontakte/icons';
 import CardDeck from './CardDeck';
@@ -85,6 +85,7 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
 }) => {
   const [selectedCards, setSelectedCards] = useState<SelectedCard[]>([]);
   const [activeDragCard, setActiveDragCard] = useState<{id: string; cardData: CardData} | null>(null);
+  const [activeDropTarget, setActiveDropTarget] = useState<string | null>(null);
   const [isMobile, setIsMobile] = useState<boolean>(false);
   const [activeControlsPosition, setActiveControlsPosition] = useState<number | null>(null);
   const [isShuffling, setIsShuffling] = useState<boolean>(false);
@@ -150,9 +151,18 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
     });
   };
   
+  // Обработчик при наведении карты на зону
+  const handleDragOver = (event: DragOverEvent) => {
+    const { over } = event;
+    setActiveDropTarget(over ? String(over.id) : null);
+  };
+  
   // Обработчик окончания перетаскивания
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
+    
+    // Сбрасываем активную зону
+    setActiveDropTarget(null);
     
     if (over && active.data.current) {
       const cardData = active.data.current.cardData;
@@ -201,8 +211,9 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
       }
     }
     
-    // Сбрасываем активное перетаскивание
+    // Сбрасываем активное перетаскивание и активную зону
     setActiveDragCard(null);
+    setActiveDropTarget(null);
   };
   
   // Функция для переключения состояния "перевернутая карта"
@@ -351,6 +362,7 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
         <DndContext 
           sensors={sensors}
           onDragStart={handleDragStart}
+          onDragOver={handleDragOver}
           onDragEnd={handleDragEnd}
         >
           <div style={{ 
@@ -573,7 +585,14 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
           {/* Оверлей для перетаскивания */}
           <DragOverlay>
             {activeDragCard && (
-              <div style={{ width: '100px', height: '150px' }}>
+              <div style={{ 
+                width: activeDropTarget ? '100px' : '150px', // Изначально размер колоды, при наведении - размер зоны
+                height: activeDropTarget ? '150px' : '230px',
+                transform: 'scale(1)', // Убираем дополнительное масштабирование
+                transition: 'all 0.2s ease', // Плавная анимация изменения размера
+                filter: 'drop-shadow(0 8px 16px rgba(0, 0, 0, 0.3))', // Добавляем тень для объёма
+                zIndex: 9999
+              }}>
                 <DraggableCard
                   id={activeDragCard.id}
                   cardData={activeDragCard.cardData}
