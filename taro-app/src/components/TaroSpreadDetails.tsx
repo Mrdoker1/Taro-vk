@@ -88,7 +88,6 @@ export const TaroSpreadDetails: React.FC<TaroSpreadDetailsProps> = ({
     return (
       <div style={{
         width: '100%',
-        maxWidth: '1200px',
         background: 'url(https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/3b830249f16752184ecb361cce592c7795bcf9ad) center/cover',
         borderRadius: '12px',
         overflow: 'hidden',
@@ -115,7 +114,6 @@ export const TaroSpreadDetails: React.FC<TaroSpreadDetailsProps> = ({
     return (
       <div style={{
         width: '100%',
-        maxWidth: '1200px',
         background: 'url(https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/3b830249f16752184ecb361cce592c7795bcf9ad) center/cover',
         borderRadius: '12px',
         overflow: 'hidden',
@@ -147,7 +145,6 @@ export const TaroSpreadDetails: React.FC<TaroSpreadDetailsProps> = ({
   return (
     <div style={{
       width: '100%',
-      maxWidth: '1200px',
       background: 'url(https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/3b830249f16752184ecb361cce592c7795bcf9ad) center/cover',
       borderRadius: '12px',
       overflow: 'hidden',
