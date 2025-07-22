@@ -6,6 +6,7 @@ import CardDeck from './CardDeck';
 import DroppablePosition from './DroppablePosition';
 import DraggableCard from './DraggableCard';
 import { CustomButton } from '../CustomButton';
+import { InstructionsPanel } from '../InstructionsPanel';
 
 interface CardDndSelectorProps {
   spreadName: string;
@@ -430,6 +431,9 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
                     {isShuffling ? '🔄 Перетасовываем...' : '🔀 Перетасовать карты'}
                   </CustomButton>
                 )}
+                
+                {/* Панель с инструкциями */}
+                <InstructionsPanel />
               </div>
             </div>
 
