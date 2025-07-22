@@ -47,6 +47,22 @@ export const TaroSpreadDetails: React.FC<TaroSpreadDetailsProps> = ({
   }, [decks, selectedDeckId]);
 
   // Определим, является ли схема сложной (многострочной)
+  // Функция для определения иконки расклада по названию
+  const getSpreadIcon = (spreadName: string): string => {
+    const name = spreadName.toLowerCase();
+    
+    if (name.includes('одна карта') || name.includes('one card') || name.includes('карта дня')) {
+      return 'https://i.ibb.co/fz2F7zv7/one-card.png';
+    } else if (name.includes('три карты') || name.includes('three card') || name.includes('прошлое настоящее будущее')) {
+      return 'https://i.ibb.co/Q7GphGLZ/three-card.png';
+    } else if (name.includes('ло шу') || name.includes('loshu') || name.includes('lo shu')) {
+      return 'https://i.ibb.co/KxnrVrd6/loshu.png';
+    }
+    
+    // Иконка по умолчанию (можно использовать одну из существующих)
+    return 'https://i.ibb.co/fz2F7zv7/one-card.png';
+  };
+
   // Функция для перехода к гаданию с выбранным раскладом и колодой
   const handleStartReading = () => {
     if (selectedDeckId && currentSpread) {
@@ -142,31 +158,44 @@ export const TaroSpreadDetails: React.FC<TaroSpreadDetailsProps> = ({
       {/* Заголовок секции */}
       <div style={{
         display: 'flex',
-        alignItems: 'center',
+        alignItems: 'flex-start',
         gap: '12px',
-        marginBottom: '32px'
+        marginBottom: '8px'
       }}>
         <img
-          src="https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/cf86979ebd7f8f29d083fff45b7dbbc96221b5a9"
-          alt="Tarot spread icon"
+          src={getSpreadIcon(currentSpread.name)}
+          alt={`${currentSpread.name} icon`}
           style={{
-            width: '44px',
-            height: '44px',
-            objectFit: 'contain'
+            width: '60px',
+            height: '60px',
+            objectFit: 'contain',
+            flexShrink: 0
           }}
         />
-        <h1 style={{
-          color: '#ffffff',
-          fontSize: '24px',
-          fontWeight: '400',
-          margin: 0,
-          fontFamily: 'Jost',
-          lineHeight: 1.2,
-          flex: 1,
-          minWidth: 0
-        }}>
-          {currentSpread.name}
-        </h1>
+        <div style={{ flex: 1 }}>
+          <h1 style={{
+            color: '#ffffff',
+            fontSize: '24px',
+            fontWeight: '400',
+            margin: '0 0 4px 0',
+            fontFamily: 'Jost',
+            lineHeight: 1.2
+          }}>
+            {currentSpread.name}
+          </h1>
+          
+          {/* Описание под заголовком */}
+          <p style={{
+            fontSize: '16px',
+            lineHeight: 1.5,
+            margin: 0,
+            color: 'rgba(255, 255, 255, 0.9)',
+            textAlign: 'left',
+            fontFamily: 'Jost'
+          }}>
+            {currentSpread.description}
+          </p>
+        </div>
       </div>
 
       {/* Декоративный элемент */}
@@ -193,17 +222,6 @@ export const TaroSpreadDetails: React.FC<TaroSpreadDetailsProps> = ({
         background: 'url(https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/bf65c29bb76ac59b655e89bb29946e4f00f49a6d) center/cover',
         marginBottom: '32px'
       }} />
-
-      {/* Описание */}
-      <p style={{
-        fontSize: '16px',
-        lineHeight: 1.5,
-        marginBottom: '32px',
-        color: 'rgba(255, 255, 255, 0.9)',
-        textAlign: 'center'
-      }}>
-        {currentSpread.description}
-      </p>
 
       {/* Первая строка - форма для гадания */}
       <div style={{
@@ -388,7 +406,7 @@ export const TaroSpreadDetails: React.FC<TaroSpreadDetailsProps> = ({
                   </span>
                   <span style={{
                     color: 'rgba(255, 255, 255, 0.9)',
-                    fontSize: '12px',
+                    fontSize: '14px',
                     lineHeight: 1.2
                   }}
                   className="position-text"
