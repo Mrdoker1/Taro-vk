@@ -94,6 +94,7 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
   const [isMobile, setIsMobile] = useState<boolean>(false);
   const [activeControlsPosition, setActiveControlsPosition] = useState<number | null>(null);
   const [isShuffling, setIsShuffling] = useState<boolean>(false);
+  const [windowWidth, setWindowWidth] = useState<number>(typeof window !== 'undefined' ? window.innerWidth : 1024);
   
   // Функция для определения иконки расклада по названию
   const getSpreadIcon = (spreadName: string): string => {
@@ -111,12 +112,28 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
     return 'https://i.ibb.co/fz2F7zv7/one-card.png';
   };
   
-  // Определяем, является ли устройство мобильным
+  // Определяем, является ли устройство мобильным и отслеживаем размер окна
   useEffect(() => {
     // Простая проверка типа устройства через User-Agent
     const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
     const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     setIsMobile(isTouchDevice || isMobileDevice);
+
+    // Функция для обновления размера окна
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    // Добавляем слушатель события изменения размера окна
+    window.addEventListener('resize', handleResize);
+    
+    // Устанавливаем начальный размер
+    setWindowWidth(window.innerWidth);
+
+    // Очищаем слушатель при размонтировании компонента
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
   }, []);
   
   // Инициализация сенсоров для перетаскивания - улучшенные настройки для мобильных устройств
@@ -297,7 +314,7 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
       <div style={{ 
         display: 'flex', 
         flexDirection: 'column',
-        gap: isMobile ? '8px' : '12px',
+        gap: windowWidth <= 768 ? '8px' : '12px',
         alignItems: 'center'
       }}>
         {spreadGrid.map((row, rowIndex) => (
@@ -305,9 +322,9 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
             key={rowIndex}
             style={{ 
               display: 'flex', 
-              gap: isMobile ? '8px' : '12px',
+              gap: windowWidth <= 768 ? '8px' : '12px',
               justifyContent: 'center',
-              flexWrap: isMobile ? 'wrap' : 'nowrap' // На мобильных разрешаем перенос
+              flexWrap: windowWidth <= 768 ? 'wrap' : 'nowrap' // На мобильных разрешаем перенос
             }}
           >
             {row.map((position) => {
@@ -457,7 +474,7 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
   
   return (
     <div style={{ 
-      padding: '20px',
+      padding: windowWidth <= 768 ? '16px' : '20px',
       display: 'flex',
       justifyContent: 'center'
     }}>
@@ -468,7 +485,7 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
         overflow: 'hidden',
         position: 'relative',
         minHeight: '600px',
-        padding: '32px'
+        padding: windowWidth <= 768 ? '24px 16px' : '32px'
       }}>
         {/* Заголовок секции */}
         <div style={{
@@ -476,14 +493,16 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
           alignItems: 'center',
           gap: '12px',
           marginBottom: '16px',
-          position: 'relative'
+          position: 'relative',
+          flexDirection: windowWidth <= 480 ? 'column' : 'row',
+          textAlign: windowWidth <= 480 ? 'center' : 'left'
         }}>
           <img
             src={getSpreadIcon(spreadName)}
             alt="Tarot spread icon"
             style={{
-              width: '60px',
-              height: '60px',
+              width: windowWidth <= 480 ? '50px' : '60px',
+              height: windowWidth <= 480 ? '50px' : '60px',
               objectFit: 'contain',
               flexShrink: 0
             }}
@@ -491,7 +510,7 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
           <div>
             <h1 style={{
               color: '#ffffff',
-              fontSize: '24px',
+              fontSize: windowWidth <= 480 ? '20px' : '24px',
               fontWeight: '400',
               margin: 0,
               fontFamily: 'Jost, -apple-system, BlinkMacSystemFont, sans-serif',
@@ -501,7 +520,7 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
             </h1>
             <Text style={{ 
               color: 'rgba(255, 255, 255, 0.9)', 
-              fontSize: '14px',
+              fontSize: windowWidth <= 480 ? '12px' : '14px',
               marginTop: '4px',
               fontFamily: 'Jost, -apple-system, BlinkMacSystemFont, sans-serif',
               lineHeight: 1.2
@@ -515,14 +534,14 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
         <div style={{
           display: 'flex',
           justifyContent: 'center',
-          marginBottom: '16px',
+          marginBottom: windowWidth <= 480 ? '12px' : '16px',
           position: 'relative'
         }}>
           <img
             src="https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/a73aa4a82442cd6022e0ae5e650a0c240ffa4f01"
             alt="Decorative element"
             style={{
-              width: '90px',
+              width: windowWidth <= 480 ? '70px' : '90px',
               height: 'auto',
               objectFit: 'contain'
             }}
@@ -534,7 +553,7 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
           width: '100%',
           height: '2px',
           background: 'url(https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/bf65c29bb76ac59b655e89bb29946e4f00f49a6d) center/cover',
-          marginBottom: '32px'
+          marginBottom: windowWidth <= 768 ? '24px' : '32px'
         }} />
         
         <DndContext 
@@ -543,149 +562,152 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
           onDragOver={handleDragOver}
           onDragEnd={handleDragEnd}
         >
-          <div style={{ 
-            display: 'flex', 
-            gap: '32px', 
-            alignItems: 'center',
-            flexDirection: 'row' // Всегда горизонтальное расположение
-          }}>
-            {/* Левая колонка - Вопрос и колода */}
-            <div style={{ 
-              flex: isMobile ? '1' : '0 0 300px',
-              display: 'flex', 
-              flexDirection: 'column', 
-              gap: '24px' 
+          {/* Секция с вопросом */}
+          <div style={{ marginBottom: '24px' }}>
+            <h3 style={{ 
+              marginBottom: 16, 
+              fontSize: '16px', 
+              textAlign: 'center',
+              color: '#ffffff',
+              fontWeight: '300',
+              margin: '0 0 16px 0',
+              fontFamily: 'Jost, -apple-system, BlinkMacSystemFont, sans-serif'
             }}>
-              {/* Секция с вопросом */}
-              <div>
-                <h3 style={{ 
-                  marginBottom: 16, 
-                  fontSize: '16px', 
-                  textAlign: 'center',
-                  color: '#ffffff',
-                  fontWeight: '300',
-                  margin: '0 0 16px 0',
+              Ваш вопрос
+            </h3>
+            
+            {/* Отображаем вопрос пользователя */}
+            {userQuestion && (
+              <div style={{ 
+                marginBottom: '24px',
+                textAlign: 'center'
+              }}>
+                <Text style={{ 
+                  color: 'rgba(255, 255, 255, 0.9)',
+                  fontSize: windowWidth <= 480 ? '18px' : '24px',
+                  fontStyle: 'italic',
                   fontFamily: 'Jost, -apple-system, BlinkMacSystemFont, sans-serif'
                 }}>
-                  Ваш вопрос
-                </h3>
-                
-                {/* Отображаем вопрос пользователя */}
-                {userQuestion && (
-                  <div style={{ 
-                    marginBottom: '24px',
-                    textAlign: 'center'
-                  }}>
-                    <Text style={{ 
-                      color: 'rgba(255, 255, 255, 0.9)',
-                      fontSize: '24px',
-                      fontStyle: 'italic',
-                      fontFamily: 'Jost, -apple-system, BlinkMacSystemFont, sans-serif'
-                    }}>
-                      "{userQuestion}"
-                    </Text>
-                  </div>
-                )}
+                  "{userQuestion}"
+                </Text>
               </div>
+            )}
+          </div>
 
-              {/* Колода карт */}
-              <div style={{ 
-                display: 'flex', 
-                flexDirection: 'column', 
-                alignItems: 'center', 
-                gap: '16px'
-              }}>
-                <div style={{ position: 'relative' }}>
-                  <CardDeck cards={cards} usedCardIds={usedCardIds} isShuffling={isShuffling} backImageUrl={backImageUrl} />
-                  
-                  {/* Анимированная рука для подсказки драг-н-дропа */}
-                  {cards.length > 0 && Object.keys(selectedCards).length === 0 && (
-                    <div style={{
-                      position: 'absolute',
-                      top: '50%',
-                      right: '-80px',
-                      transform: 'translateY(-50%)',
-                      fontSize: '28px',
-                      animation: 'dragAndDropHint 3s ease-in-out infinite',
-                      pointerEvents: 'none',
-                      zIndex: 10
-                    }}>
-                      <div style={{ 
-                        position: 'relative',
-                        filter: 'drop-shadow(2px 2px 4px rgba(0,0,0,0.3))'
-                      }}>
-                        {/* Карта */}
-                        <span style={{
-                          position: 'absolute',
-                          top: '0',
-                          left: '0',
-                          zIndex: 1
-                        }}>
-                          🃏
-                        </span>
-                        {/* Рука поверх карты */}
-                        <span style={{
-                          position: 'relative',
-                          top: '-2px',
-                          left: '8px',
-                          zIndex: 2
-                        }}>
-                          🤏
-                        </span>
-                      </div>
-                    </div>
-                  )}
-                </div>
-                
-                {/* Кнопка перетасовки карт */}
-                {onShuffleCards && (
-                  <CustomButton 
-                    variant="secondary"
-                    size="m"
-                    onClick={handleShuffle}
-                    disabled={isShuffling}
-                  >
-                    {isShuffling ? '🔄 Перетасовываем...' : '🔀 Перетасовать карты'}
-                  </CustomButton>
-                )}
-                
-                {/* Панель с инструкциями */}
-                <InstructionsPanel />
-              </div>
-            </div>
-
-            {/* Правая колонка - Позиции для карт */}
+          {/* Основной контейнер с колодой, кнопками и позициями */}
+          <div style={{ 
+            display: 'flex', 
+            gap: windowWidth <= 768 ? '16px' : '32px', 
+            alignItems: 'center',
+            flexDirection: windowWidth <= 768 ? 'column' : 'row', // Адаптивность
+            flexWrap: 'wrap',
+          }}>
+            {/* Левая колонка - Колода карт, кнопки и позиции для карт */}
             <div style={{ 
               flex: '1',
               display: 'flex', 
-              flexDirection: 'column',
-              alignItems: 'center',
-              height: '100%' // Полная высота
+              flexDirection: 'column', 
+              alignItems: 'center', 
+              gap: windowWidth <= 480 ? '12px' : '16px',
+              width: '100%'
             }}>
-              {/* Добавляем информацию о трёх точках для управления картой */}
-              {isMobile && (
-                <Text style={{ 
-                  fontSize: '13px', 
-                  textAlign: 'center', 
-                  color: 'rgba(255, 255, 255, 0.7)',
-                  marginBottom: '12px' 
-                }}>
-                  Перетащите карты сюда
-                </Text>
-              )}
-              
-              {/* Контейнер для карт с фиксированной шириной */}
-              <div style={{ 
-                display: 'flex', 
-                flexDirection: 'column',
-                justifyContent: 'center',
+              {/* Контейнер с колодой и кнопкой */}
+              <div style={{
+                display: 'flex',
+                gap: windowWidth <= 768 ? '16px' : '32px',
                 alignItems: 'center',
-                height: '100%', // Высота на весь доступный контейнер
+                flexDirection: windowWidth <= 768 ? 'column' : 'row',
                 width: '100%',
-                margin: '0',
-                padding: '0'
+                justifyContent: windowWidth <= 768 ? 'center' : 'flex-start'
               }}>
-                {renderSpreadGrid()}
+                {/* Блок с колодой и кнопками */}
+                <div style={{
+                  display: 'flex', 
+                  flexDirection: 'column', 
+                  alignItems: 'center', 
+                  gap: windowWidth <= 480 ? '12px' : '16px',
+                  flex: windowWidth <= 768 ? 'none' : '0 0 400px'
+                }}>
+                  <div style={{ position: 'relative' }}>
+                    <CardDeck cards={cards} usedCardIds={usedCardIds} isShuffling={isShuffling} backImageUrl={backImageUrl} />
+                    
+                    {/* Анимированная рука для подсказки драг-н-дропа */}
+                    {cards.length > 0 && Object.keys(selectedCards).length === 0 && !isMobile && windowWidth > 768 && (
+                      <div style={{
+                        position: 'absolute',
+                        top: '50%',
+                        right: '-80px',
+                        transform: 'translateY(-50%)',
+                        fontSize: '28px',
+                        animation: 'dragAndDropHint 3s ease-in-out infinite',
+                        pointerEvents: 'none',
+                        zIndex: 10
+                      }}>
+                        <div style={{ 
+                          position: 'relative',
+                          filter: 'drop-shadow(2px 2px 4px rgba(0,0,0,0.3))'
+                        }}>
+                          {/* Карта */}
+                          <span style={{
+                            position: 'absolute',
+                            top: '0',
+                            left: '0',
+                            zIndex: 1
+                          }}>
+                            🃏
+                          </span>
+                          {/* Рука поверх карты */}
+                          <span style={{
+                            position: 'relative',
+                            top: '-2px',
+                            left: '8px',
+                            zIndex: 2
+                          }}>
+                            🤏
+                          </span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Кнопка перетасовки карт */}
+                  {onShuffleCards && (
+                    <CustomButton 
+                      variant="secondary"
+                      size="m"
+                      onClick={handleShuffle}
+                      disabled={isShuffling}
+                    >
+                      {isShuffling ? '🔄 Перетасовываем...' : '🔀 Перетасовать карты'}
+                    </CustomButton>
+                  )}
+                  
+                  {/* Панель с инструкциями */}
+                  <InstructionsPanel windowWidth={windowWidth} />
+                </div>
+
+                {/* Позиции для карт - справа на десктопе, под кнопками на мобильных */}
+                <div style={{ 
+                  flex: '1',
+                  display: 'flex', 
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  minWidth: windowWidth <= 768 ? '100%' : '300px',
+                  width: '100%'
+                }}>
+                  {/* Контейнер для карт */}
+                  <div style={{ 
+                    display: 'flex', 
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    width: '100%',
+                    margin: '0',
+                    padding: '0'
+                  }}>
+                    {renderSpreadGrid()}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -719,7 +741,7 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
           width: '100%',
           height: '2px',
           background: 'url(https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/bf65c29bb76ac59b655e89bb29946e4f00f49a6d) center/cover',
-          marginTop: '32px',
+          marginTop: windowWidth <= 768 ? '24px' : '32px',
           marginBottom: '16px'
         }} />
 
@@ -732,7 +754,7 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
             src="https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/154f96a15bcd974fd38495f6f7aeec22f8b9613a"
             alt="Decorative element"
             style={{
-              width: '90px',
+              width: windowWidth <= 480 ? '70px' : '90px',
               height: 'auto',
               objectFit: 'contain'
             }}
@@ -743,14 +765,19 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
         <div style={{ 
           display: 'flex', 
           gap: '16px',
-          justifyContent: 'flex-end',
+          justifyContent: windowWidth <= 768 ? 'center' : 'flex-end',
+          flexDirection: windowWidth <= 480 ? 'column' : 'row',
+          alignItems: 'center',
           marginTop: '24px'
         }}>
           <CustomButton 
             variant="secondary"
             size="m"
             onClick={onBack}
-            style={{ minWidth: '120px' }}
+            style={{ 
+              minWidth: '120px',
+              width: windowWidth <= 480 ? '100%' : 'auto'
+            }}
           >
             Назад
           </CustomButton>
@@ -759,7 +786,10 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
             size="m"
             onClick={handleSubmit}
             disabled={!isReadyToSubmit()}
-            style={{ minWidth: '120px' }}
+            style={{ 
+              minWidth: '120px',
+              width: windowWidth <= 480 ? '100%' : 'auto'
+            }}
           >
             Продолжить
           </CustomButton>

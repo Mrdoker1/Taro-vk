@@ -61,23 +61,6 @@ export const CardDeck: React.FC<CardDeckProps> = ({ cards, usedCardIds, isShuffl
             />
           ))}
           
-          {/* Остаток колоды (текстовое отображение) */}
-          {availableCards.length > 4 && (
-            <div style={{
-              position: 'absolute',
-              bottom: '-28px',
-              right: '0',
-              zIndex: 15,
-              background: 'rgba(0,0,0,0.6)',
-              color: 'white',
-              padding: '2px 6px',
-              borderRadius: '10px',
-              fontSize: '12px'
-            }}>
-              Осталось: {availableCards.length}
-            </div>
-          )}
-          
           {/* Верхняя карта колоды для перетаскивания */}
           {topCard && (
             <div style={{
