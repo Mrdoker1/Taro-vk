@@ -495,15 +495,15 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
           gap: '12px',
           marginBottom: '16px',
           position: 'relative',
-          flexDirection: windowWidth <= 480 ? 'column' : 'row',
-          textAlign: windowWidth <= 480 ? 'center' : 'left'
+          flexDirection: 'row',
+          textAlign: 'left'
         }}>
           <img
             src={getSpreadIcon(spreadName)}
             alt="Tarot spread icon"
             style={{
-              width: windowWidth <= 480 ? '50px' : '60px',
-              height: windowWidth <= 480 ? '50px' : '60px',
+              width: '60px',
+              height: '60px',
               objectFit: 'contain',
               flexShrink: 0
             }}
