@@ -387,8 +387,8 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
                   data-dropdown-menu
                   style={{
                     position: 'absolute',
-                    top: '36px',
-                    right: '6px',
+                    top: '40px',
+                    right: '40px',
                     transform: 'translateX(50%)',
                     zIndex: 9999,
                     background: 'rgba(0, 0, 0, 0.9)',
