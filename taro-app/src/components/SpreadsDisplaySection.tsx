@@ -52,7 +52,6 @@ const SpreadCard: React.FC<SpreadCardProps> = ({ spread, onSelectSpread }) => {
     border: `1px solid ${BORDER_COLOR}`,
     borderRadius: '4px',
     display: 'flex',
-    minHeight: isMobile ? '200px' : '218px',
     width: '100%',
     minWidth: isMobile ? '280px' : '380px',
     alignItems: 'center',
