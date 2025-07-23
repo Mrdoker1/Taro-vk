@@ -88,6 +88,7 @@ export const TaroReadingPanel: FC<TaroReadingPanelProps> = ({ id, spreadId, deck
           spreadId={spreadId}
           deckId={deckId}
           selectedCards={selectedCards}
+          userQuestion={userQuestion} // Передаем вопрос из глобального store
           onBack={() => setCurrentStep('SELECT_CARDS')}
         />
       )}

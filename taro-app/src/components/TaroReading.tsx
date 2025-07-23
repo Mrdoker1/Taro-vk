@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useAppDispatch, useAppSelector } from '../store';
-import { fetchPromptTemplate } from '../store/slices/promptSlice';
+import { fetchPromptTemplate, clearCurrentTemplate } from '../store/slices/promptSlice';
 import { generateText, clearGeneratedText } from '../store/slices/generationSlice';
-import { Spinner, Button, Div, Title, Text, Group, Textarea, FormItem, Card, Select, Accordion } from '@vkontakte/vkui';
+import { Button, Text } from '@vkontakte/vkui';
 import { Icon24Download, Icon24Share } from '@vkontakte/icons';
-import { CustomTooltip } from './CustomTooltip';
+import { CustomButton } from './CustomButton';
+import { MagicLoader } from './MagicLoader';
 import { fetchDeckDetails } from '../store/slices/taroDecksSlice';
 import { saveTarotReadingToCalendar } from '../utils/calendarUtils';
 import bridge from '../bridge';
@@ -17,6 +18,7 @@ interface TaroReadingProps {
     cardId: string;
     isReversed: boolean;
   }[];
+  userQuestion?: string; // Добавляем вопрос как prop
   onBack?: () => void;
 }
 
@@ -33,6 +35,7 @@ export const TaroReading: React.FC<TaroReadingProps> = ({
   spreadId, 
   deckId,
   selectedCards,
+  userQuestion: propUserQuestion, // Переименовываем для избежания конфликта
   onBack 
 }) => {
   const dispatch = useAppDispatch();
@@ -40,9 +43,24 @@ export const TaroReading: React.FC<TaroReadingProps> = ({
   const { currentDeck } = useAppSelector((state) => state.taroDecks); 
   const { currentTemplate, templateLoading, templateError } = useAppSelector((state) => state.prompt);
   const { generatedText, isGenerating, generationError } = useAppSelector((state) => state.generation);
-  const [question, setQuestion] = useState<string>('');
-  const [selectedQuestionIndex, setSelectedQuestionIndex] = useState<string>('custom');
+  const question = propUserQuestion || ''; // Используем переданный вопрос вместо локального состояния
   const [parsedInterpretation, setParsedInterpretation] = useState<ParsedInterpretation | null>(null);
+
+  // Функция для определения иконки расклада по названию
+  const getSpreadIcon = (spreadName: string): string => {
+    const name = spreadName.toLowerCase();
+    
+    if (name.includes('одна карта') || name.includes('one card') || name.includes('карта дня')) {
+      return 'https://i.ibb.co/fz2F7zv7/one-card.png';
+    } else if (name.includes('три карты') || name.includes('three card') || name.includes('прошлое настоящее будущее')) {
+      return 'https://i.ibb.co/Q7GphGLZ/three-card.png';
+    } else if (name.includes('ло шу') || name.includes('loshu') || name.includes('lo shu')) {
+      return 'https://i.ibb.co/KxnrVrd6/loshu.png';
+    }
+    
+    // Иконка по умолчанию
+    return 'https://i.ibb.co/fz2F7zv7/one-card.png';
+  };
 
   // Функция для скачивания файла с толкованием
   const handleDownloadPDF = async () => {
@@ -160,6 +178,9 @@ ${pos.interpretation}
   useEffect(() => {
     if (spreadId) {
       console.log('Запрос шаблона промпта для расклада:', spreadId);
+      // Очищаем предыдущий шаблон промпта
+      dispatch(clearCurrentTemplate());
+      // Загружаем новый шаблон
       dispatch(fetchPromptTemplate({ promptId: spreadId }));
     }
     
@@ -233,24 +254,17 @@ ${pos.interpretation}
     }
   }, [generatedText, currentSpread, currentDeck, selectedCards, question]);
 
-  // Обработчик выбора предустановленного вопроса
-  const handleQuestionChange = (value: string) => {
-    if (value === 'custom') {
-      setSelectedQuestionIndex('custom');
-      // Оставляем текущий пользовательский вопрос
-    } else {
-      const index = parseInt(value);
-      if (currentSpread?.questions && currentSpread.questions[index]) {
-        setSelectedQuestionIndex(value);
-        setQuestion(currentSpread.questions[index]);
-      }
-    }
-  };
-
   // Функция для подготовки промпта с данными о картах
-  const preparePrompt = () => {
+  const preparePrompt = useCallback(() => {
     if (!currentTemplate || !currentSpread || !currentDeck) return null;
     if (!question.trim()) return null; // Если вопрос не введен, не формируем промпт
+
+    console.log('Подготовка промпта для:', {
+      spreadId,
+      spreadName: currentSpread.name,
+      templateId: currentTemplate.id,
+      cardsCount: selectedCards.length
+    });
 
     // Создаем список карт с позициями для промпта
     const cardsText = selectedCards.map(card => {
@@ -271,9 +285,11 @@ ${pos.interpretation}
     // Формируем текст промпта напрямую без использования шаблона
     const promptText = `
 Вопрос пользователя: ${userQuestion}
-Расклад: ${currentSpread.name}
+Расклад: ${currentSpread.name} (количество карт: ${selectedCards.length})
 Карты и позиции:
 ${cardsText}
+
+ВАЖНО: Данный расклад "${currentSpread.name}" содержит ИМЕННО ${selectedCards.length} карт. Это НЕ расклад "Ло Шу" (который требует 9 карт). Толкуй расклад согласно его истинному названию и количеству карт.
 
 Сформируй ответ строго по описанному JSON-формату.
 Ответ ОБЯЗАТЕЛЬНО должен быть ТОЛЬКО на РУССКОМ ЯЗЫКЕ. Не переходи на английский ни в коем случае.`;
@@ -283,7 +299,16 @@ ${cardsText}
     
     // Добавляем указание на русский язык в начало системного промпта
     if (!systemPromptText.includes('ИСПОЛЬЗУЙ ТОЛЬКО РУССКИЙ ЯЗЫК')) {
-      systemPromptText = `ИСПОЛЬЗУЙ ТОЛЬКО РУССКИЙ ЯЗЫК ДЛЯ ВСЕХ ОТВЕТОВ. НЕ ИСПОЛЬЗУЙ АНГЛИЙСКИЙ НИ В КОЕМ СЛУЧАЕ.\n\n${systemPromptText}`;
+      systemPromptText = `ИСПОЛЬЗУЙ ТОЛЬКО РУССКИЙ ЯЗЫК ДЛЯ ВСЕХ ОТВЕТОВ. НЕ ИСПОЛЬЗУЙ АНГЛИЙСКИЙ НИ В КОЕМ СЛУЧАЕ.
+
+ВАЖНЫЕ ПРАВИЛА ТОЛКОВАНИЯ РАСКЛАДОВ:
+- "Одна карта" или "Карта дня" - это расклад из 1 карты
+- "Три карты" или "Прошлое настоящее будущее" - это расклад из 3 карт  
+- "Ло Шу" - это расклад из 9 карт в формате 3×3
+- НЕ путай разные расклады между собой
+- Толкуй расклад согласно его истинному названию и количеству карт
+
+${systemPromptText}`;
     }
 
     // Создаем объект запроса для генерации
@@ -307,10 +332,11 @@ ${cardsText}
         responseLang: 'russian'
       }
     };
-  };
+  }, [currentTemplate, currentSpread, currentDeck, selectedCards, question, spreadId, deckId]);
 
   // Функция для генерации текста толкования
-  const handleGenerate = () => {
+  const handleGenerate = useCallback(() => {
+    console.log('=== ОТЛАДКА ГЕНЕРАЦИИ ===');
     console.log('Текущий шаблон промпта:', currentTemplate);
     console.log('Текущий расклад:', currentSpread);
     console.log('Текущая колода:', currentDeck);
@@ -318,7 +344,10 @@ ${cardsText}
     
     const requestData = preparePrompt();
     if (requestData) {
-      console.log('Данные для отправки в LLM:', JSON.stringify(requestData, null, 2));
+      console.log('=== ФИНАЛЬНЫЕ ДАННЫЕ ДЛЯ LLM ===');
+      console.log('Системный промпт:', requestData.systemPrompt);
+      console.log('Пользовательский промпт:', requestData.prompt);
+      console.log('Параметры:', requestData.parameters);
       
       // Добавляем дополнительную отладочную информацию
       if (!requestData.prompt) {
@@ -337,151 +366,165 @@ ${cardsText}
       console.error('Не удалось подготовить данные для запроса');
       alert('Ошибка: не удалось подготовить данные для запроса. Проверьте консоль для подробностей.');
     }
-  };
+  }, [currentTemplate, currentSpread, currentDeck, selectedCards, dispatch, preparePrompt]);
+
+  // Автоматический запуск генерации после загрузки всех данных
+  useEffect(() => {
+    // Проверяем, что все необходимые данные загружены
+    if (currentTemplate && currentSpread && currentDeck && selectedCards.length > 0 && question.trim() && !isGenerating && !generatedText) {
+      console.log('Автоматический запуск генерации толкования');
+      handleGenerate();
+    }
+  }, [currentTemplate, currentSpread, currentDeck, selectedCards, question, isGenerating, generatedText, handleGenerate]);
 
   if (templateLoading) {
-    return <Spinner size="m" />;
+    return <MagicLoader text="Загружаем шаблон толкования..." size="m" />;
   }
 
   if (templateError) {
     return (
-      <Div>
+      <div style={{ padding: '16px' }}>
         <Text style={{ color: 'var(--vkui--color_text_negative)' }}>
           Ошибка: {templateError}
         </Text>
         <Button onClick={onBack} size="m" mode="secondary" style={{ marginTop: 16 }}>
           Назад
         </Button>
-      </Div>
+      </div>
     );
   }
 
   return (
-    <Group>
-      <Div>
-        <Title level="1">
-          {currentSpread ? currentSpread.name : 'Толкование расклада'}
-        </Title>
-
-        {/* Выбор предустановленных вопросов */}
-        {currentSpread?.questions && currentSpread.questions.length > 0 && (
-          <FormItem top="Выберите вопрос" style={{ marginTop: 16 }}>
-            <Select
-              value={selectedQuestionIndex}
-              onChange={(e) => handleQuestionChange(e.target.value)}
-              options={[
-                { label: 'Свой вопрос', value: 'custom' },
-                ...currentSpread.questions.map((q, index) => ({
-                  label: q,
-                  value: String(index)
-                }))
-              ]}
-            />
-          </FormItem>
-        )}
-
-        {/* Ввод пользовательского вопроса */}
-        <FormItem 
-          top={selectedQuestionIndex === 'custom' ? "Введите свой вопрос" : "Изменить вопрос (по желанию)"}
-          style={{ marginTop: 16 }}
-        >
-          <Textarea
-            value={question}
-            onChange={(e) => setQuestion(e.target.value)}
-            placeholder="Введите ваш вопрос для более точного толкования..."
+    <div style={{ 
+      padding: '16px',
+      display: 'flex',
+      justifyContent: 'center'
+    }}>
+      <div style={{
+        width: '100%',
+        background: 'url(https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/3b830249f16752184ecb361cce592c7795bcf9ad) center/cover',
+        borderRadius: '12px',
+        position: 'relative',
+        minHeight: '600px',
+        padding: '32px'
+      }}>
+        {/* Заголовок секции */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '12px',
+          marginBottom: '16px',
+          position: 'relative',
+          flexDirection: 'row',
+          textAlign: 'left'
+        }}>
+          <img
+            src={getSpreadIcon(currentSpread?.name || '')}
+            alt="Tarot spread icon"
+            style={{
+              width: '60px',
+              height: '60px',
+              objectFit: 'contain',
+              flexShrink: 0
+            }}
           />
-        </FormItem>
-
-        {/* Отображение выбранных карт */}
-        <div style={{ marginTop: 24, marginBottom: 24 }}>
-          <Title level="3" style={{ marginBottom: 12 }}>
-            Выбранные карты:
-          </Title>
-          <div style={{ 
-            display: 'flex', 
-            flexWrap: 'wrap', 
-            gap: '16px',
-            justifyContent: 'center'
-          }}>
-            {selectedCards.map((card) => {
-              const cardInfo = currentDeck?.cards?.find(c => c.id === card.cardId);
-              const positionInfo = currentSpread?.meta[card.position.toString()];
-              // Находим интерпретацию для этой карты, если она есть
-              const cardInterpretation = parsedInterpretation?.positions?.find(pos => pos.index === card.position);
-              
-              return (
-                <Card 
-                  key={`${card.position}-${card.cardId}`}
-                  style={{ 
-                    width: 80, 
-                    height: 120, 
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    backgroundColor: 'var(--vkui--color_background_secondary)',
-                    padding: '8px',
-                    transform: card.isReversed ? 'rotate(180deg)' : 'none',
-                    position: 'relative' // Для абсолютного позиционирования иконки
-                  }}
-                >
-                  {parsedInterpretation && cardInterpretation && (
-                    <div style={{ 
-                      position: 'absolute', 
-                      top: '5px', 
-                      right: '5px',
-                      transform: card.isReversed ? 'rotate(180deg)' : 'none',
-                      zIndex: 1
-                    }}>
-                      <CustomTooltip
-                        content={`${positionInfo?.label || `Позиция ${card.position}`}: ${cardInterpretation.interpretation}`}
-                        ariaLabel={`Показать толкование карты ${cardInfo?.name || card.cardId} в позиции ${positionInfo?.label || `Позиция ${card.position}`}`}
-                      />
-                    </div>
-                  )}
-                  
-                  <Text style={{ 
-                    textAlign: 'center',
-                    transform: card.isReversed ? 'rotate(180deg)' : 'none',
-                    fontSize: '12px'
-                  }}>
-                    {positionInfo?.label || `Позиция ${card.position}`}
-                    <br />
-                    {cardInfo?.name || card.cardId}
-                  </Text>
-                </Card>
-              );
-            })}
+          <div>
+            <h1 style={{
+              color: '#ffffff',
+              fontSize: '24px',
+              fontWeight: '400',
+              margin: 0,
+              fontFamily: 'Jost, -apple-system, BlinkMacSystemFont, sans-serif',
+              lineHeight: 1.2
+            }}>
+              Толкование расклада
+            </h1>
+            <Text style={{ 
+              color: 'rgba(255, 255, 255, 0.9)', 
+              fontSize: '14px',
+              marginTop: '4px',
+              fontFamily: 'Jost, -apple-system, BlinkMacSystemFont, sans-serif',
+              lineHeight: 1.2
+            }}>
+              {currentSpread ? currentSpread.name : 'Результат гадания'}
+            </Text>
           </div>
         </div>
 
-        {/* Кнопка генерации и результат */}
-        <Div style={{ 
-          display: 'flex', 
-          flexDirection: 'column', 
-          gap: '16px',
-          marginTop: 24,
-          marginBottom: 16
+        {/* Декоративный элемент */}
+        <div style={{
+          display: 'flex',
+          justifyContent: 'center',
+          marginBottom: '16px',
+          position: 'relative'
         }}>
-          <Button 
-            size="m" 
-            mode="primary" 
-            onClick={handleGenerate}
-            disabled={isGenerating || selectedCards.length === 0}
-            loading={isGenerating}
-            stretched
-          >
-            {isGenerating ? 'Генерация...' : 'Получить толкование'}
-          </Button>
+          <img
+            src="https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/a73aa4a82442cd6022e0ae5e650a0c240ffa4f01"
+            alt="Decorative element"
+            style={{
+              width: '90px',
+              height: 'auto',
+              objectFit: 'contain'
+            }}
+          />
+        </div>
 
-          {!question.trim() && (
-            <Text style={{ color: 'var(--vkui--color_text_negative)' }}>
-              Пожалуйста, введите ваш вопрос для получения толкования
-            </Text>
-          )}
+        {/* Разделитель */}
+        <div style={{
+          width: '100%',
+          height: '2px',
+          background: 'url(https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/bf65c29bb76ac59b655e89bb29946e4f00f49a6d) center/cover',
+          marginBottom: '32px'
+        }} />
 
-          {generationError && (
-            <Text style={{ color: 'var(--vkui--color_text_negative)' }}>
+        {/* Секция с вопросом */}
+        {question.trim() && (
+          <div style={{ marginBottom: '24px' }}>
+            <h3 style={{ 
+              marginBottom: 16, 
+              fontSize: '16px', 
+              textAlign: 'center',
+              color: '#ffffff',
+              fontWeight: '300',
+              margin: '0 0 16px 0',
+              fontFamily: 'Jost, -apple-system, BlinkMacSystemFont, sans-serif'
+            }}>
+              Ваш вопрос
+            </h3>
+            
+            <div style={{ 
+              marginBottom: '24px',
+              textAlign: 'center'
+            }}>
+              <Text style={{ 
+                color: 'rgba(255, 255, 255, 0.9)',
+                fontSize: '24px',
+                fontStyle: 'italic',
+                fontFamily: 'Jost, -apple-system, BlinkMacSystemFont, sans-serif'
+              }}>
+                "{question}"
+              </Text>
+            </div>
+          </div>
+        )}
+
+        {/* Индикатор генерации */}
+        {isGenerating && (
+          <div style={{ 
+            marginBottom: '24px'
+          }}>
+            <MagicLoader text="Генерируется толкование..." size="m" />
+          </div>
+        )}
+
+        {/* Ошибка генерации */}
+        {generationError && (
+          <div style={{ 
+            padding: '16px',
+            marginBottom: '24px',
+            textAlign: 'center'
+          }}>
+            <Text style={{ color: 'var(--vkui--color_text_negative)', fontSize: '16px' }}>
               {generationError.includes("не относится к таро") ? 
                 generationError : 
                 <>
@@ -493,109 +536,195 @@ ${cardsText}
                 </>
               }
             </Text>
-          )}
-        </Div>
+          </div>
+        )}
 
-        {/* Результат генерации */}
+        {/* Результат толкования в стиле InstructionsPanel */}
         {parsedInterpretation && (
-          <Card mode="shadow" style={{ 
-            padding: '16px', 
-            marginTop: 8, 
-            marginBottom: 16,
-            backgroundColor: 'var(--vkui--color_background_secondary)'
+          <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            width: '100%',
+            marginBottom: '24px'
           }}>
-            <Title level="3" style={{ marginBottom: 12 }}>
-              Толкование:
-            </Title>
-            
-            {parsedInterpretation.error ? (
-              <Text style={{ color: 'var(--vkui--color_text_negative)', marginBottom: 16 }}>
-                {parsedInterpretation.message}
-              </Text>
-            ) : (
-              <>
+            <div style={{
+              background: 'rgba(0,0,0,0.2)',
+              display: 'flex',
+              width: '100%',
+              flexDirection: 'column',
+              alignItems: 'stretch',
+              justifyContent: 'center',
+              padding: '16px',
+              borderRadius: '0 0 8px 8px',
+              borderTop: '1px solid rgba(227,199,122,1)'
+            }}>
+              {/* Заголовок толкования с кнопками */}
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                marginBottom: '16px'
+              }}>
+                <h3 style={{
+                  color: '#ffffff',
+                  fontSize: '18px',
+                  fontWeight: '400',
+                  margin: 0,
+                  fontFamily: 'Jost, -apple-system, BlinkMacSystemFont, sans-serif'
+                }}>
+                  ТОЛКОВАНИЕ
+                </h3>
+                
+                {!parsedInterpretation.error && (
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <Button
+                      mode="tertiary"
+                      size="s"
+                      before={<Icon24Download />}
+                      onClick={handleDownloadPDF}
+                    >
+                      Скачать
+                    </Button>
+                    <Button
+                      mode="tertiary"
+                      size="s"
+                      before={<Icon24Share />}
+                      onClick={handleShareToVK}
+                    >
+                      Поделиться
+                    </Button>
+                  </div>
+                )}
+              </div>
+
+              {/* Основное толкование */}
+              {parsedInterpretation.error ? (
                 <Text style={{ 
-                  lineHeight: '1.5', 
-                  marginBottom: '16px',
-                  fontSize: '16px'
+                  color: 'var(--vkui--color_text_negative)', 
+                  fontSize: '16px',
+                  fontFamily: 'Jost, -apple-system, BlinkMacSystemFont, sans-serif'
                 }}>
                   {parsedInterpretation.message}
                 </Text>
+              ) : (
+                <>
+                  <Text style={{ 
+                    color: 'white',
+                    fontSize: '16px',
+                    fontWeight: '300',
+                    lineHeight: 1.5,
+                    marginBottom: '16px',
+                    fontFamily: 'Jost, -apple-system, BlinkMacSystemFont, sans-serif'
+                  }}>
+                    {parsedInterpretation.message}
+                  </Text>
 
-                {parsedInterpretation.positions && parsedInterpretation.positions.length > 0 && (
-                  <Accordion>
-                    <Accordion.Summary>
-                      <Title level="3" style={{ marginTop: 8 }}>Подробное толкование каждой карты</Title>
-                    </Accordion.Summary>
-                    <Accordion.Content>
-                      <div style={{ marginTop: '16px' }}>
-                        {parsedInterpretation.positions.map((pos) => {
-                          const position = selectedCards.find(card => card.position === pos.index);
-                          const positionInfo = position && currentSpread?.meta[position.position.toString()];
-                          const positionLabel = positionInfo?.label || `Позиция ${pos.index}`;
-                          
-                          return (
-                            <div key={pos.index} style={{ marginBottom: '16px' }}>
-                              <Text weight="3" style={{ marginBottom: '4px' }}>
-                                {positionLabel}:
-                              </Text>
-                              <Text style={{ lineHeight: '1.5' }}>
-                                {pos.interpretation}
-                              </Text>
+                  {/* Детальное толкование карт в стиле instruction panel */}
+                  {parsedInterpretation.positions && parsedInterpretation.positions.length > 0 && (
+                    <div style={{ marginTop: '16px' }}>
+                      {parsedInterpretation.positions.map((pos, index) => {
+                        const position = selectedCards.find(card => card.position === pos.index);
+                        const positionInfo = position && currentSpread?.meta[position.position.toString()];
+                        const positionLabel = positionInfo?.label || `Позиция ${pos.index}`;
+                        const cardInfo = position && currentDeck?.cards?.find(c => c.id === position.cardId);
+                        const cardName = cardInfo?.name || 'Неизвестная карта';
+                        const reversedText = position?.isReversed ? ' (Перевернутая)' : '';
+                        
+                        return (
+                          <div key={pos.index} style={{
+                            display: 'flex',
+                            width: '100%',
+                            alignItems: 'flex-start',
+                            gap: '16px',
+                            marginBottom: index < parsedInterpretation.positions.length - 1 ? '16px' : '0',
+                            lineHeight: 1.3
+                          }}>
+                            <div style={{
+                              border: '1px solid rgba(151,128,65,0.25)',
+                              display: 'flex',
+                              height: '32px',
+                              width: '32px',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              fontSize: '14px',
+                              color: 'rgba(210,175,80,1)',
+                              fontWeight: '500',
+                              textAlign: 'center',
+                              borderRadius: '50%',
+                              flexShrink: 0
+                            }}>
+                              {index + 1}
                             </div>
-                          );
-                        })}
-                      </div>
-                    </Accordion.Content>
-                  </Accordion>
-                )}
-              </>
-            )}
-          </Card>
-        )}
-
-        {/* Кнопки действий с результатом */}
-        {parsedInterpretation && !parsedInterpretation.error && (
-          <Div style={{ marginTop: 16, marginBottom: 8 }}>
-            <div style={{ 
-              display: 'flex', 
-              gap: '12px', 
-              justifyContent: 'center',
-              flexWrap: 'wrap'
-            }}>
-              <Button
-                mode="primary"
-                size="m"
-                before={<Icon24Download />}
-                onClick={handleDownloadPDF}
-              >
-                Скачать
-              </Button>
-              <Button
-                mode="secondary"
-                size="m"
-                before={<Icon24Share />}
-                onClick={handleShareToVK}
-              >
-                Поделиться в VK
-              </Button>
+                            <div style={{
+                              color: 'white',
+                              fontSize: '16px',
+                              fontWeight: '300',
+                              flex: '1',
+                              fontFamily: 'Jost, -apple-system, BlinkMacSystemFont, sans-serif'
+                            }}>
+                              <div style={{
+                                fontWeight: '400',
+                                marginBottom: '4px',
+                                color: 'rgba(210,175,80,1)'
+                              }}>
+                                {positionLabel} — {cardName}{reversedText}
+                              </div>
+                              <div>
+                                {pos.interpretation}
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </>
+              )}
             </div>
-          </Div>
+          </div>
         )}
 
-        <Div style={{ marginTop: 24 }}>
-          <Button 
+        {/* Нижний разделитель */}
+        <div style={{
+          width: '100%',
+          height: '2px',
+          background: 'url(https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/bf65c29bb76ac59b655e89bb29946e4f00f49a6d) center/cover',
+          marginTop: '24px',
+          marginBottom: '16px'
+        }} />
+
+        {/* Нижний декоративный элемент */}
+        <div style={{
+          display: 'flex',
+          justifyContent: 'center'
+        }}>
+          <img
+            src="https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/154f96a15bcd974fd38495f6f7aeec22f8b9613a"
+            alt="Decorative element"
+            style={{
+              width: '90px',
+              height: 'auto',
+              objectFit: 'contain'
+            }}
+          />
+        </div>
+
+        {/* Кнопка назад */}
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'flex-end',
+          marginTop: '24px'
+        }}>
+          <CustomButton 
+            variant="secondary"
             size="m" 
-            mode="secondary" 
             onClick={onBack}
-            stretched
+            style={{ minWidth: '120px' }}
           >
             Назад
-          </Button>
-        </Div>
-      </Div>
-    </Group>
+          </CustomButton>
+        </div>
+      </div>
+    </div>
   );
-};
-
-export default TaroReading; 
+}; 
