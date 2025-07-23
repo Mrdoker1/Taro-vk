@@ -85,8 +85,14 @@ const prepareRequestData = (requestData: GenerationRequest) => {
           const spreadText = spreadName ? `Расклад: ${spreadName}` : '';
           const cardsTitle = 'Карты и позиции:';
           
+          // Определяем язык ответа
+          const isRussian = parameters.responseLang === 'russian';
+          const languageInstruction = isRussian 
+            ? 'Ответ ОБЯЗАТЕЛЬНО должен быть ТОЛЬКО на РУССКОМ ЯЗЫКЕ. Не переходи на английский ни в коем случае.'
+            : 'Answer MUST be ONLY in ENGLISH. Do not switch to Russian under any circumstances.';
+          
           // Основной текст промпта
-          promptText = `${questionText}\n${spreadText}\n${cardsTitle}\n${cardsText || ''}\n\nСформируй ответ строго по описанному JSON-формату.\nОтвет ОБЯЗАТЕЛЬНО должен быть ТОЛЬКО на РУССКОМ ЯЗЫКЕ. Не переходи на английский ни в коем случае.`;
+          promptText = `${questionText}\n${spreadText}\n${cardsTitle}\n${cardsText || ''}\n\nСформируй ответ строго по описанному JSON-формату.\n${languageInstruction}`;
         } else {
           // Если в промпте есть плейсхолдеры, заменяем их
           promptText = promptText
@@ -94,8 +100,11 @@ const prepareRequestData = (requestData: GenerationRequest) => {
             .replace('{{spreadName}}', spreadName || '')
             .replace('{{cards}}', cardsText || '');
           
-          // Добавляем требование русского языка
-          promptText += '\nОтвет ОБЯЗАТЕЛЬНО должен быть ТОЛЬКО на языке, указанном в поле responseLang.';
+          // Добавляем требование языка в зависимости от параметров
+          const languageRequirement = parameters.responseLang === 'russian' 
+            ? '\nОтвет ОБЯЗАТЕЛЬНО должен быть ТОЛЬКО на РУССКОМ языке.'
+            : '\nAnswer MUST be ONLY in ENGLISH.';
+          promptText += languageRequirement;
         }
       }
       break;
@@ -128,12 +137,9 @@ const prepareRequestData = (requestData: GenerationRequest) => {
     ВАЖНО: Весь ответ должен быть ТОЛЬКО на РУССКОМ языке. Не используй английский язык ни в коем случае.`;
   }
 
-  // Если язык ответа - русский, принудительно добавляем требование русского языка в начало системного промпта
-  if (parameters.responseLang === 'russian' && !systemPrompt.startsWith('ИСПОЛЬЗУЙ ТОЛЬКО РУССКИЙ ЯЗЫК')) {
-    systemPrompt = `ИСПОЛЬЗУЙ ТОЛЬКО РУССКИЙ ЯЗЫК ДЛЯ ВСЕХ ОТВЕТОВ. НЕ ИСПОЛЬЗУЙ АНГЛИЙСКИЙ НИ В КОЕМ СЛУЧАЕ.\n\n${systemPrompt}`;
-  } else if (parameters.responseLang === 'english' && !systemPrompt.startsWith('USE ONLY ENGLISH')) {
-    systemPrompt = `USE ONLY ENGLISH FOR ALL RESPONSES. DO NOT USE ANY OTHER LANGUAGE.\n\n${systemPrompt}`;
-  }
+  // НЕ добавляем языковые инструкции здесь, если они уже есть в systemPrompt
+  // (TaroReading.tsx сам управляет языковыми инструкциями)
+  console.log('Системный промпт из generationSlice (БЕЗ дополнительных языковых инструкций):', systemPrompt);
 
   // Формируем итоговый объект запроса
   interface RequestObject {
@@ -244,6 +250,13 @@ export const generateText = createAsyncThunk(
           text: JSON.stringify(data)
         };
       } else {
+        // Проверяем, есть ли в данных поле error - это означает, что LLM вернула ошибку
+        if (data.error === true) {
+          const errorMsg = data.message || 'LLM вернула ошибку в ответе';
+          console.log('LLM вернула ошибку:', errorMsg);
+          return rejectWithValue(errorMsg);
+        }
+        
         // Пытаемся предположить, что ответ уже в нужном формате и просто преобразуем его в строку
         console.log('Получен ответ в неизвестном формате, пробуем преобразовать в JSON:', data);
         try {

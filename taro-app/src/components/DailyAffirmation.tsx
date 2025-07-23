@@ -15,7 +15,7 @@ import {
 } from '@vkontakte/vkui';
 import { Icon24Download, Icon24Share } from '@vkontakte/icons';
 import { useAppDispatch, useAppSelector } from '../store';
-import { fetchPromptTemplate } from '../store/slices/promptSlice';
+import { fetchPromptTemplate, clearCurrentTemplate } from '../store/slices/promptSlice';
 import { generateText, clearGeneratedText } from '../store/slices/generationSlice';
 import { ApiType, getLanguageForApi } from '../utils/languageUtils';
 import { saveAffirmationToCalendar } from '../utils/calendarUtils';
@@ -178,11 +178,15 @@ ${parsedAffirmation.usage}
   useEffect(() => {
     // Очищаем предыдущие результаты генерации при входе на страницу
     dispatch(clearGeneratedText());
+    // Очищаем предыдущий шаблон промпта (важно для переключения между раскладами и аффирмациями)
+    dispatch(clearCurrentTemplate());
+    // Загружаем новый шаблон для аффирмаций
     dispatch(fetchPromptTemplate({ promptId: 'daily-affirmation', lang }));
     
     // Очищаем результаты при размонтировании компонента
     return () => {
       dispatch(clearGeneratedText());
+      dispatch(clearCurrentTemplate());
     };
   }, [dispatch, lang]);
   

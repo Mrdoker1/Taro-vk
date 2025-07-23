@@ -10,6 +10,7 @@ import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
 import { useAppDispatch, useAppSelector } from '../store';
 import { setSign, setLanguage } from '../store/slices/horoscopeSlice';
 import { setUseManualCardSelection } from '../store/slices/appSlice';
+import { clearCurrentTemplate } from '../store/slices/promptSlice';
 import { AppHeader } from '../components/AppHeader';
 import { Footer } from '../components/Footer';
 import { StarButton } from '../components/StarButton';
@@ -57,6 +58,8 @@ export const Settings: FC<SettingsProps> = ({ id }) => {
   };
 
   const handleLanguageChange = (value: string) => {
+    // Очищаем текущий промпт при смене языка, чтобы загрузился новый
+    dispatch(clearCurrentTemplate());
     dispatch(setLanguage(value as AppLanguage));
   };
 

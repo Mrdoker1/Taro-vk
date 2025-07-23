@@ -43,6 +43,7 @@ export const TaroReading: React.FC<TaroReadingProps> = ({
   const { currentDeck } = useAppSelector((state) => state.taroDecks); 
   const { currentTemplate, templateLoading, templateError } = useAppSelector((state) => state.prompt);
   const { generatedText, isGenerating, generationError } = useAppSelector((state) => state.generation);
+  const { lang } = useAppSelector((state) => state.horoscope); // Получаем выбранный язык
   const question = propUserQuestion || ''; // Используем переданный вопрос вместо локального состояния
   const [parsedInterpretation, setParsedInterpretation] = useState<ParsedInterpretation | null>(null);
 
@@ -177,11 +178,11 @@ ${pos.interpretation}
   // Получаем шаблон промпта для выбранного расклада
   useEffect(() => {
     if (spreadId) {
-      console.log('Запрос шаблона промпта для расклада:', spreadId);
+      console.log('Запрос шаблона промпта для расклада:', spreadId, 'язык:', lang);
       // Очищаем предыдущий шаблон промпта
       dispatch(clearCurrentTemplate());
-      // Загружаем новый шаблон
-      dispatch(fetchPromptTemplate({ promptId: spreadId }));
+      // Загружаем новый шаблон с учетом языка
+      dispatch(fetchPromptTemplate({ promptId: spreadId, lang }));
     }
     
     // Очищаем предыдущий результат генерации
@@ -192,7 +193,13 @@ ${pos.interpretation}
       console.log('Запрос информации о колоде:', deckId);
       dispatch(fetchDeckDetails({ deckId }));
     }
-  }, [dispatch, spreadId, deckId]);
+
+    // Очищаем при размонтировании компонента
+    return () => {
+      dispatch(clearGeneratedText());
+      dispatch(clearCurrentTemplate());
+    };
+  }, [dispatch, spreadId, deckId, lang]); // Добавили lang в зависимости
 
   // Парсим полученный результат толкования в JSON
   useEffect(() => {
@@ -202,6 +209,18 @@ ${pos.interpretation}
         // Пытаемся распарсить JSON
         const parsedResult = JSON.parse(generatedText);
         console.log('Успешно распарсили JSON:', parsedResult);
+        
+        // Проверяем, есть ли ошибка в ответе от LLM
+        if (parsedResult.error === true) {
+          console.log('LLM вернула ошибку:', parsedResult.message);
+          setParsedInterpretation({
+            message: parsedResult.message,
+            positions: [],
+            error: true
+          });
+          return;
+        }
+        
         if (parsedResult.message) {
           setParsedInterpretation(parsedResult);
           
@@ -279,8 +298,8 @@ ${pos.interpretation}
     // Получаем текущий вопрос
     const userQuestion = question.trim();
 
-    // Принудительно устанавливаем русский язык
-    const responseLang = 'russian'; 
+    // Используем выбранный пользователем язык
+    const responseLang = lang; 
 
     // Формируем текст промпта напрямую без использования шаблона
     const promptText = `
@@ -292,14 +311,36 @@ ${cardsText}
 ВАЖНО: Данный расклад "${currentSpread.name}" содержит ИМЕННО ${selectedCards.length} карт. Это НЕ расклад "Ло Шу" (который требует 9 карт). Толкуй расклад согласно его истинному названию и количеству карт.
 
 Сформируй ответ строго по описанному JSON-формату.
-Ответ ОБЯЗАТЕЛЬНО должен быть ТОЛЬКО на РУССКОМ ЯЗЫКЕ. Не переходи на английский ни в коем случае.`;
+Отвечай на языке: ${responseLang === 'russian' ? 'русский' : 'английский'}.`;
 
-    // Дополняем системный промпт требованием русского языка
+    // Дополняем системный промпт требованием нужного языка
     let systemPromptText = currentTemplate.systemPrompt || '';
     
-    // Добавляем указание на русский язык в начало системного промпта
-    if (!systemPromptText.includes('ИСПОЛЬЗУЙ ТОЛЬКО РУССКИЙ ЯЗЫК')) {
-      systemPromptText = `ИСПОЛЬЗУЙ ТОЛЬКО РУССКИЙ ЯЗЫК ДЛЯ ВСЕХ ОТВЕТОВ. НЕ ИСПОЛЬЗУЙ АНГЛИЙСКИЙ НИ В КОЕМ СЛУЧАЕ.
+    console.log('=== ОТЛАДКА ЯЗЫКОВЫХ ИНСТРУКЦИЙ ===');
+    console.log('Исходный системный промпт из шаблона:', systemPromptText);
+    console.log('Выбранный язык:', lang);
+    
+    // Добавляем указание на выбранный язык в начало системного промпта
+    const languageInstruction = lang === 'russian' 
+      ? 'ИСПОЛЬЗУЙ ТОЛЬКО РУССКИЙ ЯЗЫК ДЛЯ ВСЕХ ОТВЕТОВ. НЕ ИСПОЛЬЗУЙ АНГЛИЙСКИЙ НИ В КОЕМ СЛУЧАЕ.'
+      : 'USE ONLY ENGLISH FOR ALL RESPONSES. DO NOT USE RUSSIAN UNDER ANY CIRCUMSTANCES.';
+    
+    console.log('Нужная языковая инструкция:', languageInstruction);
+    
+    // Сначала удаляем ВСЕ существующие языковые инструкции с более широкими паттернами
+    const originalLength = systemPromptText.length;
+    systemPromptText = systemPromptText
+      .replace(/ИСПОЛЬЗУЙ ТОЛЬКО РУССКИЙ ЯЗЫК.*?СЛУЧАЕ\./gs, '')
+      .replace(/USE ONLY ENGLISH.*?CIRCUMSTANCES\./gs, '')
+      .replace(/НЕ ИСПОЛЬЗУЙ АНГЛИЙСКИЙ.*?\./g, '')
+      .replace(/DO NOT USE RUSSIAN.*?\./g, '')
+      .trim();
+    
+    console.log('После очистки языковых инструкций:', systemPromptText);
+    console.log('Удалено символов:', originalLength - systemPromptText.length);
+    
+    // Затем добавляем только нужную языковую инструкцию
+    systemPromptText = `${languageInstruction}
 
 ВАЖНЫЕ ПРАВИЛА ТОЛКОВАНИЯ РАСКЛАДОВ:
 - "Одна карта" или "Карта дня" - это расклад из 1 карты
@@ -309,32 +350,31 @@ ${cardsText}
 - Толкуй расклад согласно его истинному названию и количеству карт
 
 ${systemPromptText}`;
-    }
+
+    console.log('Финальный системный промпт:', systemPromptText);
 
     // Создаем объект запроса для генерации
     return {
       prompt: promptText,
       systemPrompt: systemPromptText,
-      parameters: {
-        temperature: currentTemplate.temperature || 0.7,
-        maxTokens: currentTemplate.maxTokens || 800,
-        responseLang: responseLang,
-        language: 'russian',
-        outputLanguage: 'russian'
-      },
-      taroContext: {
-        spreadId,
-        deckId,
-        spreadName: currentSpread.name,
-        cards: selectedCards,
-        question: userQuestion,
-        cardsText,
-        responseLang: 'russian'
-      }
-    };
-  }, [currentTemplate, currentSpread, currentDeck, selectedCards, question, spreadId, deckId]);
-
-  // Функция для генерации текста толкования
+        parameters: {
+          temperature: currentTemplate.temperature || 0.7,
+          maxTokens: currentTemplate.maxTokens || 800,
+          responseLang: responseLang,
+          language: responseLang,
+          outputLanguage: responseLang
+        },
+        taroContext: {
+          spreadId,
+          deckId,
+          spreadName: currentSpread.name,
+          cards: selectedCards,
+          question: userQuestion,
+          cardsText,
+          responseLang: responseLang
+        }
+      };
+    }, [currentTemplate, currentSpread, currentDeck, selectedCards, question, spreadId, deckId, lang]);  // Функция для генерации текста толкования
   const handleGenerate = useCallback(() => {
     console.log('=== ОТЛАДКА ГЕНЕРАЦИИ ===');
     console.log('Текущий шаблон промпта:', currentTemplate);
@@ -370,12 +410,12 @@ ${systemPromptText}`;
 
   // Автоматический запуск генерации после загрузки всех данных
   useEffect(() => {
-    // Проверяем, что все необходимые данные загружены
-    if (currentTemplate && currentSpread && currentDeck && selectedCards.length > 0 && question.trim() && !isGenerating && !generatedText) {
-      console.log('Автоматический запуск генерации толкования');
+    // Проверяем, что все необходимые данные загружены И НЕТ ОШИБКИ генерации
+    if (currentTemplate && currentSpread && currentDeck && selectedCards.length > 0 && question.trim() && !isGenerating && !generatedText && !generationError) {
+      console.log('Автоматический запуск генерации толкования на языке:', lang);
       handleGenerate();
     }
-  }, [currentTemplate, currentSpread, currentDeck, selectedCards, question, isGenerating, generatedText, handleGenerate]);
+  }, [currentTemplate, currentSpread, currentDeck, selectedCards, question, isGenerating, generatedText, generationError, handleGenerate, lang]);
 
   if (templateLoading) {
     return <MagicLoader text="Загружаем шаблон толкования..." size="m" />;
