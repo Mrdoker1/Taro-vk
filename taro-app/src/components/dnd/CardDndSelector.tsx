@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { DndContext, DragOverlay, DragEndEvent, DragStartEvent, DragOverEvent, useSensor, useSensors, PointerSensor, TouchSensor, MouseSensor } from '@dnd-kit/core';
-import { Text, Switch, IconButton } from '@vkontakte/vkui';
-import { Icon24Settings } from '@vkontakte/icons';
+import { Text, IconButton } from '@vkontakte/vkui';
+import { Icon24MoreHorizontal, Icon24Delete } from '@vkontakte/icons';
 import CardDeck from './CardDeck';
 import DroppablePosition from './DroppablePosition';
 import DraggableCard from './DraggableCard';
 import { CustomButton } from '../CustomButton';
+import { CustomToggle } from '../CustomToggle';
 import { InstructionsPanel } from '../InstructionsPanel';
 import shuffleIcon from '../../assets/shuffle.svg';
 
@@ -41,42 +42,6 @@ interface CardData {
   image?: string;
 }
 
-const AnimatedPanel: React.FC<{
-  visible: boolean;
-  children: React.ReactNode;
-  style?: React.CSSProperties;
-}> = ({ visible, children, style }) => {
-  const [mounted, setMounted] = useState(false);
-  
-  useEffect(() => {
-    if (visible) {
-      setMounted(true);
-    } else {
-      const timeout = setTimeout(() => {
-        setMounted(false);
-      }, 300); // время анимации
-      return () => clearTimeout(timeout);
-    }
-  }, [visible]);
-  
-  if (!mounted && !visible) {
-    return null;
-  }
-  
-  return (
-    <div
-      style={{
-        ...style,
-        opacity: visible ? 1 : 0,
-        transform: visible ? 'translateY(0)' : 'translateY(10px)',
-        transition: 'opacity 0.3s ease, transform 0.3s ease',
-      }}
-    >
-      {children}
-    </div>
-  );
-};
-
 export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
   spreadName,
   deckName,
@@ -96,6 +61,7 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
   const [activeControlsPosition, setActiveControlsPosition] = useState<number | null>(null);
   const [isShuffling, setIsShuffling] = useState<boolean>(false);
   const [windowWidth, setWindowWidth] = useState<number>(typeof window !== 'undefined' ? window.innerWidth : 1024);
+  const buttonRef = useRef<HTMLDivElement>(null);
   
   // Функция для определения иконки расклада по названию
   const getSpreadIcon = (spreadName: string): string => {
@@ -125,17 +91,29 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
       setWindowWidth(window.innerWidth);
     };
 
-    // Добавляем слушатель события изменения размера окна
+    // Функция для закрытия меню при клике вне его
+    const handleClickOutside = (event: MouseEvent) => {
+      if (activeControlsPosition !== null) {
+        const target = event.target as Element;
+        if (!target.closest('[data-dropdown-button]') && !target.closest('[data-dropdown-menu]')) {
+          setActiveControlsPosition(null);
+        }
+      }
+    };
+
+    // Добавляем слушатели событий
     window.addEventListener('resize', handleResize);
+    document.addEventListener('click', handleClickOutside);
     
     // Устанавливаем начальный размер
     setWindowWidth(window.innerWidth);
 
-    // Очищаем слушатель при размонтировании компонента
+    // Очищаем слушатели при размонтировании компонента
     return () => {
       window.removeEventListener('resize', handleResize);
+      document.removeEventListener('click', handleClickOutside);
     };
-  }, []);
+  }, [activeControlsPosition]);
   
   // Инициализация сенсоров для перетаскивания - улучшенные настройки для мобильных устройств
   const sensors = useSensors(
@@ -351,7 +329,8 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
         marginBottom: 8,
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'center'
+        alignItems: 'center',
+        zIndex: showControls ? 10000 : 10 // Поднимаем позицию карты выше при открытом меню
       }}>
         <DroppablePosition
           id={`position-${position}`}
@@ -359,7 +338,12 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
           isOccupied={isOccupied}
         >
           {selectedCard && (
-            <div style={{ width: '100%', height: '100%', position: 'relative' }}>
+            <div style={{ 
+              width: '100%', 
+              height: '100%', 
+              position: 'relative',
+              zIndex: showControls ? 10000 : 1 // Поднимаем контейнер выше когда меню открыто
+            }}>
               <DraggableCard
                 id={`placed-${selectedCard.cardId}-${position}`}
                 cardData={getCardById(selectedCard.cardId) || { id: selectedCard.cardId, name: 'Карта' }}
@@ -368,91 +352,105 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
                 disabled={true}
               />
               
-              {/* Кнопка с иконкой настроек для открытия панели управления */}
-              <div style={{ 
-                position: 'absolute', 
-                top: '6px', 
-                right: '6px', 
-                zIndex: 60,
-              }}>
+              {/* Кнопка с иконкой троеточия для открытия выпадающего меню */}
+              <div 
+                ref={buttonRef}
+                data-dropdown-button
+                style={{ 
+                  position: 'absolute', 
+                  top: '6px', 
+                  right: '6px', 
+                  zIndex: '10'
+                }}>
                 <IconButton
                   onClick={() => toggleControls(position)}
                   style={{
                     backgroundColor: showControls ? 'rgba(0, 123, 255, 0.8)' : 'rgba(0, 0, 0, 0.4)',
-                    borderRadius: '50%',
+                    borderRadius: '4px', // Делаем квадратным
                     padding: '6px',
+                    width: '30px', // Фиксированная ширина для квадрата
+                    height: '30px', // Фиксированная высота для квадрата
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
                     boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
                     transition: 'background-color 0.3s ease'
                   }}
                 >
-                  <Icon24Settings fill="#ffffff" width={18} height={18} />
+                  <Icon24MoreHorizontal fill="#ffffff" width={18} height={18} />
                 </IconButton>
               </div>
               
-              {/* Панель управления с анимацией */}
-              <AnimatedPanel
-                visible={showControls}
-                style={{ 
-                  position: 'absolute', 
-                  bottom: '0', 
-                  left: '0', 
-                  right: '0',
-                  padding: '8px 6px 6px',
-                  borderBottomLeftRadius: '8px',
-                  borderBottomRightRadius: '8px',
-                  background: 'linear-gradient(to top, rgba(0,0,0,0.8) 60%, rgba(0,0,0,0.5) 85%, rgba(0,0,0,0) 100%)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '8px',
-                  zIndex: 50
-                }}
-              >
-                {/* Блок с переключателем и подписью */}
-                <div style={{ 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  justifyContent: 'center',
-                  width: '100%',
-                  backgroundColor: 'rgba(255,255,255,0.15)',
-                  padding: '6px',
-                  borderRadius: '6px'
-                }}>
-                  <Switch 
-                    checked={selectedCard.isReversed}
-                    onChange={() => {
-                      handleCardReversedToggle(position);
-                    }}
-                    style={{ position: 'relative', zIndex: 55 }}
-                  />
-                  <Text style={{ 
-                    color: 'white', 
-                    marginLeft: '8px', 
-                    fontSize: '13px', 
-                    fontWeight: 'medium',
-                    position: 'relative',
-                    zIndex: 55
+              {/* Выпадающее меню */}
+              {showControls && (
+                <div 
+                  data-dropdown-menu
+                  style={{
+                    position: 'absolute',
+                    top: '36px',
+                    right: '6px',
+                    transform: 'translateX(50%)',
+                    zIndex: 9999,
+                    background: 'rgba(0, 0, 0, 0.9)',
+                    borderRadius: '8px',
+                    padding: windowWidth <= 768 ? '10px' : '12px',
+                    minWidth: windowWidth <= 768 ? '140px' : '160px',
+                    maxWidth: windowWidth <= 768 ? '160px' : '180px',
+                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    backdropFilter: 'blur(10px)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: windowWidth <= 768 ? '10px' : '12px'
                   }}>
-                    {selectedCard.isReversed ? 'Перевёрнута' : 'Прямая'}
-                  </Text>
+                  
+                  {/* Блок с переключателем */}
+                  <div style={{ 
+                    width: '100%'
+                  }}>
+                    <CustomToggle
+                      checked={selectedCard.isReversed || false}
+                      onChange={() => handleCardReversedToggle(position)}
+                      label={selectedCard.isReversed ? 'Перевёрнута' : 'Прямая'}
+                    />
+                  </div>
+                  
+                  {/* Кнопка удаления */}
+                  <button
+                    onClick={() => {
+                      handleRemoveCard(position);
+                      setActiveControlsPosition(null);
+                    }}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: 'white',
+                      fontSize: windowWidth <= 768 ? '12px' : '13px',
+                      fontWeight: 'medium',
+                      padding: windowWidth <= 768 ? '8px 10px' : '10px 12px',
+                      borderRadius: '4px',
+                      cursor: 'pointer',
+                      transition: 'background-color 0.2s ease',
+                      textAlign: 'left',
+                      width: '100%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = 'transparent';
+                    }}
+                  >
+                    <Icon24Delete fill="white" width={16} height={16} />
+                    Удалить карту
+                  </button>
                 </div>
-                
-                {/* Кнопка удаления */}
-                <CustomButton 
-                  variant="secondary"
-                  size="s"
-                  onClick={() => {
-                    handleRemoveCard(position);
-                    setActiveControlsPosition(null);
-                  }}
-                  style={{ 
-                    width: '100px',
-                    position: 'relative',
-                    zIndex: 55
-                  }}
-                >
-                  Удалить
-                </CustomButton>
-              </AnimatedPanel>
+              )}
+              
+              {/* Выпадающее меню теперь рендерится здесь */}
             </div>
           )}
         </DroppablePosition>
@@ -483,7 +481,7 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
         width: '100%',
         background: 'url(https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/3b830249f16752184ecb361cce592c7795bcf9ad) center/cover',
         borderRadius: '12px',
-        overflow: 'hidden',
+        // overflow: 'hidden',
         position: 'relative',
         minHeight: '600px',
         padding: windowWidth <= 768 ? '24px 16px' : '32px'
