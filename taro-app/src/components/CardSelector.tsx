@@ -32,7 +32,7 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
   const { useManualCardSelection } = useAppSelector((state) => state.app);
   const [selectedCards, setSelectedCards] = useState<SelectedCard[]>([]);
   const [allPositions, setAllPositions] = useState<number[]>([]);
-  const [shuffledCards, setShuffledCards] = useState<Array<{id: string; name: string; image?: string}>>([]);
+  const [shuffledCards, setShuffledCards] = useState<Array<{id: string; name: string; imageUrl?: string}>>([]);
 
   // Получаем данные колоды и расклада
   useEffect(() => {

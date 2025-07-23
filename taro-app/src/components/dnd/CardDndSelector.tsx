@@ -16,7 +16,7 @@ interface CardDndSelectorProps {
   cards: {
     id: string;
     name: string;
-    image?: string;
+    imageUrl?: string; // Изменяем на imageUrl, как в Redux store
   }[];
   positions: {
     position: number;
@@ -39,7 +39,7 @@ interface SelectedCard {
 interface CardData {
   id: string;
   name: string;
-  image?: string;
+  imageUrl?: string; // Изменяем на imageUrl
 }
 
 export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
@@ -346,7 +346,7 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
             }}>
               <DraggableCard
                 id={`placed-${selectedCard.cardId}-${position}`}
-                cardData={getCardById(selectedCard.cardId) || { id: selectedCard.cardId, name: 'Карта' }}
+                cardData={getCardById(selectedCard.cardId) || { id: selectedCard.cardId, name: 'Карта', imageUrl: undefined }}
                 preview={true}
                 isReversed={selectedCard.isReversed}
                 disabled={true}

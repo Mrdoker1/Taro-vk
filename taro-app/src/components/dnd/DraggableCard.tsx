@@ -7,7 +7,7 @@ interface DraggableCardProps {
   cardData: {
     id: string;
     name: string;
-    image?: string;
+    imageUrl?: string; // Изменяем на imageUrl
   };
   preview?: boolean;
   isReversed?: boolean;
@@ -113,9 +113,9 @@ export const DraggableCard: React.FC<DraggableCardProps> = ({
       }}>
         {preview ? (
           <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            {cardData.image ? (
+            {cardData.imageUrl ? (
               <img 
-                src={cardData.image} 
+                src={cardData.imageUrl} 
                 alt={cardData.name} 
                 style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} 
                 draggable={false} // Отключаем нативное перетаскивание изображений
