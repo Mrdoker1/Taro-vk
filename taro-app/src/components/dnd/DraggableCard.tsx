@@ -121,7 +121,18 @@ export const DraggableCard: React.FC<DraggableCardProps> = ({
                 draggable={false} // Отключаем нативное перетаскивание изображений
               />
             ) : (
-              <div style={{ padding: '8px', textAlign: 'center' }}>
+              <div style={{ 
+                padding: '8px', 
+                textAlign: 'center',
+                backgroundColor: 'grey',
+                color: 'white',
+                width: '100%',
+                height: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: '8px'
+              }}>
                 {cardData.name}
               </div>
             )}

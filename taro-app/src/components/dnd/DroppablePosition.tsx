@@ -25,11 +25,11 @@ export const DroppablePosition: React.FC<DroppablePositionProps> = ({
     height: '130px',
     borderRadius: '8px',
     border: isOver 
-      ? '3px dashed var(--vkui--color_accent)' 
+      ? '3px dashed #FFD700' 
       : isOccupied 
-        ? '2px solid var(--vkui--color_background_accent)' 
+        ? '2px solid #FFD700' 
         : '2px dashed var(--vkui--color_icon_secondary)',
-    backgroundColor: isOver ? 'rgba(0, 0, 255, 0.08)' : 'transparent',
+    backgroundColor: isOver ? 'rgba(255, 215, 0, 0.15)' : 'transparent',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -58,7 +58,7 @@ export const DroppablePosition: React.FC<DroppablePositionProps> = ({
       >
         {!children && (
           <Text style={{ 
-            color: isOver ? 'var(--vkui--color_accent)' : 'var(--vkui--color_text_secondary)', 
+            color: isOver ? '#FFD700' : 'var(--vkui--color_text_secondary)', 
             textAlign: 'center',
             position: 'absolute',
             fontSize: '14px',
@@ -82,13 +82,13 @@ export const DroppablePosition: React.FC<DroppablePositionProps> = ({
         {`
           @keyframes pulse {
             0% {
-              box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.4);
+              box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.4);
             }
             70% {
-              box-shadow: 0 0 0 8px rgba(0, 123, 255, 0);
+              box-shadow: 0 0 0 8px rgba(255, 215, 0, 0);
             }
             100% {
-              box-shadow: 0 0 0 0 rgba(0, 123, 255, 0);
+              box-shadow: 0 0 0 0 rgba(255, 215, 0, 0);
             }
           }
         `}
