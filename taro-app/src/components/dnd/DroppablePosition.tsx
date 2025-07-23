@@ -21,8 +21,8 @@ export const DroppablePosition: React.FC<DroppablePositionProps> = ({
   });
 
   const style: React.CSSProperties = {
-    width: '100px',
-    height: '150px',
+    width: '80px',
+    height: '130px',
     borderRadius: '8px',
     border: isOver 
       ? '3px dashed var(--vkui--color_accent)' 
@@ -61,7 +61,7 @@ export const DroppablePosition: React.FC<DroppablePositionProps> = ({
             color: isOver ? 'var(--vkui--color_accent)' : 'var(--vkui--color_text_secondary)', 
             textAlign: 'center',
             position: 'absolute',
-            fontSize: '12px',
+            fontSize: '14px',
             padding: '0 4px',
             fontWeight: isOver ? 'bold' : 'normal',
             zIndex: 5

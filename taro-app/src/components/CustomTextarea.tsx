@@ -43,7 +43,7 @@ export const CustomTextarea: FC<CustomTextareaProps> = ({
           borderRadius: '3px',
           backgroundColor: 'transparent',
           color: '#ffffff',
-          fontSize: '12px',
+          fontSize: '16px',
           fontWeight: '400',
           fontFamily: 'Jost, -apple-system, BlinkMacSystemFont, sans-serif',
           resize: 'vertical',

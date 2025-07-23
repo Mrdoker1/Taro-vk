@@ -617,7 +617,7 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
                 display: 'flex',
                 gap: windowWidth <= 768 ? '16px' : '32px',
                 alignItems: 'center',
-                flexDirection: windowWidth <= 768 ? 'column' : 'row',
+                flexDirection: windowWidth <= 768 ? 'column-reverse' : 'row',
                 width: '100%',
                 justifyContent: windowWidth <= 768 ? 'center' : 'flex-start'
               }}>
