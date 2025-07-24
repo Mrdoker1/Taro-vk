@@ -46,6 +46,7 @@ export const TaroReading: React.FC<TaroReadingProps> = ({
   const { lang } = useAppSelector((state) => state.horoscope); // Получаем выбранный язык
   const question = propUserQuestion || ''; // Используем переданный вопрос вместо локального состояния
   const [parsedInterpretation, setParsedInterpretation] = useState<ParsedInterpretation | null>(null);
+  const [showAllPositions, setShowAllPositions] = useState(false); // Состояние для управления показом всех позиций
 
   // Функция для определения иконки расклада по названию
   const getSpreadIcon = (spreadName: string): string => {
@@ -223,6 +224,7 @@ ${pos.interpretation}
         
         if (parsedResult.message) {
           setParsedInterpretation(parsedResult);
+          setShowAllPositions(false); // Сбрасываем состояние аккордеона для новой интерпретации
           
           // Сохраняем расклад в календарь
           if (currentSpread && currentDeck) {
@@ -270,6 +272,7 @@ ${pos.interpretation}
       }
     } else {
       setParsedInterpretation(null);
+      setShowAllPositions(false); // Сбрасываем состояние аккордеона
     }
   }, [generatedText, currentSpread, currentDeck, selectedCards, question]);
 
@@ -662,60 +665,157 @@ ${systemPromptText}`;
                   {/* Детальное толкование карт в стиле instruction panel */}
                   {parsedInterpretation.positions && parsedInterpretation.positions.length > 0 && (
                     <div style={{ marginTop: '16px' }}>
-                      {parsedInterpretation.positions.map((pos, index) => {
-                        const position = selectedCards.find(card => card.position === pos.index);
-                        const positionInfo = position && currentSpread?.meta[position.position.toString()];
-                        const positionLabel = positionInfo?.label || `Позиция ${pos.index}`;
-                        const cardInfo = position && currentDeck?.cards?.find(c => c.id === position.cardId);
-                        const cardName = cardInfo?.name || 'Неизвестная карта';
-                        const reversedText = position?.isReversed ? ' (Перевернутая)' : '';
-                        
-                        return (
-                          <div key={pos.index} style={{
-                            display: 'flex',
-                            width: '100%',
-                            alignItems: 'flex-start',
-                            gap: '16px',
-                            marginBottom: index < parsedInterpretation.positions.length - 1 ? '16px' : '0',
-                            lineHeight: 1.3
-                          }}>
-                            <div style={{
-                              border: '1px solid rgba(151,128,65,0.25)',
+                      {/* Показываем первые две позиции */}
+                      {parsedInterpretation.positions
+                        .slice(0, 2)
+                        .map((pos, index) => {
+                          const position = selectedCards.find(card => card.position === pos.index);
+                          const positionInfo = position && currentSpread?.meta[position.position.toString()];
+                          const positionLabel = positionInfo?.label || `Позиция ${pos.index}`;
+                          const cardInfo = position && currentDeck?.cards?.find(c => c.id === position.cardId);
+                          const cardName = cardInfo?.name || 'Неизвестная карта';
+                          const reversedText = position?.isReversed ? ' (Перевернутая)' : '';
+                          
+                          return (
+                            <div key={pos.index} style={{
                               display: 'flex',
-                              height: '32px',
-                              width: '32px',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              fontSize: '14px',
-                              color: 'rgba(210,175,80,1)',
-                              fontWeight: '500',
-                              textAlign: 'center',
-                              borderRadius: '50%',
-                              flexShrink: 0
-                            }}>
-                              {index + 1}
-                            </div>
-                            <div style={{
-                              color: 'white',
-                              fontSize: '16px',
-                              fontWeight: '300',
-                              flex: '1',
-                              fontFamily: 'Jost, -apple-system, BlinkMacSystemFont, sans-serif'
+                              width: '100%',
+                              alignItems: 'flex-start',
+                              gap: '16px',
+                              marginBottom: '16px',
+                              lineHeight: 1.3
                             }}>
                               <div style={{
-                                fontWeight: '400',
-                                marginBottom: '4px',
-                                color: 'rgba(210,175,80,1)'
+                                border: '1px solid rgba(151,128,65,0.25)',
+                                display: 'flex',
+                                height: '32px',
+                                width: '32px',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                fontSize: '14px',
+                                color: 'rgba(210,175,80,1)',
+                                fontWeight: '500',
+                                textAlign: 'center',
+                                borderRadius: '50%',
+                                flexShrink: 0
                               }}>
-                                {positionLabel} — {cardName}{reversedText}
+                                {index + 1}
                               </div>
-                              <div>
-                                {pos.interpretation}
+                              <div style={{
+                                color: 'white',
+                                fontSize: '16px',
+                                fontWeight: '300',
+                                flex: '1',
+                                fontFamily: 'Jost, -apple-system, BlinkMacSystemFont, sans-serif'
+                              }}>
+                                <div style={{
+                                  fontWeight: '400',
+                                  marginBottom: '4px',
+                                  color: 'rgba(210,175,80,1)'
+                                }}>
+                                  {positionLabel} — {cardName}{reversedText}
+                                </div>
+                                <div>
+                                  {pos.interpretation}
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        );
-                      })}
+                          );
+                        })}
+                      
+                      {/* Дополнительные позиции с анимацией */}
+                      {parsedInterpretation.positions.length > 2 && (
+                        <div style={{
+                          overflow: 'hidden',
+                          transition: 'max-height 0.3s ease-in-out',
+                          maxHeight: showAllPositions ? '1000px' : '0'
+                        }}>
+                          {parsedInterpretation.positions
+                            .slice(2)
+                            .map((pos, index) => {
+                              const position = selectedCards.find(card => card.position === pos.index);
+                              const positionInfo = position && currentSpread?.meta[position.position.toString()];
+                              const positionLabel = positionInfo?.label || `Позиция ${pos.index}`;
+                              const cardInfo = position && currentDeck?.cards?.find(c => c.id === position.cardId);
+                              const cardName = cardInfo?.name || 'Неизвестная карта';
+                              const reversedText = position?.isReversed ? ' (Перевернутая)' : '';
+                              
+                              return (
+                                <div key={pos.index} style={{
+                                  display: 'flex',
+                                  width: '100%',
+                                  alignItems: 'flex-start',
+                                  gap: '16px',
+                                  marginBottom: '16px',
+                                  lineHeight: 1.3,
+                                  opacity: showAllPositions ? 1 : 0,
+                                  transition: 'opacity 0.3s ease-in-out 0.1s'
+                                }}>
+                                  <div style={{
+                                    border: '1px solid rgba(151,128,65,0.25)',
+                                    display: 'flex',
+                                    height: '32px',
+                                    width: '32px',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    fontSize: '14px',
+                                    color: 'rgba(210,175,80,1)',
+                                    fontWeight: '500',
+                                    textAlign: 'center',
+                                    borderRadius: '50%',
+                                    flexShrink: 0
+                                  }}>
+                                    {index + 3}
+                                  </div>
+                                  <div style={{
+                                    color: 'white',
+                                    fontSize: '16px',
+                                    fontWeight: '300',
+                                    flex: '1',
+                                    fontFamily: 'Jost, -apple-system, BlinkMacSystemFont, sans-serif'
+                                  }}>
+                                    <div style={{
+                                      fontWeight: '400',
+                                      marginBottom: '4px',
+                                      color: 'rgba(210,175,80,1)'
+                                    }}>
+                                      {positionLabel} — {cardName}{reversedText}
+                                    </div>
+                                    <div>
+                                      {pos.interpretation}
+                                    </div>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                        </div>
+                      )}
+                      
+                      {/* Кнопка "Показать еще" если позиций больше 2 */}
+                      {parsedInterpretation.positions.length > 2 && (
+                        <div style={{
+                          display: 'flex',
+                          justifyContent: 'center',
+                          marginTop: '16px'
+                        }}>
+                          <CustomButton
+                            variant="secondary"
+                            size="s"
+                            onClick={() => setShowAllPositions(!showAllPositions)}
+                            style={{
+                              fontSize: '14px',
+                              color: 'rgba(210,175,80,1)',
+                              border: '1px solid rgba(210,175,80,0.3)',
+                              background: 'rgba(210,175,80,0.1)'
+                            }}
+                          >
+                            {showAllPositions 
+                              ? `Скрыть детали (${parsedInterpretation.positions.length - 2} поз.)`
+                              : `Подробное толкование каждой карты (еще ${parsedInterpretation.positions.length - 2} поз.)`
+                            }
+                          </CustomButton>
+                        </div>
+                      )}
                     </div>
                   )}
                 </>
