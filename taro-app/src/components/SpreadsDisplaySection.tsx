@@ -222,7 +222,6 @@ export const SpreadsDisplaySection: React.FC<SpreadsDisplaySectionProps> = ({ on
     margin: '0 auto',
     padding: isMobile ? '16px' : '32px',
     backgroundColor: 'transparent',
-    minHeight: '400px',
     boxSizing: 'border-box'
   };
 
@@ -431,7 +430,8 @@ export const SpreadsDisplaySection: React.FC<SpreadsDisplaySectionProps> = ({ on
             gap: isMobile ? '16px' : '20px',
             width: '100%',
             margin: '0 auto',
-            minWidth: isMobile ? '280px' : 'auto'
+            minWidth: isMobile ? '280px' : 'auto',
+            justifyItems: 'center'
           }}>
             {spreads.map((spread) => (
               <SpreadCard

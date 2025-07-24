@@ -48,6 +48,17 @@ export const TaroReading: React.FC<TaroReadingProps> = ({
   const question = propUserQuestion || ''; // Используем переданный вопрос вместо локального состояния
   const [parsedInterpretation, setParsedInterpretation] = useState<ParsedInterpretation | null>(null);
   const [showAllPositions, setShowAllPositions] = useState(false); // Состояние для управления показом всех позиций
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768); // Состояние для отслеживания мобильной версии
+
+  // Отслеживание изменения размера окна для адаптивности
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Отладочная информация для проверки изображений карт
   console.log('TaroReading - Current deck:', currentDeck?.name);
@@ -461,7 +472,7 @@ ${systemPromptText}`;
 
   return (
     <div style={{ 
-      padding: '16px',
+      padding: isMobile ? '8px' : '16px',
       display: 'flex',
       justifyContent: 'center'
     }}>
@@ -470,8 +481,8 @@ ${systemPromptText}`;
         background: 'url(https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/3b830249f16752184ecb361cce592c7795bcf9ad) center/cover',
         borderRadius: '12px',
         position: 'relative',
-        minHeight: '600px',
-        padding: '32px'
+        minHeight: isMobile ? '400px' : '600px',
+        padding: isMobile ? '16px' : '32px'
       }}>
         {/* Заголовок секции */}
         <div style={{
@@ -487,8 +498,8 @@ ${systemPromptText}`;
             src={getSpreadIcon(currentSpread ? { name: currentSpread.name, imageURL: currentSpread.imageURL } : undefined)}
             alt="Tarot spread icon"
             style={{
-              width: '60px',
-              height: '60px',
+              width: isMobile ? '50px' : '60px',
+              height: isMobile ? '50px' : '60px',
               objectFit: 'contain',
               flexShrink: 0
             }}
@@ -496,7 +507,7 @@ ${systemPromptText}`;
           <div>
             <h1 style={{
               color: '#ffffff',
-              fontSize: '24px',
+              fontSize: isMobile ? '20px' : '24px',
               fontWeight: '400',
               margin: 0,
               fontFamily: 'Jost, -apple-system, BlinkMacSystemFont, sans-serif',
@@ -506,7 +517,7 @@ ${systemPromptText}`;
             </h1>
             <Text style={{ 
               color: 'rgba(255, 255, 255, 0.9)', 
-              fontSize: '14px',
+              fontSize: isMobile ? '12px' : '14px',
               marginTop: '4px',
               fontFamily: 'Jost, -apple-system, BlinkMacSystemFont, sans-serif',
               lineHeight: 1.2
@@ -545,14 +556,15 @@ ${systemPromptText}`;
         {/* Основной контент в две колонки */}
         <div style={{
           display: 'flex',
-          gap: '32px',
+          gap: isMobile ? '16px' : '32px',
           alignItems: 'flex-start',
-          flexDirection: window.innerWidth < 768 ? 'column' : 'row'
+          flexDirection: isMobile ? 'column' : 'row'
         }}>
           {/* Левая колонка - Толкование */}
           <div style={{
-            flex: window.innerWidth < 768 ? '1' : '2',
-            minWidth: 0
+            flex: isMobile ? '1' : '2',
+            minWidth: 0,
+            width: '100%'
           }}>
             {/* Секция с вопросом */}
             {question.trim() && (
@@ -571,13 +583,15 @@ ${systemPromptText}`;
                 
                 <div style={{ 
                   marginBottom: '24px',
-                  textAlign: 'center'
+                  textAlign: 'center',
+                  padding: isMobile ? '0 8px' : '0'
                 }}>
                   <Text style={{ 
                     color: 'rgba(255, 255, 255, 0.9)',
-                    fontSize: '24px',
+                    fontSize: isMobile ? '18px' : '24px',
                     fontStyle: 'italic',
-                    fontFamily: 'Jost, -apple-system, BlinkMacSystemFont, sans-serif'
+                    fontFamily: 'Jost, -apple-system, BlinkMacSystemFont, sans-serif',
+                    lineHeight: 1.3
                   }}>
                     "{question}"
                   </Text>
@@ -640,11 +654,13 @@ ${systemPromptText}`;
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                marginBottom: '16px'
+                marginBottom: '16px',
+                flexDirection: isMobile ? 'column' : 'row',
+                gap: isMobile ? '12px' : '0'
               }}>
                 <h3 style={{
                   color: '#ffffff',
-                  fontSize: '18px',
+                  fontSize: isMobile ? '16px' : '18px',
                   fontWeight: '400',
                   margin: 0,
                   fontFamily: 'Jost, -apple-system, BlinkMacSystemFont, sans-serif'
@@ -653,12 +669,18 @@ ${systemPromptText}`;
                 </h3>
                 
                 {!parsedInterpretation.error && (
-                  <div style={{ display: 'flex', gap: '8px' }}>
+                  <div style={{ 
+                    display: 'flex', 
+                    gap: '8px',
+                    flexWrap: 'wrap',
+                    justifyContent: isMobile ? 'center' : 'flex-end'
+                  }}>
                     <Button
                       mode="tertiary"
                       size="s"
                       before={<Icon24Download />}
                       onClick={handleDownloadPDF}
+                      style={{ fontSize: isMobile ? '12px' : '14px' }}
                     >
                       Скачать
                     </Button>
@@ -667,6 +689,7 @@ ${systemPromptText}`;
                       size="s"
                       before={<Icon24Share />}
                       onClick={handleShareToVK}
+                      style={{ fontSize: isMobile ? '12px' : '14px' }}
                     >
                       Поделиться
                     </Button>
@@ -715,9 +738,10 @@ ${systemPromptText}`;
                               display: 'flex',
                               width: '100%',
                               alignItems: 'flex-start',
-                              gap: '16px',
+                              gap: isMobile ? '12px' : '16px',
                               marginBottom: '16px',
-                              lineHeight: 1.3
+                              lineHeight: 1.3,
+                              flexDirection: window.innerWidth < 480 ? 'column' : 'row'
                             }}>
                               <div style={{
                                 border: '1px solid rgba(151,128,65,0.25)',
@@ -731,13 +755,14 @@ ${systemPromptText}`;
                                 fontWeight: '500',
                                 textAlign: 'center',
                                 borderRadius: '50%',
-                                flexShrink: 0
+                                flexShrink: 0,
+                                alignSelf: window.innerWidth < 480 ? 'flex-start' : 'flex-start'
                               }}>
                                 {index + 1}
                               </div>
                               <div style={{
                                 color: 'white',
-                                fontSize: '16px',
+                                fontSize: isMobile ? '14px' : '16px',
                                 fontWeight: '300',
                                 flex: '1',
                                 fontFamily: 'Jost, -apple-system, BlinkMacSystemFont, sans-serif'
@@ -745,11 +770,14 @@ ${systemPromptText}`;
                                 <div style={{
                                   fontWeight: '400',
                                   marginBottom: '4px',
-                                  color: 'rgba(210,175,80,1)'
+                                  color: 'rgba(210,175,80,1)',
+                                  fontSize: isMobile ? '13px' : '16px'
                                 }}>
                                   {positionLabel} — {cardName}{reversedText}
                                 </div>
-                                <div>
+                                <div style={{
+                                  lineHeight: 1.4
+                                }}>
                                   {pos.interpretation}
                                 </div>
                               </div>
@@ -779,11 +807,12 @@ ${systemPromptText}`;
                                   display: 'flex',
                                   width: '100%',
                                   alignItems: 'flex-start',
-                                  gap: '16px',
+                                  gap: isMobile ? '12px' : '16px',
                                   marginBottom: '16px',
                                   lineHeight: 1.3,
                                   opacity: showAllPositions ? 1 : 0,
-                                  transition: 'opacity 0.3s ease-in-out 0.1s'
+                                  transition: 'opacity 0.3s ease-in-out 0.1s',
+                                  flexDirection: window.innerWidth < 480 ? 'column' : 'row'
                                 }}>
                                   <div style={{
                                     border: '1px solid rgba(151,128,65,0.25)',
@@ -797,13 +826,14 @@ ${systemPromptText}`;
                                     fontWeight: '500',
                                     textAlign: 'center',
                                     borderRadius: '50%',
-                                    flexShrink: 0
+                                    flexShrink: 0,
+                                    alignSelf: window.innerWidth < 480 ? 'flex-start' : 'flex-start'
                                   }}>
                                     {index + 3}
                                   </div>
                                   <div style={{
                                     color: 'white',
-                                    fontSize: '16px',
+                                    fontSize: isMobile ? '14px' : '16px',
                                     fontWeight: '300',
                                     flex: '1',
                                     fontFamily: 'Jost, -apple-system, BlinkMacSystemFont, sans-serif'
@@ -811,11 +841,14 @@ ${systemPromptText}`;
                                     <div style={{
                                       fontWeight: '400',
                                       marginBottom: '4px',
-                                      color: 'rgba(210,175,80,1)'
+                                      color: 'rgba(210,175,80,1)',
+                                      fontSize: isMobile ? '13px' : '16px'
                                     }}>
                                       {positionLabel} — {cardName}{reversedText}
                                     </div>
-                                    <div>
+                                    <div style={{
+                                      lineHeight: 1.4
+                                    }}>
                                       {pos.interpretation}
                                     </div>
                                   </div>
@@ -857,14 +890,14 @@ ${systemPromptText}`;
             </div>
           </div>
         )}
-      </div>
+          </div>
 
-      {/* Правая колонка - Схема карт */}
-      <div style={{
-        flex: window.innerWidth < 768 ? '1' : '1',
-        minWidth: window.innerWidth < 768 ? '100%' : '300px',
-        maxWidth: window.innerWidth < 768 ? '100%' : '400px'
-      }}>
+          {/* Правая колонка - Схема карт */}
+          <div style={{
+            flex: isMobile ? '1' : '1',
+            minWidth: isMobile ? '100%' : '300px',
+            maxWidth: isMobile ? '100%' : '400px'
+          }}>
         {/* Схема расклада без контейнера */}
         {currentSpread && selectedCards.length > 0 ? (
           <div style={{
@@ -968,7 +1001,7 @@ ${systemPromptText}`;
                     }}>
                       <div style={{
                         color: 'rgba(210,175,80,1)',
-                        fontSize: '10px',
+                        fontSize: '12px',
                         fontWeight: '500',
                         textAlign: 'center',
                         lineHeight: 1,
@@ -1078,7 +1111,7 @@ ${systemPromptText}`;
                         }}>
                           <div style={{
                             color: 'rgba(210,175,80,1)',
-                            fontSize: '9px',
+                            fontSize: '11px',
                             fontWeight: '500',
                             textAlign: 'center',
                             lineHeight: 1,
@@ -1098,6 +1131,7 @@ ${systemPromptText}`;
                 gridTemplateColumns: selectedCards.length <= 3 ? `repeat(${selectedCards.length}, 1fr)` : 'repeat(3, 1fr)',
                 gap: '8px',
                 justifyContent: 'center',
+                justifyItems: 'center',
                 width: '100%',
                 padding: '10px'
               }}>
@@ -1189,7 +1223,7 @@ ${systemPromptText}`;
                         }}>
                           <div style={{
                             color: 'rgba(210,175,80,1)',
-                            fontSize: '8px',
+                            fontSize: '10px',
                             fontWeight: '500',
                             textAlign: 'center',
                             lineHeight: 1,
@@ -1221,7 +1255,7 @@ ${systemPromptText}`;
           </div>
         )}
       </div>
-    </div>
+        </div>
 
         {/* Нижний разделитель */}
         <div style={{

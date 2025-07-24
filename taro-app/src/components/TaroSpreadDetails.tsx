@@ -88,7 +88,6 @@ export const TaroSpreadDetails: React.FC<TaroSpreadDetailsProps> = ({
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        minHeight: '400px',
         width: '100%'
       }}>
         <MagicLoader />
