@@ -520,87 +520,99 @@ ${systemPromptText}`;
           marginBottom: '32px'
         }} />
 
-        {/* Секция с вопросом */}
-        {question.trim() && (
-          <div style={{ marginBottom: '24px' }}>
-            <h3 style={{ 
-              marginBottom: 16, 
-              fontSize: '16px', 
-              textAlign: 'center',
-              color: '#ffffff',
-              fontWeight: '300',
-              margin: '0 0 16px 0',
-              fontFamily: 'Jost, -apple-system, BlinkMacSystemFont, sans-serif'
-            }}>
-              Ваш вопрос
-            </h3>
-            
-            <div style={{ 
-              marginBottom: '24px',
-              textAlign: 'center'
-            }}>
-              <Text style={{ 
-                color: 'rgba(255, 255, 255, 0.9)',
-                fontSize: '24px',
-                fontStyle: 'italic',
-                fontFamily: 'Jost, -apple-system, BlinkMacSystemFont, sans-serif'
-              }}>
-                "{question}"
-              </Text>
-            </div>
-          </div>
-        )}
-
-        {/* Индикатор генерации */}
-        {isGenerating && (
-          <div style={{ 
-            marginBottom: '24px'
-          }}>
-            <MagicLoader text="Генерируется толкование..." size="m" />
-          </div>
-        )}
-
-        {/* Ошибка генерации */}
-        {generationError && (
-          <div style={{ 
-            padding: '16px',
-            marginBottom: '24px',
-            textAlign: 'center'
-          }}>
-            <Text style={{ color: 'var(--vkui--color_text_negative)', fontSize: '16px' }}>
-              {generationError.includes("не относится к таро") ? 
-                generationError : 
-                <>
-                  Ошибка: {generationError}
-                  <br />
-                  <span style={{ fontSize: '12px' }}>
-                    Проверьте соединение с интернетом или попробуйте позже.
-                  </span>
-                </>
-              }
-            </Text>
-          </div>
-        )}
-
-        {/* Результат толкования в стиле InstructionsPanel */}
-        {parsedInterpretation && (
+        {/* Основной контент в две колонки */}
+        <div style={{
+          display: 'flex',
+          gap: '32px',
+          alignItems: 'flex-start',
+          flexDirection: window.innerWidth < 768 ? 'column' : 'row'
+        }}>
+          {/* Левая колонка - Толкование */}
           <div style={{
-            display: 'flex',
-            justifyContent: 'center',
-            width: '100%',
-            marginBottom: '24px'
+            flex: window.innerWidth < 768 ? '1' : '2',
+            minWidth: 0
           }}>
-            <div style={{
-              background: 'rgba(0,0,0,0.2)',
-              display: 'flex',
-              width: '100%',
-              flexDirection: 'column',
-              alignItems: 'stretch',
-              justifyContent: 'center',
-              padding: '16px',
-              borderRadius: '0 0 8px 8px',
-              borderTop: '1px solid rgba(227,199,122,1)'
-            }}>
+            {/* Секция с вопросом */}
+            {question.trim() && (
+              <div style={{ marginBottom: '24px' }}>
+                <h3 style={{ 
+                  marginBottom: 16, 
+                  fontSize: '16px', 
+                  textAlign: 'center',
+                  color: '#ffffff',
+                  fontWeight: '300',
+                  margin: '0 0 16px 0',
+                  fontFamily: 'Jost, -apple-system, BlinkMacSystemFont, sans-serif'
+                }}>
+                  Ваш вопрос
+                </h3>
+                
+                <div style={{ 
+                  marginBottom: '24px',
+                  textAlign: 'center'
+                }}>
+                  <Text style={{ 
+                    color: 'rgba(255, 255, 255, 0.9)',
+                    fontSize: '24px',
+                    fontStyle: 'italic',
+                    fontFamily: 'Jost, -apple-system, BlinkMacSystemFont, sans-serif'
+                  }}>
+                    "{question}"
+                  </Text>
+                </div>
+              </div>
+            )}
+
+            {/* Индикатор генерации */}
+            {isGenerating && (
+              <div style={{ 
+                marginBottom: '24px'
+              }}>
+                <MagicLoader text="Генерируется толкование..." size="m" />
+              </div>
+            )}
+
+            {/* Ошибка генерации */}
+            {generationError && (
+              <div style={{ 
+                padding: '16px',
+                marginBottom: '24px',
+                textAlign: 'center'
+              }}>
+                <Text style={{ color: 'var(--vkui--color_text_negative)', fontSize: '16px' }}>
+                  {generationError.includes("не относится к таро") ? 
+                    generationError : 
+                    <>
+                      Ошибка: {generationError}
+                      <br />
+                      <span style={{ fontSize: '12px' }}>
+                        Проверьте соединение с интернетом или попробуйте позже.
+                      </span>
+                    </>
+                  }
+                </Text>
+              </div>
+            )}
+
+            {/* Результат толкования в стиле InstructionsPanel */}
+            {parsedInterpretation && (
+              <div style={{
+                display: 'flex',
+                justifyContent: 'center',
+                width: '100%',
+                marginBottom: '24px'
+              }}>
+                <div style={{
+                  background: 'rgba(0,0,0,0.2)',
+                  display: 'flex',
+                  width: '100%',
+                  flexDirection: 'column',
+                  alignItems: 'stretch',
+                  justifyContent: 'center',
+                  padding: '16px',
+                  borderRadius: '0 0 8px 8px',
+                  borderTop: '1px solid rgba(227,199,122,1)'
+                }}>
               {/* Заголовок толкования с кнопками */}
               <div style={{
                 display: 'flex',
@@ -823,6 +835,206 @@ ${systemPromptText}`;
             </div>
           </div>
         )}
+      </div>
+
+      {/* Правая колонка - Схема карт */}
+      <div style={{
+        flex: window.innerWidth < 768 ? '1' : '1',
+        minWidth: window.innerWidth < 768 ? '100%' : '300px',
+        maxWidth: window.innerWidth < 768 ? '100%' : '400px'
+      }}>
+        {/* Схема расклада без контейнера */}
+        {currentSpread && selectedCards.length > 0 ? (
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '12px'
+          }}>
+            {/* Динамическое отображение карт в зависимости от типа расклада */}
+            {currentSpread.name.toLowerCase().includes('одна карта') || currentSpread.name.toLowerCase().includes('карта дня') ? (
+              // Расклад "Одна карта"
+              <div style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: '200px'
+              }}>
+                {selectedCards.map((card) => (
+                  <div key={card.position} style={{
+                    width: '80px',
+                    height: '120px',
+                    background: 'rgba(210,175,80,0.1)',
+                    border: '2px solid rgba(210,175,80,0.3)',
+                    borderRadius: '8px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    transform: card.isReversed ? 'rotate(180deg)' : 'none',
+                    position: 'relative'
+                  }}>
+                    <div style={{
+                      color: 'rgba(210,175,80,1)',
+                      fontSize: '12px',
+                      fontWeight: '500',
+                      marginBottom: '4px',
+                      transform: card.isReversed ? 'rotate(180deg)' : 'none'
+                    }}>
+                      {currentDeck?.cards?.find(c => c.id === card.cardId)?.name || card.cardId}
+                    </div>
+                    <div style={{
+                      position: 'absolute',
+                      bottom: '4px',
+                      right: '4px',
+                      width: '16px',
+                      height: '16px',
+                      borderRadius: '50%',
+                      background: 'rgba(210,175,80,1)',
+                      color: '#000',
+                      fontSize: '10px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontWeight: '500'
+                    }}>
+                      {card.position}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : currentSpread.name.toLowerCase().includes('три карты') || currentSpread.name.toLowerCase().includes('прошлое настоящее будущее') ? (
+              // Расклад "Три карты"
+              <div style={{
+                display: 'flex',
+                justifyContent: 'center',
+                gap: '12px',
+                flexWrap: 'wrap',
+                padding: '20px 0'
+              }}>
+                {selectedCards
+                  .sort((a, b) => a.position - b.position)
+                  .map((card) => (
+                  <div key={card.position} style={{
+                    width: '70px',
+                    height: '105px',
+                    background: 'rgba(210,175,80,0.1)',
+                    border: '2px solid rgba(210,175,80,0.3)',
+                    borderRadius: '6px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    transform: card.isReversed ? 'rotate(180deg)' : 'none',
+                    position: 'relative'
+                  }}>
+                    <div style={{
+                      color: 'rgba(210,175,80,1)',
+                      fontSize: '10px',
+                      fontWeight: '500',
+                      marginBottom: '4px',
+                      textAlign: 'center',
+                      transform: card.isReversed ? 'rotate(180deg)' : 'none',
+                      padding: '0 2px'
+                    }}>
+                      {currentDeck?.cards?.find(c => c.id === card.cardId)?.name || card.cardId}
+                    </div>
+                    <div style={{
+                      position: 'absolute',
+                      bottom: '2px',
+                      right: '2px',
+                      width: '14px',
+                      height: '14px',
+                      borderRadius: '50%',
+                      background: 'rgba(210,175,80,1)',
+                      color: '#000',
+                      fontSize: '9px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontWeight: '500'
+                    }}>
+                      {card.position}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              // Универсальная сетка для других раскладов (включая Ло Шу)
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: selectedCards.length <= 3 ? `repeat(${selectedCards.length}, 1fr)` : 'repeat(3, 1fr)',
+                gap: '8px',
+                justifyContent: 'center',
+                width: '100%',
+                padding: '10px'
+              }}>
+                {selectedCards
+                  .sort((a, b) => a.position - b.position)
+                  .map((card) => (
+                  <div key={card.position} style={{
+                    width: '60px',
+                    height: '90px',
+                    background: 'rgba(210,175,80,0.1)',
+                    border: '1px solid rgba(210,175,80,0.3)',
+                    borderRadius: '4px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    transform: card.isReversed ? 'rotate(180deg)' : 'none',
+                    position: 'relative'
+                  }}>
+                    <div style={{
+                      color: 'rgba(210,175,80,1)',
+                      fontSize: '8px',
+                      fontWeight: '500',
+                      marginBottom: '2px',
+                      textAlign: 'center',
+                      transform: card.isReversed ? 'rotate(180deg)' : 'none',
+                      padding: '0 1px',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis'
+                    }}>
+                      {(currentDeck?.cards?.find(c => c.id === card.cardId)?.name || card.cardId).substring(0, 10)}
+                    </div>
+                    <div style={{
+                      position: 'absolute',
+                      bottom: '1px',
+                      right: '1px',
+                      width: '12px',
+                      height: '12px',
+                      borderRadius: '50%',
+                      background: 'rgba(210,175,80,1)',
+                      color: '#000',
+                      fontSize: '8px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontWeight: '500'
+                    }}>
+                      {card.position}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        ) : (
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            height: '200px',
+            color: 'rgba(255,255,255,0.5)',
+            fontSize: '14px',
+            textAlign: 'center'
+          }}>
+            Схема карт будет отображена после загрузки расклада
+          </div>
+        )}
+      </div>
+    </div>
 
         {/* Нижний разделитель */}
         <div style={{
