@@ -6,6 +6,7 @@ import { Button, Text } from '@vkontakte/vkui';
 import { Icon24Download, Icon24Share } from '@vkontakte/icons';
 import { CustomButton } from './CustomButton';
 import { MagicLoader } from './MagicLoader';
+import { CustomTooltip } from './CustomTooltip';
 import { fetchDeckDetails } from '../store/slices/taroDecksSlice';
 import { saveTarotReadingToCalendar } from '../utils/calendarUtils';
 import bridge from '../bridge';
@@ -47,6 +48,21 @@ export const TaroReading: React.FC<TaroReadingProps> = ({
   const question = propUserQuestion || ''; // Используем переданный вопрос вместо локального состояния
   const [parsedInterpretation, setParsedInterpretation] = useState<ParsedInterpretation | null>(null);
   const [showAllPositions, setShowAllPositions] = useState(false); // Состояние для управления показом всех позиций
+
+  // Отладочная информация для проверки изображений карт
+  console.log('TaroReading - Current deck:', currentDeck?.name);
+  console.log('TaroReading - Sample cards with images:', currentDeck?.cards?.slice(0, 3).map(card => ({
+    id: card.id,
+    name: card.name,
+    imageUrl: card.imageUrl
+  })));
+
+  // Функция для получения толкования конкретной карты
+  const getCardInterpretation = (cardPosition: number): string | null => {
+    if (!parsedInterpretation?.positions) return null;
+    const position = parsedInterpretation.positions.find(pos => pos.index === cardPosition);
+    return position?.interpretation || null;
+  };
 
   // Функция для определения иконки расклада по названию
   const getSpreadIcon = (spreadName: string): string => {
@@ -860,48 +876,104 @@ ${systemPromptText}`;
                 alignItems: 'center',
                 height: '200px'
               }}>
-                {selectedCards.map((card) => (
+                {selectedCards.map((card) => {
+                const cardInfo = currentDeck?.cards?.find(c => c.id === card.cardId);
+                const cardInterpretation = getCardInterpretation(card.position);
+                const hasInterpretation = parsedInterpretation && !parsedInterpretation.error && cardInterpretation;
+                
+                // Отладочный вывод для проверки URL изображений
+                console.log('One card - Card:', card.cardId, 'ImageUrl:', cardInfo?.imageUrl);
+                
+                return (
                   <div key={card.position} style={{
                     width: '80px',
                     height: '120px',
-                    background: 'rgba(210,175,80,0.1)',
-                    border: '2px solid rgba(210,175,80,0.3)',
                     borderRadius: '8px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
                     transform: card.isReversed ? 'rotate(180deg)' : 'none',
-                    position: 'relative'
+                    position: 'relative',
+                    overflow: 'hidden',
+                    backgroundImage: cardInfo?.imageUrl ? `url(${cardInfo.imageUrl})` : 'none',
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    backgroundColor: 'rgba(210,175,80,0.1)'
                   }}>
-                    <div style={{
-                      color: 'rgba(210,175,80,1)',
-                      fontSize: '12px',
-                      fontWeight: '500',
-                      marginBottom: '4px',
-                      transform: card.isReversed ? 'rotate(180deg)' : 'none'
-                    }}>
-                      {currentDeck?.cards?.find(c => c.id === card.cardId)?.name || card.cardId}
-                    </div>
+                    {/* Оверлей сверху для номера позиции и иконки тултипа */}
                     <div style={{
                       position: 'absolute',
-                      bottom: '4px',
-                      right: '4px',
-                      width: '16px',
-                      height: '16px',
-                      borderRadius: '50%',
-                      background: 'rgba(210,175,80,1)',
-                      color: '#000',
-                      fontSize: '10px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontWeight: '500'
+                      top: '0',
+                      left: '0',
+                      right: '0',
+                      background: 'linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.6), transparent)',
+                      height: '40px',
+                      borderRadius: '8px 8px 0 0',
+                      transform: card.isReversed ? 'rotate(180deg)' : 'none'
                     }}>
-                      {card.position}
+                      {/* CustomTooltip в левом верхнем углу */}
+                      {hasInterpretation && (
+                        <div style={{
+                          position: 'absolute',
+                          top: '6px',
+                          left: '6px'
+                        }}>
+                          <CustomTooltip
+                            content={getCardInterpretation(card.position) || ''}
+                            ariaLabel={`Толкование карты ${cardInfo?.name || card.cardId}`}
+                            iconButtonStyle={{
+                              width: '16px',
+                              height: '16px',
+                              minWidth: '16px',
+                              minHeight: '16px',
+                              padding: '0',
+                              fontSize: '10px',
+                              borderRadius: '2px'
+                            }}
+                          />
+                        </div>
+                      )}
+                      {/* Номер позиции */}
+                      <div style={{
+                        position: 'absolute',
+                        top: '6px',
+                        right: '6px',
+                        width: '16px',
+                        height: '16px',
+                        borderRadius: '50%',
+                        background: 'rgba(210,175,80,1)',
+                        color: '#000',
+                        fontSize: '10px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontWeight: '500',
+                        boxShadow: '0 1px 3px rgba(0,0,0,0.5)'
+                      }}>
+                        {card.position}
+                      </div>
+                    </div>
+                    {/* Оверлей для названия карты */}
+                    <div style={{
+                      position: 'absolute',
+                      bottom: '0',
+                      left: '0',
+                      right: '0',
+                      background: 'linear-gradient(transparent, rgba(0,0,0,0.8))',
+                      padding: '8px 4px 4px 4px',
+                      transform: card.isReversed ? 'rotate(180deg)' : 'none'
+                    }}>
+                      <div style={{
+                        color: 'rgba(210,175,80,1)',
+                        fontSize: '10px',
+                        fontWeight: '500',
+                        textAlign: 'center',
+                        lineHeight: 1,
+                        textShadow: '1px 1px 2px rgba(0,0,0,0.8)'
+                      }}>
+                        {cardInfo?.name || card.cardId}
+                      </div>
                     </div>
                   </div>
-                ))}
+                );
+              })}
               </div>
             ) : currentSpread.name.toLowerCase().includes('три карты') || currentSpread.name.toLowerCase().includes('прошлое настоящее будущее') ? (
               // Расклад "Три карты"
@@ -914,50 +986,104 @@ ${systemPromptText}`;
               }}>
                 {selectedCards
                   .sort((a, b) => a.position - b.position)
-                  .map((card) => (
-                  <div key={card.position} style={{
-                    width: '70px',
-                    height: '105px',
-                    background: 'rgba(210,175,80,0.1)',
-                    border: '2px solid rgba(210,175,80,0.3)',
-                    borderRadius: '6px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    transform: card.isReversed ? 'rotate(180deg)' : 'none',
-                    position: 'relative'
-                  }}>
-                    <div style={{
-                      color: 'rgba(210,175,80,1)',
-                      fontSize: '10px',
-                      fontWeight: '500',
-                      marginBottom: '4px',
-                      textAlign: 'center',
-                      transform: card.isReversed ? 'rotate(180deg)' : 'none',
-                      padding: '0 2px'
-                    }}>
-                      {currentDeck?.cards?.find(c => c.id === card.cardId)?.name || card.cardId}
-                    </div>
-                    <div style={{
-                      position: 'absolute',
-                      bottom: '2px',
-                      right: '2px',
-                      width: '14px',
-                      height: '14px',
-                      borderRadius: '50%',
-                      background: 'rgba(210,175,80,1)',
-                      color: '#000',
-                      fontSize: '9px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontWeight: '500'
-                    }}>
-                      {card.position}
-                    </div>
-                  </div>
-                ))}
+                  .map((card) => {
+                    const cardInfo = currentDeck?.cards?.find(c => c.id === card.cardId);
+                    const cardInterpretation = getCardInterpretation(card.position);
+                    const hasInterpretation = parsedInterpretation && !parsedInterpretation.error && cardInterpretation;
+                    
+                    // Отладочный вывод для проверки URL изображений
+                    console.log('Three cards - Card:', card.cardId, 'ImageUrl:', cardInfo?.imageUrl);
+                    
+                    return (
+                      <div key={card.position} style={{
+                        width: '70px',
+                        height: '105px',
+                        borderRadius: '6px',
+                        transform: card.isReversed ? 'rotate(180deg)' : 'none',
+                        position: 'relative',
+                        overflow: 'hidden',
+                        backgroundImage: cardInfo?.imageUrl ? `url(${cardInfo.imageUrl})` : 'none',
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                        backgroundColor: 'rgba(210,175,80,0.1)'
+                      }}>
+                        {/* Оверлей сверху для номера позиции и иконки тултипа */}
+                        <div style={{
+                          position: 'absolute',
+                          top: '0',
+                          left: '0',
+                          right: '0',
+                          background: 'linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.6), transparent)',
+                          height: '35px',
+                          borderRadius: '6px 6px 0 0',
+                          transform: card.isReversed ? 'rotate(180deg)' : 'none'
+                        }}>
+                          {/* CustomTooltip в левом верхнем углу */}
+                          {hasInterpretation && (
+                            <div style={{
+                              position: 'absolute',
+                              top: '4px',
+                              left: '4px'
+                            }}>
+                              <CustomTooltip
+                                content={getCardInterpretation(card.position) || ''}
+                                ariaLabel={`Толкование карты ${cardInfo?.name || card.cardId}`}
+                                iconButtonStyle={{
+                                  width: '14px',
+                                  height: '14px',
+                                  minWidth: '14px',
+                                  minHeight: '14px',
+                                  padding: '0',
+                                  fontSize: '9px',
+                                  borderRadius: '2px'
+                                }}
+                              />
+                            </div>
+                          )}
+                          {/* Номер позиции */}
+                          <div style={{
+                            position: 'absolute',
+                            top: '4px',
+                            right: '4px',
+                            width: '14px',
+                            height: '14px',
+                            borderRadius: '50%',
+                            background: 'rgba(210,175,80,1)',
+                            color: '#000',
+                            fontSize: '9px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontWeight: '500',
+                            boxShadow: '0 1px 3px rgba(0,0,0,0.5)'
+                          }}>
+                            {card.position}
+                          </div>
+                        </div>
+                        {/* Оверлей для названия карты */}
+                        <div style={{
+                          position: 'absolute',
+                          bottom: '0',
+                          left: '0',
+                          right: '0',
+                          background: 'linear-gradient(transparent, rgba(0,0,0,0.8))',
+                          padding: '6px 2px 2px 2px',
+                          transform: card.isReversed ? 'rotate(180deg)' : 'none'
+                        }}>
+                          <div style={{
+                            color: 'rgba(210,175,80,1)',
+                            fontSize: '9px',
+                            fontWeight: '500',
+                            textAlign: 'center',
+                            lineHeight: 1,
+                            textShadow: '1px 1px 2px rgba(0,0,0,0.8)'
+                          }}>
+                            {cardInfo?.name || card.cardId}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
               </div>
             ) : (
               // Универсальная сетка для других раскладов (включая Ло Шу)
@@ -971,52 +1097,107 @@ ${systemPromptText}`;
               }}>
                 {selectedCards
                   .sort((a, b) => a.position - b.position)
-                  .map((card) => (
-                  <div key={card.position} style={{
-                    width: '60px',
-                    height: '90px',
-                    background: 'rgba(210,175,80,0.1)',
-                    border: '1px solid rgba(210,175,80,0.3)',
-                    borderRadius: '4px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    transform: card.isReversed ? 'rotate(180deg)' : 'none',
-                    position: 'relative'
-                  }}>
-                    <div style={{
-                      color: 'rgba(210,175,80,1)',
-                      fontSize: '8px',
-                      fontWeight: '500',
-                      marginBottom: '2px',
-                      textAlign: 'center',
-                      transform: card.isReversed ? 'rotate(180deg)' : 'none',
-                      padding: '0 1px',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis'
-                    }}>
-                      {(currentDeck?.cards?.find(c => c.id === card.cardId)?.name || card.cardId).substring(0, 10)}
-                    </div>
-                    <div style={{
-                      position: 'absolute',
-                      bottom: '1px',
-                      right: '1px',
-                      width: '12px',
-                      height: '12px',
-                      borderRadius: '50%',
-                      background: 'rgba(210,175,80,1)',
-                      color: '#000',
-                      fontSize: '8px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontWeight: '500'
-                    }}>
-                      {card.position}
-                    </div>
-                  </div>
-                ))}
+                  .map((card) => {
+                    const cardInfo = currentDeck?.cards?.find(c => c.id === card.cardId);
+                    const cardInterpretation = getCardInterpretation(card.position);
+                    const hasInterpretation = parsedInterpretation && !parsedInterpretation.error && cardInterpretation;
+                    
+                    // Отладочный вывод для проверки URL изображений
+                    console.log('Universal grid - Card:', card.cardId, 'ImageUrl:', cardInfo?.imageUrl);
+                    
+                    return (
+                      <div key={card.position} style={{
+                        width: '75px',
+                        height: '110px',
+                        borderRadius: '6px',
+                        transform: card.isReversed ? 'rotate(180deg)' : 'none',
+                        position: 'relative',
+                        overflow: 'hidden',
+                        backgroundImage: cardInfo?.imageUrl ? `url(${cardInfo.imageUrl})` : 'none',
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                        backgroundColor: 'rgba(210,175,80,0.1)'
+                      }}>
+                        {/* Оверлей сверху для номера позиции и иконки тултипа */}
+                        <div style={{
+                          position: 'absolute',
+                          top: '0',
+                          left: '0',
+                          right: '0',
+                          background: 'linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.6), transparent)',
+                          height: '35px',
+                          borderRadius: '6px 6px 0 0',
+                          transform: card.isReversed ? 'rotate(180deg)' : 'none'
+                        }}>
+                          {/* CustomTooltip в левом верхнем углу */}
+                          {hasInterpretation && (
+                            <div style={{
+                              position: 'absolute',
+                              top: '4px',
+                              left: '4px'
+                            }}>
+                              <CustomTooltip
+                                content={getCardInterpretation(card.position) || ''}
+                                ariaLabel={`Толкование карты ${cardInfo?.name || card.cardId}`}
+                                iconButtonStyle={{
+                                  width: '14px',
+                                  height: '14px',
+                                  minWidth: '14px',
+                                  minHeight: '14px',
+                                  padding: '0',
+                                  fontSize: '8px',
+                                  borderRadius: '2px'
+                                }}
+                              />
+                            </div>
+                          )}
+                          {/* Номер позиции */}
+                          <div style={{
+                            position: 'absolute',
+                            top: '4px',
+                            right: '4px',
+                            width: '14px',
+                            height: '14px',
+                            borderRadius: '50%',
+                            background: 'rgba(210,175,80,1)',
+                            color: '#000',
+                            fontSize: '9px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontWeight: '500',
+                            boxShadow: '0 1px 3px rgba(0,0,0,0.5)'
+                          }}>
+                            {card.position}
+                          </div>
+                        </div>
+                        {/* Оверлей для названия карты */}
+                        <div style={{
+                          position: 'absolute',
+                          bottom: '0',
+                          left: '0',
+                          right: '0',
+                          background: 'linear-gradient(transparent, rgba(0,0,0,0.8))',
+                          padding: '6px 2px 2px 2px',
+                          transform: card.isReversed ? 'rotate(180deg)' : 'none'
+                        }}>
+                          <div style={{
+                            color: 'rgba(210,175,80,1)',
+                            fontSize: '8px',
+                            fontWeight: '500',
+                            textAlign: 'center',
+                            lineHeight: 1,
+                            textShadow: '1px 1px 2px rgba(0,0,0,0.8)',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap'
+                          }}>
+                            {(cardInfo?.name || card.cardId).substring(0, 10)}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
               </div>
             )}
           </div>
