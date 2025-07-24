@@ -12,6 +12,7 @@ import shuffleIcon from '../../assets/shuffle.svg';
 
 interface CardDndSelectorProps {
   spreadName: string;
+  spreadImageURL?: string; // Добавляем поле для URL изображения расклада
   deckName: string;
   cards: {
     id: string;
@@ -44,6 +45,7 @@ interface CardData {
 
 export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
   spreadName,
+  spreadImageURL,
   deckName,
   cards,
   positions,
@@ -63,9 +65,15 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
   const [windowWidth, setWindowWidth] = useState<number>(typeof window !== 'undefined' ? window.innerWidth : 1024);
   const buttonRef = useRef<HTMLDivElement>(null);
   
-  // Функция для определения иконки расклада по названию
-  const getSpreadIcon = (spreadName: string): string => {
-    const name = spreadName.toLowerCase();
+  // Функция для определения иконки расклада
+  const getSpreadIcon = (spread?: { name: string; imageURL?: string }): string => {
+    // Используем imageURL из данных бэкенда, если доступно
+    if (spread?.imageURL) {
+      return spread.imageURL;
+    }
+    
+    // Fallback к захардкоженным изображениям для обратной совместимости
+    const name = spread?.name?.toLowerCase() || '';
     
     if (name.includes('одна карта') || name.includes('one card') || name.includes('карта дня')) {
       return 'https://i.ibb.co/fz2F7zv7/one-card.png';
@@ -75,7 +83,7 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
       return 'https://i.ibb.co/KxnrVrd6/loshu.png';
     }
     
-    // Иконка по умолчанию (можно использовать одну из существующих)
+    // Иконка по умолчанию
     return 'https://i.ibb.co/fz2F7zv7/one-card.png';
   };
   
@@ -497,7 +505,7 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
           textAlign: 'left'
         }}>
           <img
-            src={getSpreadIcon(spreadName)}
+            src={getSpreadIcon({ name: spreadName, imageURL: spreadImageURL })}
             alt="Tarot spread icon"
             style={{
               width: '60px',

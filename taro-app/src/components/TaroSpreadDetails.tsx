@@ -53,9 +53,15 @@ export const TaroSpreadDetails: React.FC<TaroSpreadDetailsProps> = ({
   }, [decks, selectedDeckId]);
 
   // Определим, является ли схема сложной (многострочной)
-  // Функция для определения иконки расклада по названию
-  const getSpreadIcon = (spreadName: string): string => {
-    const name = spreadName.toLowerCase();
+  // Функция для определения иконки расклада
+  const getSpreadIcon = (spread?: { name: string; imageURL?: string }): string => {
+    // Используем imageURL из данных бэкенда, если доступно
+    if (spread?.imageURL) {
+      return spread.imageURL;
+    }
+    
+    // Fallback к захардкоженным изображениям для обратной совместимости
+    const name = spread?.name?.toLowerCase() || '';
     
     if (name.includes('одна карта') || name.includes('one card') || name.includes('карта дня')) {
       return 'https://i.ibb.co/fz2F7zv7/one-card.png';
@@ -65,7 +71,7 @@ export const TaroSpreadDetails: React.FC<TaroSpreadDetailsProps> = ({
       return 'https://i.ibb.co/KxnrVrd6/loshu.png';
     }
     
-    // Иконка по умолчанию (можно использовать одну из существующих)
+    // Иконка по умолчанию
     return 'https://i.ibb.co/fz2F7zv7/one-card.png';
   };
 
@@ -166,7 +172,7 @@ export const TaroSpreadDetails: React.FC<TaroSpreadDetailsProps> = ({
         marginBottom: '8px'
       }}>
         <img
-          src={getSpreadIcon(currentSpread.name)}
+          src={getSpreadIcon(currentSpread ? { name: currentSpread.name, imageURL: currentSpread.imageURL } : undefined)}
           alt={`${currentSpread.name} icon`}
           style={{
             width: '60px',

@@ -12,6 +12,7 @@ export interface TaroSpread {
   description: string;
   available: boolean;
   paid: boolean;
+  imageURL?: string; // Добавляем поле для URL изображения расклада
 }
 
 export interface TaroSpreadDetails extends TaroSpread {
@@ -54,7 +55,11 @@ export const fetchSpreads = createAsyncThunk(
       // Используем утилиту для получения языка в нужном формате для API
       const apiLang = getLanguageForApi(lang, ApiType.TARO_DECKS);
       
-      const response = await fetch(`${API_URL}/spreads?includeAll=false&lang=${apiLang}`);
+      const apiUrl = `${API_URL}/spreads?includeAll=true&lang=${apiLang}`;
+      console.log('=== ОТЛАДКА API ЗАПРОСА ===');
+      console.log('URL запроса:', apiUrl);
+      
+      const response = await fetch(apiUrl);
       
       if (!response.ok) {
         const errorData = await response.json().catch(() => null);
@@ -62,6 +67,19 @@ export const fetchSpreads = createAsyncThunk(
       }
       
       const data = await response.json();
+      console.log('Ответ API для раскладов (raw):', data);
+      console.log('Тип данных:', typeof data);
+      console.log('Является массивом:', Array.isArray(data));
+      
+      // Детальный анализ каждого расклада
+      if (Array.isArray(data)) {
+        data.forEach((spread, index) => {
+          console.log(`Расклад ${index + 1}:`, spread);
+          console.log(`Поля расклада ${index + 1}:`, Object.keys(spread));
+          console.log(`Есть ли imageURL в расклад ${index + 1}:`, 'imageURL' in spread);
+        });
+      }
+      
       return data;
     } catch (error) {
       console.error('Error fetching spreads:', error);
@@ -113,6 +131,17 @@ const taroSpreadsSlice = createSlice({
       .addCase(fetchSpreads.fulfilled, (state, action: PayloadAction<TaroSpread[]>) => {
         state.spreadsLoading = false;
         state.spreads = action.payload;
+        
+        // Логирование данных раскладов для отладки
+        console.log('=== ОТЛАДКА РАСКЛАДОВ ===');
+        console.log('Получено раскладов:', action.payload.length);
+        console.log('Первые 3 расклада с imageURL:', action.payload.slice(0, 3).map(spread => ({
+          id: spread.id,
+          name: spread.name,
+          imageURL: spread.imageURL,
+          hasImageURL: !!spread.imageURL
+        })));
+        console.log('Полные данные первого расклада:', action.payload[0]);
       })
       .addCase(fetchSpreads.rejected, (state, action) => {
         state.spreadsLoading = false;

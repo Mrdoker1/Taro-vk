@@ -168,6 +168,7 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
     return (
       <CardDndSelector
         spreadName={currentSpread.name}
+        spreadImageURL={currentSpread.imageURL}
         deckName={currentDeck.name}
         cards={cards}
         positions={getPositionsForDnd()}
