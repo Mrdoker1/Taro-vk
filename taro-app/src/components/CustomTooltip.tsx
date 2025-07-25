@@ -19,7 +19,7 @@ export const CustomTooltip: React.FC<CustomTooltipProps> = ({
         <Div style={{ 
           maxWidth: '250px', 
           padding: '8px',
-          backgroundColor: 'rgba(142, 115, 43, 0.95)',
+          backgroundColor: 'rgba(35, 35, 35, 0.95)',
           borderRadius: '8px'
         }}>
           <div style={{ 
