@@ -1,15 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { 
-  Group, 
-  Header, 
-  Div, 
   Button, 
   Text, 
   Title, 
-  Textarea, 
-  FormItem, 
   Card, 
-  Select, 
   Spinner, 
   Skeleton 
 } from '@vkontakte/vkui';
@@ -19,6 +13,8 @@ import { fetchPromptTemplate, clearCurrentTemplate } from '../store/slices/promp
 import { generateText, clearGeneratedText } from '../store/slices/generationSlice';
 import { ApiType, getLanguageForApi } from '../utils/languageUtils';
 import { saveAffirmationToCalendar } from '../utils/calendarUtils';
+import { CustomSelect } from './CustomSelect';
+import { CustomTextarea } from './CustomTextarea';
 import bridge from '../bridge';
 
 interface AffirmationTopic {
@@ -301,55 +297,98 @@ ${parsedAffirmation.usage}
   
   // Форма для выбора темы аффирмации
   const renderPromptForm = () => (
-    <FormItem 
-      top={<span>Выберите тему аффирмации или введите свою</span>}
-      style={{ padding: 0 }}
-    >
-      <div style={{ marginBottom: 16 }}>
-        <Select
-          mode="default"
-          placeholder="Выберите тему"
+    <div style={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: '16px',
+      maxWidth: '320px',
+      margin: '0 auto'
+    }}>
+      <div style={{ width: '100%' }}>
+        <Text style={{ 
+          color: '#ffffff',
+          marginBottom: '12px',
+          fontSize: '16px',
+          fontWeight: '400',
+          textAlign: 'center',
+          fontFamily: 'Jost'
+        }}>
+          Выберите тему аффирмации или введите свою
+        </Text>
+        
+        <CustomSelect
+          value={promptMode === 'preset' ? selectedTopic : ''}
           options={AFFIRMATION_TOPICS}
-          onChange={(event) => {
-            setSelectedTopic(event.target.value);
+          label="Тема аффирмации"
+          placeholder="Выберите тему"
+          onChange={(value) => {
+            setSelectedTopic(value);
             setPromptMode('preset');
           }}
-          value={promptMode === 'preset' ? selectedTopic : ''}
-          style={{ marginBottom: 8 }}
         />
-        <Text style={{ marginBottom: 12, color: 'var(--vkui--color_text_secondary)' }}>
+        
+        <Text style={{ 
+          color: '#ffffff', 
+          textAlign: 'center',
+          margin: '12px 0',
+          fontSize: '14px',
+          opacity: 0.8
+        }}>
           или
         </Text>
-        <Textarea
-          placeholder="Введите свою тему для аффирмации"
+        
+        <CustomTextarea
           value={customPrompt}
-          onChange={(e) => {
-            setCustomPrompt(e.target.value);
+          placeholder="Введите свою тему для аффирмации"
+          label="Персональная тема"
+          onChange={(value) => {
+            setCustomPrompt(value);
             setPromptMode('custom');
           }}
         />
       </div>
       
       <Button 
-        size="m" 
+        size="l" 
         mode="primary" 
         onClick={handleGenerate}
         disabled={isGenerating || (promptMode === 'preset' && !selectedTopic) || (promptMode === 'custom' && !customPrompt.trim())}
         loading={isGenerating}
         stretched
+        style={{
+          background: 'linear-gradient(135deg, #E3C77A 0%, #D4AF37 100%)',
+          border: 'none',
+          borderRadius: '8px',
+          color: '#000',
+          fontWeight: '500',
+          fontSize: '16px',
+          fontFamily: 'Jost'
+        }}
       >
         {isGenerating ? 'Генерация...' : 'Получить аффирмации'}
       </Button>
       
       {generationError && (
         <Text style={{ 
-          color: 'var(--vkui--color_text_negative)', 
-          marginTop: 8 
+          color: '#ff6b6b', 
+          textAlign: 'center',
+          fontSize: '14px'
         }}>
           Ошибка: {generationError}
         </Text>
       )}
-    </FormItem>
+      
+      <Text style={{ 
+        fontSize: '14px', 
+        color: 'rgba(255, 255, 255, 0.7)',
+        textAlign: 'center',
+        fontFamily: 'Jost'
+      }}>
+        Язык аффирмаций: {lang === 'english' ? 'английский 🇬🇧' : 'русский 🇷🇺'} 
+        (установлен в настройках)
+      </Text>
+    </div>
   );
   
   // Отображение результата генерации
@@ -359,8 +398,19 @@ ${parsedAffirmation.usage}
     // Отображение ошибки в результате
     if (parsedAffirmation.error) {
       return (
-        <Card mode="shadow" style={{ padding: 16, marginTop: 16 }}>
-          <Text style={{ color: 'var(--vkui--color_text_negative)' }}>
+        <Card mode="shadow" style={{ 
+          padding: '20px', 
+          marginTop: '24px',
+          background: 'rgba(255, 255, 255, 0.1)',
+          border: '2px solid rgba(255, 107, 107, 0.5)',
+          borderRadius: '12px'
+        }}>
+          <Text style={{ 
+            color: '#ff6b6b',
+            textAlign: 'center',
+            fontSize: '16px',
+            fontFamily: 'Jost'
+          }}>
             {parsedAffirmation.message || 'Произошла ошибка при генерации аффирмаций'}
           </Text>
         </Card>
@@ -370,78 +420,117 @@ ${parsedAffirmation.usage}
     // Отображение успешного результата
     return (
       <Card mode="shadow" style={{ 
-        padding: 16, 
-        marginTop: 16,
-        backgroundColor: 'var(--vkui--color_background_secondary)'
+        padding: '24px', 
+        marginTop: '24px',
+        background: 'rgba(255, 255, 255, 0.1)',
+        border: '2px solid rgba(227, 199, 122, 0.5)',
+        borderRadius: '12px'
       }}>
-        <Title level="2" style={{ marginBottom: 16 }}>
+        <Title level="2" style={{ 
+          marginBottom: '20px',
+          color: '#ffffff',
+          textAlign: 'center',
+          fontSize: '20px',
+          fontWeight: '500',
+          fontFamily: 'Jost'
+        }}>
           {parsedAffirmation.title}
         </Title>
         
         {parsedAffirmation.sections.map((section, index) => (
-          <Div key={index} style={{ 
-            padding: '12px 0',
+          <div key={index} style={{ 
+            padding: '16px 0',
             borderBottom: index < parsedAffirmation.sections.length - 1 ? 
-              '1px solid var(--vkui--color_separator_primary)' : 'none'
+              '1px solid rgba(255, 255, 255, 0.2)' : 'none'
           }}>
-            <Title level="3" style={{ marginBottom: 8 }}>
+            <Title level="3" style={{ 
+              marginBottom: '8px',
+              color: '#E3C77A',
+              fontSize: '16px',
+              fontWeight: '500',
+              fontFamily: 'Jost'
+            }}>
               {section.title}
             </Title>
             <Text style={{ 
-              lineHeight: '1.5', 
-              fontSize: '16px'
+              lineHeight: '1.6', 
+              fontSize: '15px',
+              color: '#ffffff',
+              fontFamily: 'Jost'
             }}>
               {section.text}
             </Text>
-          </Div>
+          </div>
         ))}
         
         {parsedAffirmation.usage && (
-          <Div style={{ 
-            marginTop: 16, 
-            padding: 12,
-            backgroundColor: 'var(--vkui--color_background_secondary--hover)',
-            borderRadius: 8
+          <div style={{ 
+            marginTop: '20px', 
+            padding: '16px',
+            background: 'rgba(227, 199, 122, 0.2)',
+            borderRadius: '8px',
+            border: '1px solid rgba(227, 199, 122, 0.3)'
           }}>
-            <Title level="3" style={{ marginBottom: 8 }}>
+            <Title level="3" style={{ 
+              marginBottom: '8px',
+              color: '#E3C77A',
+              fontSize: '16px',
+              fontWeight: '500',
+              fontFamily: 'Jost'
+            }}>
               Как использовать
             </Title>
             <Text style={{ 
-              lineHeight: '1.5', 
+              lineHeight: '1.6', 
               fontSize: '14px',
-              whiteSpace: 'pre-line'
+              color: '#ffffff',
+              whiteSpace: 'pre-line',
+              fontFamily: 'Jost'
             }}>
               {parsedAffirmation.usage}
             </Text>
-          </Div>
+          </div>
         )}
 
         {/* Кнопки действий с результатом */}
-        <Div style={{ marginTop: 16, marginBottom: 8 }}>
-          <div style={{ 
-            display: 'flex', 
-            gap: '12px', 
-            justifyContent: 'center',
-            flexWrap: 'wrap'
-          }}>
-            <Button
-              mode="primary"
-              size="m"
-              before={<Icon24Download />}
-              onClick={handleDownloadPDF}
-            >
-              Скачать
-            </Button>
-            <Button
-              mode="secondary"
-              size="m"
-              before={<Icon24Share />}
-              onClick={handleShareToVK}
-            >
-              Поделиться в VK
-            </Button>
-          </div>
-        </Div>
+        <div style={{ 
+          marginTop: '24px', 
+          display: 'flex', 
+          gap: '12px', 
+          justifyContent: 'center',
+          flexWrap: 'wrap'
+        }}>
+          <Button
+            mode="primary"
+            size="m"
+            before={<Icon24Download />}
+            onClick={handleDownloadPDF}
+            style={{
+              background: 'linear-gradient(135deg, #E3C77A 0%, #D4AF37 100%)',
+              border: 'none',
+              color: '#000',
+              fontWeight: '500',
+              fontFamily: 'Jost'
+            }}
+          >
+            Скачать
+          </Button>
+          <Button
+            mode="secondary"
+            size="m"
+            before={<Icon24Share />}
+            onClick={handleShareToVK}
+            style={{
+              background: 'transparent',
+              border: '2px solid #E3C77A',
+              color: '#E3C77A',
+              fontWeight: '500',
+              fontFamily: 'Jost'
+            }}
+          >
+            Поделиться в VK
+          </Button>
+        </div>
       </Card>
     );
   };
@@ -449,64 +538,100 @@ ${parsedAffirmation.usage}
   // Показываем состояние загрузки шаблона
   if (templateLoading) {
     return (
-      <Group header={<Header size="s">🌞 Ежедневные аффирмации</Header>}>
-        <Div style={{ display: 'flex', justifyContent: 'center', padding: 32 }}>
-          <Spinner size="m" />
-        </Div>
-      </Group>
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center',
+        padding: '40px 0',
+        color: '#ffffff'
+      }}>
+        <Spinner size="m" />
+        <Text style={{ 
+          marginLeft: '12px',
+          color: '#ffffff',
+          fontFamily: 'Jost'
+        }}>
+          Загрузка...
+        </Text>
+      </div>
     );
   }
   
   // Показываем ошибку загрузки шаблона
   if (templateError) {
     return (
-      <Group header={<Header size="s">🌞 Ежедневные аффирмации</Header>}>
-        <Card mode="shadow" style={{ padding: 16 }}>
-          <Text style={{ color: 'var(--vkui--color_text_negative)' }}>
-            Ошибка: {templateError}
-          </Text>
-        </Card>
-      </Group>
+      <Card mode="shadow" style={{ 
+        padding: '20px',
+        background: 'rgba(255, 255, 255, 0.1)',
+        border: '2px solid rgba(255, 107, 107, 0.5)',
+        borderRadius: '12px'
+      }}>
+        <Text style={{ 
+          color: '#ff6b6b',
+          textAlign: 'center',
+          fontSize: '16px',
+          fontFamily: 'Jost'
+        }}>
+          Ошибка: {templateError}
+        </Text>
+      </Card>
     );
   }
   
   // Основной вид компонента
   return (
-    <Group header={<Header size="s">🌞 Ежедневные аффирмации</Header>}>
-      <Card mode="shadow" style={{ padding: 16 }}>
-        <Title level="3" style={{ marginBottom: 8 }}>
-          Аффирмации на сегодня
-        </Title>
-        <Text style={{ marginBottom: 8 }}>
-          Позитивные утверждения помогут вам настроиться на успешный день и привлечь желаемое в свою жизнь.
-        </Text>
+    <div>
+      <div style={{
+        marginBottom: '24px'
+      }}>
         <Text style={{ 
-          fontSize: 14, 
-          color: 'var(--vkui--color_text_secondary)',
-          marginBottom: 16
+          color: '#ffffff',
+          fontSize: '16px',
+          lineHeight: '1.5',
+          textAlign: 'center',
+          marginBottom: '8px',
+          fontFamily: 'Jost'
         }}>
-          Язык аффирмаций: {lang === 'english' ? 'английский 🇬🇧' : 'русский 🇷🇺'} 
-          (установлен в настройках)
+          Позитивные утверждения помогут вам настроиться на успешный день и привлечь желаемое в свою жизнь.
         </Text>
         
         {renderPromptForm()}
-      </Card>
+      </div>
       
       {isGenerating && (
-        <Card mode="shadow" style={{ padding: 16, marginTop: 16 }}>
-          <Skeleton width="100%" height={16} style={{ marginBottom: 12 }} />
-          <Skeleton width="90%" height={16} style={{ marginBottom: 24 }} />
+        <Card mode="shadow" style={{ 
+          padding: '20px', 
+          marginTop: '16px',
+          background: 'rgba(255, 255, 255, 0.1)',
+          border: '2px solid rgba(227, 199, 122, 0.3)',
+          borderRadius: '12px'
+        }}>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginBottom: '16px'
+          }}>
+            <Spinner size="s" />
+            <Text style={{ 
+              marginLeft: '12px',
+              color: '#ffffff',
+              fontFamily: 'Jost'
+            }}>
+              Генерация аффирмаций...
+            </Text>
+          </div>
           
-          <Div style={{ display: 'flex', flexDirection: 'column', gap: 16, padding: 0 }}>
-            <Skeleton width="100%" height={80} />
-            <Skeleton width="100%" height={80} />
-            <Skeleton width="100%" height={80} />
-          </Div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <Skeleton width="100%" height={60} style={{ borderRadius: '8px' }} />
+            <Skeleton width="100%" height={60} style={{ borderRadius: '8px' }} />
+            <Skeleton width="100%" height={60} style={{ borderRadius: '8px' }} />
+          </div>
         </Card>
       )}
       
       {renderResult()}
-    </Group>
+    </div>
   );
 };
 
