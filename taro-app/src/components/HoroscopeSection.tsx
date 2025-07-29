@@ -2,8 +2,11 @@ import React, { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../store';
 import { setType, fetchHoroscope } from '../store/slices/horoscopeSlice';
 import { Tabs, TabsItem } from '@vkontakte/vkui';
+import { Icon24Write } from '@vkontakte/icons';
+import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
 import { CustomTooltip } from './CustomTooltip';
 import { MagicLoader } from './MagicLoader';
+import { DEFAULT_VIEW_PANELS } from '../routes';
 import complexImage from '../assets/complex-image.svg';
 import sunImage from '../assets/sun.png';
 import moonImage from '../assets/moon.png';
@@ -24,12 +27,32 @@ const parseColor = (colorString: string): { name: string; hex: string } => {
   return { name: '', hex: colorString };
 };
 
+// Функция для получения русского названия знака зодиака
+const getZodiacSignInRussian = (sign: string): string => {
+  const zodiacSigns: Record<string, string> = {
+    'Aries': 'Овен',
+    'Taurus': 'Телец',
+    'Gemini': 'Близнецы',
+    'Cancer': 'Рак',
+    'Leo': 'Лев',
+    'Virgo': 'Дева',
+    'Libra': 'Весы',
+    'Scorpio': 'Скорпион',
+    'Sagittarius': 'Стрелец',
+    'Capricorn': 'Козерог',
+    'Aquarius': 'Водолей',
+    'Pisces': 'Рыбы',
+  };
+  return zodiacSigns[sign] || sign;
+};
+
 
 
 
 
 export const HoroscopeSection = () => {
   const dispatch = useAppDispatch();
+  const routeNavigator = useRouteNavigator();
   const { type, horoscope, loading, error, sign, lang } = useAppSelector((state) => state.horoscope);
   const [sunClicked, setSunClicked] = React.useState(false);
   const [moonClicked, setMoonClicked] = React.useState(false);
@@ -71,6 +94,10 @@ export const HoroscopeSection = () => {
 
   const handleTabChange = (tabValue: string) => {
     dispatch(setType(tabValue as 'daily' | 'weekly' | 'monthly'));
+  };
+
+  const handleZodiacSignClick = () => {
+    routeNavigator.push(`/${DEFAULT_VIEW_PANELS.SETTINGS}`);
   };
 
   // Адаптивность для мобильных устройств
@@ -627,7 +654,48 @@ export const HoroscopeSection = () => {
           style={iconStyle}
         />
         <h1 style={titleStyle}>
-          Привет, это твой гороскоп на сегодня
+          Привет, это твой гороскоп,{' '}
+          <span 
+            onClick={handleZodiacSignClick}
+            style={{
+              cursor: 'pointer',
+              padding: '4px 8px',
+              borderRadius: '8px',
+              background: 'rgba(255, 215, 0, 0.15)',
+              border: '1px solid rgba(255, 215, 0, 0.3)',
+              transition: 'all 0.3s ease',
+              position: 'relative',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              boxShadow: '0 0 10px rgba(255, 215, 0, 0.2)',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'rgba(255, 215, 0, 0.25)';
+              e.currentTarget.style.borderColor = 'rgba(255, 215, 0, 0.6)';
+              e.currentTarget.style.boxShadow = '0 0 20px rgba(255, 215, 0, 0.4)';
+              e.currentTarget.style.transform = 'scale(1.05)';
+              e.currentTarget.style.color = '#ffd700';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'rgba(255, 215, 0, 0.15)';
+              e.currentTarget.style.borderColor = 'rgba(255, 215, 0, 0.3)';
+              e.currentTarget.style.boxShadow = '0 0 10px rgba(255, 215, 0, 0.2)';
+              e.currentTarget.style.transform = 'scale(1)';
+              e.currentTarget.style.color = 'white';
+            }}
+          >
+            {getZodiacSignInRussian(sign)}
+            <Icon24Write 
+              width={16} 
+              height={16} 
+              style={{ 
+                opacity: 0.8,
+                transition: 'all 0.3s ease',
+                transform: 'rotate(0deg)'
+              }} 
+            />
+          </span>
         </h1>
       </div>
       
