@@ -100,6 +100,15 @@ export const HoroscopeSection = () => {
     routeNavigator.push(`/${DEFAULT_VIEW_PANELS.SETTINGS}`);
   };
 
+  // Получаем цвет дня для свечения
+  const getDayColor = () => {
+    if (horoscope?.color) {
+      const { hex } = parseColor(horoscope.color);
+      return hex;
+    }
+    return '#FFD700'; // Золотистый цвет по умолчанию
+  };
+
   // Адаптивность для мобильных устройств
   const isMobile = windowWidth < 768;
   const isVerySmallMobile = windowWidth < 480;
@@ -188,7 +197,8 @@ export const HoroscopeSection = () => {
     height: '340px',
     objectFit: 'cover',
     maxWidth: '450px',
-    borderRadius: '12px'
+    borderRadius: '12px',
+    transition: 'filter 0.5s ease-in-out'
   };
 
   const imageOverlayStyle: React.CSSProperties = {
@@ -574,6 +584,47 @@ export const HoroscopeSection = () => {
             75% { transform: translateY(-15px) translateX(3px); }
           }
           
+          @keyframes color-particle-float {
+            0%, 100% { 
+              transform: translateY(0px) translateX(0px) scale(1);
+              opacity: 0.6;
+            }
+            25% { 
+              transform: translateY(-15px) translateX(8px) scale(1.2);
+              opacity: 0.9;
+            }
+            50% { 
+              transform: translateY(-8px) translateX(-12px) scale(0.8);
+              opacity: 0.4;
+            }
+            75% { 
+              transform: translateY(-20px) translateX(6px) scale(1.1);
+              opacity: 0.7;
+            }
+          }
+          
+          @keyframes color-particle-pulse {
+            0%, 100% { 
+              box-shadow: 0 0 5px currentColor;
+              opacity: 0.5;
+            }
+            50% { 
+              box-shadow: 0 0 15px currentColor, 0 0 25px currentColor;
+              opacity: 0.8;
+            }
+          }
+          
+          @keyframes overlay-pulse {
+            0%, 100% { 
+              opacity: 0.6;
+              transform: scale(1);
+            }
+            50% { 
+              opacity: 0.9;
+              transform: scale(1.02);
+            }
+          }
+          
 
           
           @keyframes sun-bounce {
@@ -711,6 +762,22 @@ export const HoroscopeSection = () => {
               style={complexImageStyle}
             />
             
+            {/* Цветное свечение поверх изображения */}
+            {horoscope && (
+              <div style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                borderRadius: '12px',
+                background: `radial-gradient(circle at center, ${getDayColor()}15 0%, ${getDayColor()}08 30%, transparent 70%)`,
+                pointerEvents: 'none',
+                zIndex: 5,
+                animation: 'overlay-pulse 4s ease-in-out infinite'
+              }} />
+            )}
+            
             {/* Animated Elements */}
             <div className="animated-elements-container" style={animatedElementsContainerStyle}>
               {/* Sun - Outer orbit, left side */}
@@ -844,6 +911,95 @@ export const HoroscopeSection = () => {
                 animation: 'stardust 2s ease-in-out infinite, float 4.5s ease-in-out infinite',
                 animationDelay: '1.5s, 1s'
               }} />
+              
+              {/* Цветные частицы в цвете дня */}
+              {horoscope && (
+                <>
+                  <div style={{
+                    position: 'absolute',
+                    top: '25%',
+                    left: '20%',
+                    width: '4px',
+                    height: '4px',
+                    backgroundColor: getDayColor(),
+                    borderRadius: '50%',
+                    color: getDayColor(),
+                    pointerEvents: 'none',
+                    animation: 'color-particle-float 5s ease-in-out infinite, color-particle-pulse 3s ease-in-out infinite',
+                    animationDelay: '0s, 0.5s'
+                  }} />
+                  
+                  <div style={{
+                    position: 'absolute',
+                    top: '65%',
+                    left: '75%',
+                    width: '3px',
+                    height: '3px',
+                    backgroundColor: getDayColor(),
+                    borderRadius: '50%',
+                    color: getDayColor(),
+                    pointerEvents: 'none',
+                    animation: 'color-particle-float 4s ease-in-out infinite, color-particle-pulse 2.5s ease-in-out infinite',
+                    animationDelay: '1s, 0s'
+                  }} />
+                  
+                  <div style={{
+                    position: 'absolute',
+                    top: '45%',
+                    left: '90%',
+                    width: '2px',
+                    height: '2px',
+                    backgroundColor: getDayColor(),
+                    borderRadius: '50%',
+                    color: getDayColor(),
+                    pointerEvents: 'none',
+                    animation: 'color-particle-float 6s ease-in-out infinite, color-particle-pulse 4s ease-in-out infinite',
+                    animationDelay: '2s, 1s'
+                  }} />
+                  
+                  <div style={{
+                    position: 'absolute',
+                    top: '80%',
+                    left: '15%',
+                    width: '3px',
+                    height: '3px',
+                    backgroundColor: getDayColor(),
+                    borderRadius: '50%',
+                    color: getDayColor(),
+                    pointerEvents: 'none',
+                    animation: 'color-particle-float 4.5s ease-in-out infinite, color-particle-pulse 3.5s ease-in-out infinite',
+                    animationDelay: '0.5s, 1.5s'
+                  }} />
+                  
+                  <div style={{
+                    position: 'absolute',
+                    top: '35%',
+                    left: '5%',
+                    width: '2px',
+                    height: '2px',
+                    backgroundColor: getDayColor(),
+                    borderRadius: '50%',
+                    color: getDayColor(),
+                    pointerEvents: 'none',
+                    animation: 'color-particle-float 5.5s ease-in-out infinite, color-particle-pulse 2s ease-in-out infinite',
+                    animationDelay: '1.5s, 0.5s'
+                  }} />
+                  
+                  <div style={{
+                    position: 'absolute',
+                    top: '55%',
+                    left: '85%',
+                    width: '4px',
+                    height: '4px',
+                    backgroundColor: getDayColor(),
+                    borderRadius: '50%',
+                    color: getDayColor(),
+                    pointerEvents: 'none',
+                    animation: 'color-particle-float 3.5s ease-in-out infinite, color-particle-pulse 3s ease-in-out infinite',
+                    animationDelay: '2.5s, 1s'
+                  }} />
+                </>
+              )}
             </div>
 
             {/* Text Overlay */}
