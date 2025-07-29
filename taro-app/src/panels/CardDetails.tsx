@@ -4,12 +4,10 @@ import {
   Div,
   NavIdProps,
   Text,
-  Group,
-  Title,
   Placeholder,
-  SimpleCell,
   Skeleton,
   Button,
+  ConfigProvider,
 } from '@vkontakte/vkui';
 import { useParams } from '@vkontakte/vk-mini-apps-router';
 import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
@@ -19,6 +17,7 @@ import { AppHeader } from '../components/AppHeader';
 import { DEFAULT_VIEW_PANELS } from '../routes';
 import { useAppDispatch, useAppSelector } from '../store';
 import { fetchCardDetails, clearCurrentCard } from '../store/slices/taroDecksSlice';
+import '../styles/card-details.css';
 
 export interface CardDetailsProps extends NavIdProps {}
 
@@ -42,51 +41,89 @@ export const CardDetails: FC<CardDetailsProps> = ({ id }) => {
 
   // Компонент скелетона для отображения во время загрузки
   const CardDetailsSkeleton = () => (
-    <Div>
-      <Group>
-        <Div style={{
+    <Div style={{ 
+      padding: '20px 12px',
+      display: 'flex',
+      justifyContent: 'center'
+    }}>
+      <div className="card-details" style={{
+        width: '100%',
+        background: 'url(https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/3b830249f16752184ecb361cce592c7795bcf9ad) center/cover',
+        borderRadius: '12px',
+        overflow: 'hidden',
+        position: 'relative',
+        padding: '32px'
+      }}>
+        {/* Открывающий декоративный элемент */}
+        <div style={{
           display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          padding: '16px',
-          gap: '24px'
+          justifyContent: 'center',
+          marginBottom: '16px'
         }}>
-          <SimpleCell 
-            disabled 
-            style={{ padding: 0 }}
-            subtitle={<Skeleton width={120} height={16} />}
-          >
-            <Skeleton width={150} height={32} style={{ margin: '0 auto' }} />
-          </SimpleCell>
-          
-          <Skeleton width={200} height={300} borderRadius={12} />
-          
-          <Group header={<Title level="3">Значение карты</Title>} style={{ width: '100%' }}>
-            <SimpleCell 
-              multiline 
-              disabled
-              indicator={<Skeleton width={180} height={36} />}
-            >
-              В прямом положении
-            </SimpleCell>
-            <SimpleCell 
-              multiline 
-              disabled
-              indicator={<Skeleton width={180} height={36} />}
-            >
-              В перевернутом положении
-            </SimpleCell>
-          </Group>
-          
-          <Group header={<Title level="3">О колоде</Title>} style={{ width: '100%' }}>
-            <Div>
+          <Skeleton width={90} height={20} borderRadius={8} />
+        </div>
+
+        {/* Разделитель */}
+        <div style={{
+          width: '100%',
+          height: '2px',
+          marginBottom: '32px'
+        }}>
+          <Skeleton width="100%" height={2} />
+        </div>
+
+        {/* Контент */}
+        <div className="card-details-container">
+          {/* Секция изображения */}
+          <div className="card-image-section">
+            <Skeleton width={200} height={300} borderRadius={12} />
+            <div className="card-title-section">
+              <Skeleton width="150px" height={24} style={{ marginBottom: '8px' }} />
+              <Skeleton width="120px" height={16} />
+            </div>
+          </div>
+
+          {/* Секция информации */}
+          <div className="card-info-section">
+            {/* Значение карты */}
+            <div>
+              <div style={{ marginBottom: '16px' }}>
+                <Skeleton width="180px" height={20} style={{ marginBottom: '8px' }} />
+                <Skeleton width="100%" height={16} />
+              </div>
+              <div>
+                <Skeleton width="200px" height={20} style={{ marginBottom: '8px' }} />
+                <Skeleton width="100%" height={16} />
+              </div>
+            </div>
+
+            {/* О колоде */}
+            <div>
+              <Skeleton width="80px" height={20} style={{ marginBottom: '16px' }} />
               <Skeleton width="100%" height={16} style={{ marginBottom: '8px' }} />
               <Skeleton width="100%" height={16} style={{ marginBottom: '8px' }} />
-              <Skeleton width="80%" height={16} style={{ marginBottom: '8px' }} />
-            </Div>
-          </Group>
-        </Div>
-      </Group>
+              <Skeleton width="80%" height={16} />
+            </div>
+          </div>
+        </div>
+
+        {/* Нижний разделитель */}
+        <div style={{
+          width: '100%',
+          height: '2px',
+          marginBottom: '16px'
+        }}>
+          <Skeleton width="100%" height={2} />
+        </div>
+
+        {/* Закрывающий декоративный элемент */}
+        <div style={{
+          display: 'flex',
+          justifyContent: 'center'
+        }}>
+          <Skeleton width={90} height={20} borderRadius={8} />
+        </div>
+      </div>
     </Div>
   );
 
@@ -99,83 +136,151 @@ export const CardDetails: FC<CardDetailsProps> = ({ id }) => {
   };
 
   return (
-    <Panel id={id}>
-      <AppHeader
-        left={
-          <Button
-            mode="tertiary"
-            onClick={() => routeNavigator.back()}
-          >
-            Назад
-          </Button>
-        }
-        right={<StarButton size="s" />}
-      />
+    <ConfigProvider hasCustomPanelHeaderAfter={false}>
+      <Panel id={id}>
+        <AppHeader
+          left={
+            <Button
+              mode="tertiary"
+              onClick={() => routeNavigator.back()}
+            >
+              Назад
+            </Button>
+          }
+          right={<StarButton size="s" />}
+        />
 
-      {cardLoading && <CardDetailsSkeleton />}
-      
-      {cardError && (
-        <Placeholder>
-          <Text style={{ color: 'red' }}>{cardError}</Text>
-        </Placeholder>
-      )}
-      
-      {!cardLoading && !cardError && currentCard && (
-        <Div>
-          <Group>
-            <Div style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              padding: '16px',
-              gap: '24px'
+        {cardLoading && <CardDetailsSkeleton />}
+        
+        {cardError && (
+          <Placeholder>
+            <Text style={{ color: 'red' }}>{cardError}</Text>
+          </Placeholder>
+        )}
+        
+        {!cardLoading && !cardError && currentCard && (
+          <Div style={{ 
+            padding: '20px 12px',
+            display: 'flex',
+            justifyContent: 'center'
+          }}>
+            <div className="card-details" style={{
+              width: '100%',
+              background: 'url(https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/3b830249f16752184ecb361cce592c7795bcf9ad) center/cover',
+              borderRadius: '12px',
+              overflow: 'hidden',
+              position: 'relative',
+              padding: '32px'
             }}>
-              <SimpleCell 
-                disabled 
-                style={{ padding: 0 }}
-                subtitle={currentCard.deck.name}
-              >
-                <Title level="1" style={{ textAlign: 'center' }}>{currentCard.card.name}</Title>
-              </SimpleCell>
-              
-              {currentCard.card.imageUrl && (
+              {/* Открывающий декоративный элемент */}
+              <div style={{
+                display: 'flex',
+                justifyContent: 'center',
+                marginBottom: '16px'
+              }}>
                 <img
-                  src={currentCard.card.imageUrl}
-                  alt={currentCard.card.name}
+                  src="https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/a73aa4a82442cd6022e0ae5e650a0c240ffa4f01"
+                  alt="Decorative element"
                   style={{
-                    width: '200px',
-                    height: '300px',
-                    objectFit: 'contain',
-                    borderRadius: '12px',
+                    width: '90px',
+                    height: 'auto',
+                    objectFit: 'contain'
                   }}
                 />
-              )}
-              
-              <Group header={<Title level="3">Значение карты</Title>} style={{ width: '100%' }}>
-                <SimpleCell multiline indicator={currentCard.card.meaning.upright}>
-                  В прямом положении
-                </SimpleCell>
-                <SimpleCell multiline indicator={currentCard.card.meaning.reversed}>
-                  В перевернутом положении
-                </SimpleCell>
-              </Group>
-              
-              <Group header={<Title level="3">О колоде</Title>} style={{ width: '100%' }}>
-                <Div>
-                  <Text style={{ fontSize: '16px', lineHeight: '1.5' }}>
-                    {currentCard.deck.description}
-                  </Text>
-                </Div>
-              </Group>
-            </Div>
-          </Group>
-        </Div>
-      )}
-      
-      <Footer 
-        onAboutApp={handleAboutApp}
-        onLegalInfo={handleLegalInfo}
-      />
-    </Panel>
+              </div>
+
+              {/* Разделитель */}
+              <div style={{
+                width: '100%',
+                height: '2px',
+                background: 'url(https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/bf65c29bb76ac59b655e89bb29946e4f00f49a6d) center/cover',
+                marginBottom: '32px'
+              }} />
+
+              {/* Основной контент */}
+              <div className="card-details-container">
+                {/* Секция изображения карты */}
+                <div className="card-image-section">
+                  {currentCard.card.imageUrl && (
+                    <img
+                      src={currentCard.card.imageUrl}
+                      alt={currentCard.card.name}
+                      className="card-image"
+                    />
+                  )}
+                  <div className="card-title-section">
+                    <h1 className="card-title">{currentCard.card.name}</h1>
+                    <p className="card-deck-name">{currentCard.deck.name}</p>
+                  </div>
+                </div>
+
+                {/* Секция информации о карте */}
+                <div className="card-info-section">
+                  {/* Значение карты */}
+                  <div className="card-meaning-section">
+                    <div className="meaning-item">
+                      <div className="meaning-label">
+                        В прямом положении
+                      </div>
+                      <p className="meaning-text">
+                        {currentCard.card.meaning.upright}
+                      </p>
+                    </div>
+
+                    <div className="meaning-item">
+                      <div className="meaning-label">
+                        <span className="reversed-icon">↓</span>
+                        В перевернутом положении
+                      </div>
+                      <p className="meaning-text">
+                        {currentCard.card.meaning.reversed}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* О колоде */}
+                  <div>
+                    <h2 className="section-title">О колоде</h2>
+                    <p className="deck-description">
+                      {currentCard.deck.description}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Нижний разделитель */}
+              <div style={{
+                width: '100%',
+                height: '2px',
+                background: 'url(https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/bf65c29bb76ac59b655e89bb29946e4f00f49a6d) center/cover',
+                marginTop: '32px',
+                marginBottom: '16px'
+              }} />
+
+              {/* Закрывающий декоративный элемент */}
+              <div style={{
+                display: 'flex',
+                justifyContent: 'center'
+              }}>
+                <img
+                  src="https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/154f96a15bcd974fd38495f6f7aeec22f8b9613a"
+                  alt="Decorative element"
+                  style={{
+                    width: '90px',
+                    height: 'auto',
+                    objectFit: 'contain'
+                  }}
+                />
+              </div>
+            </div>
+          </Div>
+        )}
+        
+        <Footer 
+          onAboutApp={handleAboutApp}
+          onLegalInfo={handleLegalInfo}
+        />
+      </Panel>
+    </ConfigProvider>
   );
 }; 

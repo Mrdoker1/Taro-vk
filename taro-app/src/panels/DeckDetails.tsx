@@ -65,7 +65,7 @@ export const DeckDetails: FC<DeckDetailsProps> = ({ id }) => {
         overflow: 'hidden',
         position: 'relative',
         padding: '32px'
-      }}>
+      }} className="deck-details">
         {/* Скелетон для информации о колоде */}
         <div 
           className="deck-info-container"
@@ -176,7 +176,7 @@ export const DeckDetails: FC<DeckDetailsProps> = ({ id }) => {
           display: 'flex',
           justifyContent: 'center'
         }}>
-          <div style={{
+          <div className="deck-details" style={{
             width: '100%',
             background: 'url(https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/3b830249f16752184ecb361cce592c7795bcf9ad) center/cover',
             borderRadius: '12px',

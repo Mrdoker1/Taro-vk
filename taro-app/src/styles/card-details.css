@@ -1,0 +1,174 @@
+/* Адаптивные стили для страницы деталей карты */
+.card-details .card-details-container {
+  display: flex;
+  align-items: flex-start;
+  gap: 32px;
+  margin-bottom: 32px;
+}
+
+.card-details .card-image-section {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  flex-shrink: 0;
+}
+
+.card-details .card-image {
+  width: 200px;
+  height: 300px;
+  object-fit: contain;
+  border-radius: 12px;
+}
+
+.card-details .card-title-section {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+}
+
+.card-details .card-title {
+  color: #ffffff;
+  font-size: 24px;
+  font-weight: 400;
+  margin: 0;
+  font-family: 'Jost';
+  text-align: left;
+}
+
+.card-details .card-deck-name {
+  color: #ffffff;
+  font-size: 16px;
+  margin: 0;
+  opacity: 0.8;
+  text-align: left;
+}
+
+.card-details .card-info-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.card-details .card-meaning-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.card-details .section-title {
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 500;
+  margin: 0 0 16px 0;
+  font-family: 'Jost';
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.card-details .meaning-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.card-details .meaning-label {
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 500;
+  margin: 0;
+  font-family: 'Jost';
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-details .meaning-text {
+  color: #ffffff;
+  font-size: 16px;
+  margin: 0;
+  opacity: 0.9;
+  line-height: 1.5;
+}
+
+.card-details .reversed-icon {
+  width: 16px;
+  height: 16px;
+  background: #ff8c00;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 10px;
+  font-weight: bold;
+}
+
+.card-details .deck-description {
+  color: #ffffff;
+  font-size: 16px;
+  margin: 0;
+  opacity: 0.9;
+  line-height: 1.5;
+}
+
+/* Мобильные устройства */
+@media (max-width: 768px) {
+  .card-details .card-details-container {
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+  }
+  
+  .card-details .card-image-section {
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+  
+  .card-details .card-title-section {
+    align-items: center;
+  }
+  
+  .card-details .card-title {
+    text-align: center;
+    font-size: 22px;
+  }
+  
+  .card-details .card-deck-name {
+    text-align: center;
+  }
+  
+  .card-details .card-info-section {
+    width: 100%;
+  }
+  
+  .card-details .card-image {
+    width: 180px;
+    height: 270px;
+  }
+}
+
+/* Очень маленькие экраны */
+@media (max-width: 480px) {
+  .card-details .card-image {
+    width: 160px;
+    height: 240px;
+  }
+  
+  .card-details .card-title {
+    font-size: 20px;
+  }
+  
+  .card-details .section-title {
+    font-size: 16px;
+  }
+  
+  .card-details .meaning-label,
+  .card-details .meaning-text,
+  .card-details .deck-description {
+    font-size: 14px;
+  }
+}
