@@ -192,30 +192,18 @@ button {
   }
 }
 
-/* Анимация драг-н-дропа с рукой */
+/* Анимация стрелки влево-вправо */
 @keyframes dragAndDropHint {
   0% {
-    transform: translateY(-50%) translateX(0px) rotate(0deg);
-    opacity: 0.7;
-  }
-  20% {
-    transform: translateY(-50%) translateX(0px) rotate(-10deg);
-    opacity: 0.9;
-  }
-  40% {
-    transform: translateY(-50%) translateX(30px) rotate(-5deg);
-    opacity: 1;
-  }
-  60% {
-    transform: translateY(-50%) translateX(60px) rotate(0deg);
-    opacity: 0.9;
-  }
-  80% {
-    transform: translateY(-50%) translateX(60px) rotate(10deg);
+    transform: translateY(-50%) translateX(0px);
     opacity: 0.8;
   }
+  50% {
+    transform: translateY(-50%) translateX(30px);
+    opacity: 1;
+  }
   100% {
-    transform: translateY(-50%) translateX(0px) rotate(0deg);
-    opacity: 0.7;
+    transform: translateY(-50%) translateX(0px);
+    opacity: 0.8;
   }
 }

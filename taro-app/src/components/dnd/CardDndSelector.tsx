@@ -638,41 +638,21 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
                   <div style={{ position: 'relative' }}>
                     <CardDeck cards={cards} usedCardIds={usedCardIds} isShuffling={isShuffling} backImageUrl={backImageUrl} />
                     
-                    {/* Анимированная рука для подсказки драг-н-дропа */}
+                    {/* Анимированная стрелка для подсказки драг-н-дропа */}
                     {cards.length > 0 && Object.keys(selectedCards).length === 0 && !isMobile && windowWidth > 768 && (
                       <div style={{
                         position: 'absolute',
                         top: '50%',
                         right: '-80px',
                         transform: 'translateY(-50%)',
-                        fontSize: '28px',
-                        animation: 'dragAndDropHint 3s ease-in-out infinite',
+                        fontSize: '32px',
+                        animation: 'dragAndDropHint 2s ease-in-out infinite',
                         pointerEvents: 'none',
-                        zIndex: 10
+                        zIndex: 10,
+                        color: 'rgba(227, 199, 122, 0.8)',
+                        filter: 'drop-shadow(2px 2px 4px rgba(0,0,0,0.3))'
                       }}>
-                        <div style={{ 
-                          position: 'relative',
-                          filter: 'drop-shadow(2px 2px 4px rgba(0,0,0,0.3))'
-                        }}>
-                          {/* Карта */}
-                          <span style={{
-                            position: 'absolute',
-                            top: '0',
-                            left: '0',
-                            zIndex: 1
-                          }}>
-                            🃏
-                          </span>
-                          {/* Рука поверх карты */}
-                          <span style={{
-                            position: 'relative',
-                            top: '-2px',
-                            left: '8px',
-                            zIndex: 2
-                          }}>
-                            🤏
-                          </span>
-                        </div>
+                        →
                       </div>
                     )}
                   </div>
