@@ -454,8 +454,8 @@ ${parsedAffirmation.usage}
                 src={getAffirmationIcon(index)} 
                 alt="" 
                 style={{
-                  width: '20px',
-                  height: '20px',
+                  width: '32px',
+                  height: '32px',
                   flexShrink: 0
                 }}
               />
