@@ -528,6 +528,119 @@ ${parsedAffirmation.usage}
         flex: '1',
         minWidth: '0'
       }}>
+        {/* Пустой контейнер с инструкциями (изначально показывается) */}
+        {!isGenerating && !parsedAffirmation && (
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            width: '100%',
+          }}>
+            {/* Заголовок над контейнером */}
+            <Text style={{
+              color: '#ffffff',
+              fontSize: '18px',
+              fontWeight: '400',
+              textAlign: 'center',
+              fontFamily: 'Jost',
+              marginBottom: '16px'
+            }}>
+              Ждём ваш запрос, чтобы подобрать аффирмации
+            </Text>
+            
+            <div style={{
+              display: 'flex',
+              justifyContent: 'center',
+              width: '100%',
+            }}>
+              <div style={{
+                background: 'rgba(0,0,0,0.2)',
+                display: 'flex',
+                width: '100%',
+                flexDirection: 'column',
+                alignItems: 'stretch',
+                justifyContent: 'center',
+                padding: '32px 24px',
+                borderRadius: '0px 0px 4px 4px',
+                borderTop: '1px solid rgba(227,199,122,1)'
+              }}>
+              <div style={{
+                display: 'flex',
+                width: '100%',
+                alignItems: 'center',
+                gap: '16px',
+                lineHeight: 1.3,
+                marginBottom: '16px'
+              }}>
+                <div style={{
+                  border: '1px solid rgba(151,128,65,0.25)',
+                  display: 'flex',
+                  height: '32px',
+                  width: '32px',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '14px',
+                  color: 'rgba(210,175,80,1)',
+                  fontWeight: '500',
+                  textAlign: 'center',
+                  borderRadius: '50%',
+                  flexShrink: 0
+                }}>
+                  1
+                </div>
+                <div style={{
+                  color: 'white',
+                  fontSize: '16px',
+                  fontWeight: '300',
+                  alignSelf: 'stretch',
+                  flex: '1',
+                  margin: 'auto 0',
+                  fontFamily: 'Jost, -apple-system, BlinkMacSystemFont, sans-serif'
+                }}>
+                  Выберите готовую тему из списка или введите свою персональную тему
+                </div>
+              </div>
+              
+              <div style={{
+                display: 'flex',
+                width: '100%',
+                alignItems: 'center',
+                gap: '16px'
+              }}>
+                <div style={{
+                  border: '1px solid rgba(151,128,65,0.25)',
+                  display: 'flex',
+                  height: '32px',
+                  width: '32px',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '14px',
+                  color: 'rgba(210,175,80,1)',
+                  fontWeight: '500',
+                  textAlign: 'center',
+                  borderRadius: '50%',
+                  flexShrink: 0
+                }}>
+                  2
+                </div>
+                <div style={{
+                  color: 'white',
+                  fontSize: '16px',
+                  fontWeight: '300',
+                  lineHeight: '21px',
+                  alignSelf: 'stretch',
+                  flex: '1',
+                  margin: 'auto 0',
+                  fontFamily: 'Jost, -apple-system, BlinkMacSystemFont, sans-serif'
+                }}>
+                  Нажмите кнопку "Получить аффирмации" для генерации персонализированных утверждений
+                </div>
+              </div>
+            </div>
+            </div>
+          </div>
+        )}
+
         {isGenerating && (
           <Card mode="shadow" style={{ 
             padding: '20px', 
