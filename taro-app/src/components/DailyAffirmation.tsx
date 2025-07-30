@@ -584,17 +584,6 @@ ${parsedAffirmation.usage}
       <div style={{
         marginBottom: '24px'
       }}>
-        <Text style={{ 
-          color: '#ffffff',
-          fontSize: '16px',
-          lineHeight: '1.5',
-          textAlign: 'center',
-          marginBottom: '8px',
-          fontFamily: 'Jost'
-        }}>
-          Позитивные утверждения помогут вам настроиться на успешный день и привлечь желаемое в свою жизнь.
-        </Text>
-        
         {renderPromptForm()}
       </div>
       

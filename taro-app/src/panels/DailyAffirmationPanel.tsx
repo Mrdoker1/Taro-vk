@@ -72,23 +72,34 @@ export const DailyAffirmationPanel: FC<DailyAffirmationPanelProps> = ({ id }) =>
                 src={affirmationIcon}
                 alt="Affirmation icon"
                 style={{
-                  width: '44px',
-                  height: '44px',
+                  width: '60px',
+                  height: '60px',
                   objectFit: 'contain'
                 }}
               />
-              <h1 style={{
-                color: '#ffffff',
-                fontSize: '24px',
-                fontWeight: '400',
-                margin: 0,
-                fontFamily: 'Jost',
-                lineHeight: 1.2,
-                flex: 1,
-                minWidth: 0
-              }}>
-                Ежедневные аффирмации
-              </h1>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <h1 style={{
+                  color: '#ffffff',
+                  fontSize: '24px',
+                  fontWeight: '400',
+                  margin: 0,
+                  fontFamily: 'Jost',
+                  lineHeight: 1.2,
+                  marginBottom: '8px'
+                }}>
+                  Ежедневные аффирмации
+                </h1>
+                <div style={{
+                  color: '#ffffff',
+                  fontSize: '16px',
+                  lineHeight: '1.5',
+                  textAlign: 'left',
+                  fontFamily: 'Jost',
+                  opacity: 0.9
+                }}>
+                  Позитивные утверждения помогут вам настроиться на успешный день и привлечь желаемое в свою жизнь.
+                </div>
+              </div>
             </div>
 
             {/* Декоративный элемент */}
