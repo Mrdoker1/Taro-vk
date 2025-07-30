@@ -6,9 +6,16 @@ export const loadUserQuestion = createAsyncThunk(
   'app/loadUserQuestion',
   async () => {
     try {
-      const result = await bridge.send('VKWebAppStorageGet', {
+      // Добавляем timeout для VK Bridge запросов
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('VK Storage timeout')), 3000)
+      );
+      
+      const storagePromise = bridge.send('VKWebAppStorageGet', {
         keys: ['userQuestion']
       });
+      
+      const result = await Promise.race([storagePromise, timeoutPromise]) as { keys: Array<{ key: string; value: string }> };
       
       if (result.keys && result.keys.length > 0 && result.keys[0].value) {
         return result.keys[0].value;
@@ -43,19 +50,31 @@ const getUserQuestionFromStorage = (): string => {
 const saveUserQuestionToStorage = async (question: string): Promise<void> => {
   try {
     if (question.trim()) {
-      // Пытаемся сохранить через VK Bridge
-      await bridge.send('VKWebAppStorageSet', {
+      // Пытаемся сохранить через VK Bridge с timeout
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('VK Storage save timeout')), 3000)
+      );
+      
+      const savePromise = bridge.send('VKWebAppStorageSet', {
         key: 'userQuestion',
         value: question
       });
+      
+      await Promise.race([savePromise, timeoutPromise]);
       // Также сохраняем в sessionStorage как fallback
       sessionStorage.setItem('userQuestion', question);
     } else {
       // Удаляем из VK Storage
-      await bridge.send('VKWebAppStorageSet', {
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('VK Storage delete timeout')), 3000)
+      );
+      
+      const deletePromise = bridge.send('VKWebAppStorageSet', {
         key: 'userQuestion',
         value: ''
       });
+      
+      await Promise.race([deletePromise, timeoutPromise]);
       // Также удаляем из sessionStorage
       sessionStorage.removeItem('userQuestion');
     }

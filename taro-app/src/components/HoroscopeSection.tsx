@@ -335,7 +335,7 @@ export const HoroscopeSection = () => {
     fontSize: '16px',
     color: 'white',
     justifyContent: 'flex-start',
-    padding: '16px 24px',
+    padding: isVerySmallMobile ? '8px 12px' : isMobile ? '12px 16px' : '16px 24px',
     minWidth: 0,
     minHeight: '300px'
   };
@@ -357,24 +357,24 @@ export const HoroscopeSection = () => {
 
   const predictionTextStyle: React.CSSProperties = {
     fontWeight: 300,
-    lineHeight: '21px',
-    fontSize: '16px',
-    marginBottom: '16px',
+    lineHeight: isVerySmallMobile ? '18px' : '21px',
+    fontSize: isVerySmallMobile ? '14px' : '16px',
+    marginBottom: isVerySmallMobile ? '12px' : '16px',
     textAlign: 'justify'
   };
 
   const infoContainerStyle: React.CSSProperties = {
     display: 'flex',
     flexDirection: 'column',
-    fontSize: '16px'
+    fontSize: isVerySmallMobile ? '14px' : '16px'
   };
 
   const infoRowStyle: React.CSSProperties = {
     display: 'flex',
     alignItems: 'center',
-    gap: '8px',
+    gap: isVerySmallMobile ? '6px' : '8px',
     flexWrap: 'wrap',
-    marginBottom: '12px'
+    marginBottom: isVerySmallMobile ? '8px' : '12px'
   };
 
 

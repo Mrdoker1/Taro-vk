@@ -47,28 +47,46 @@ const isVKEnvironment = (): boolean => {
 const saveToStorage = async (data: Record<string, CalendarDayData>): Promise<void> => {
   try {
     if (isVKEnvironment()) {
-      // VK Storage for production
-      await bridge.send('VKWebAppStorageSet', {
+      // VK Storage for production с timeout
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('VK Storage save timeout')), 3000)
+      );
+      
+      const savePromise = bridge.send('VKWebAppStorageSet', {
         key: STORAGE_KEY,
         value: JSON.stringify(data),
       });
+      
+      await Promise.race([savePromise, timeoutPromise]);
     } else {
       // localStorage for development
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
     }
   } catch (error) {
     console.error('Failed to save calendar data:', error);
-    throw error;
+    // Fallback к localStorage даже в VK среде
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    } catch {
+      // Если и localStorage не работает, то просто логируем ошибку
+      console.error('Failed to save to localStorage as well');
+    }
   }
 };
 
 const loadFromStorage = async (): Promise<Record<string, CalendarDayData>> => {
   try {
     if (isVKEnvironment()) {
-      // VK Storage for production
-      const result = await bridge.send('VKWebAppStorageGet', {
+      // VK Storage for production с timeout
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('VK Storage timeout')), 3000)
+      );
+      
+      const storagePromise = bridge.send('VKWebAppStorageGet', {
         keys: [STORAGE_KEY],
       });
+      
+      const result = await Promise.race([storagePromise, timeoutPromise]) as { keys: Array<{ key: string; value: string }> };
       const data = result.keys.find(item => item.key === STORAGE_KEY)?.value;
       return data ? JSON.parse(data) : {};
     } else {
@@ -78,7 +96,13 @@ const loadFromStorage = async (): Promise<Record<string, CalendarDayData>> => {
     }
   } catch (error) {
     console.error('Failed to load calendar data:', error);
-    return {};
+    // Fallback к localStorage даже в VK среде
+    try {
+      const data = localStorage.getItem(STORAGE_KEY);
+      return data ? JSON.parse(data) : {};
+    } catch {
+      return {};
+    }
   }
 };
 

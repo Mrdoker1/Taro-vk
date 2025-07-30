@@ -79,11 +79,17 @@
   }
 
   /* Адаптация табов для мобильных */
+  .HoroscopeSection [class*="Tabs"],
+  .HoroscopeSection .vkuiTabs,
+  .HoroscopeSection div[role="tablist"] {
+    gap: clamp(2px, 0.5vw, 8px) !important;
+  }
+  
   .HoroscopeSection [class*="Tabs"] [class*="TabsItem"],
   .HoroscopeSection .vkuiTabs .vkuiTabsItem,
   .HoroscopeSection div[role="tablist"] button {
     font-size: clamp(12px, 2.5vw, 14px) !important;
-    padding: clamp(6px, 1.5vw, 12px) clamp(8px, 2vw, 16px) !important;
+    padding: clamp(6px, 1.5vw, 12px) clamp(4px, 1vw, 16px) !important;
     transition: all 0.3s ease !important;
     outline: none !important;
     border: none !important;
@@ -127,6 +133,13 @@
     min-height: 350px !important;
   }
 
+  /* Минимальный gap между табами для экономии места */
+  .HoroscopeSection [class*="Tabs"],
+  .HoroscopeSection .vkuiTabs,
+  .HoroscopeSection div[role="tablist"] {
+    gap: 2px !important;
+  }
+
   /* Обеспечиваем читаемость на малых экранах */
   .HoroscopeSection [class*="Tabs"] [class*="TabsItem"],
   .HoroscopeSection .vkuiTabs .vkuiTabsItem,
@@ -134,7 +147,7 @@
     letter-spacing: 0.3px !important;
     min-height: 32px !important;
     font-size: 12px !important;
-    padding: 6px 10px !important;
+    padding: 6px 4px !important;
     outline: none !important;
     border: none !important;
     box-shadow: none !important;
