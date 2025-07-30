@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Text } from '@vkontakte/vkui';
 import { useAppDispatch, useAppSelector } from '../store';
 import { fetchSpreadDetails } from '../store/slices/taroSpreadsSlice';
 import { fetchDecks } from '../store/slices/taroDecksSlice';
@@ -22,8 +23,9 @@ export const TaroSpreadDetails: React.FC<TaroSpreadDetailsProps> = ({
   const routeNavigator = useRouteNavigator();
   const { currentSpread, spreadLoading, spreadError } = useAppSelector((state) => state.taroSpreads);
   const { decks, decksLoading } = useAppSelector((state) => state.taroDecks);
-  const { userQuestion } = useAppSelector((state) => state.app);
   const [selectedDeckId, setSelectedDeckId] = useState<string>('');
+  const [selectedPresetQuestion, setSelectedPresetQuestion] = useState<string>('');
+  const [customQuestion, setCustomQuestion] = useState<string>('');
 
   // Получаем данные расклада
   useEffect(() => {
@@ -77,10 +79,37 @@ export const TaroSpreadDetails: React.FC<TaroSpreadDetailsProps> = ({
 
   // Функция для перехода к гаданию с выбранным раскладом и колодой
   const handleStartReading = () => {
-    if (selectedDeckId && currentSpread && userQuestion.trim()) {
+    const finalQuestion = selectedPresetQuestion || customQuestion.trim();
+    if (selectedDeckId && currentSpread && finalQuestion) {
+      // Обновляем глобальный userQuestion перед переходом
+      dispatch(setUserQuestion(finalQuestion));
       routeNavigator.push(`/reading/${spreadId}/${selectedDeckId}`);
     }
   };
+
+  // Обработчики для выбора вопросов
+  const handlePresetQuestionSelect = (questionValue: string) => {
+    setSelectedPresetQuestion(questionValue);
+    setCustomQuestion(''); // Очищаем пользовательский вопрос
+    if (questionValue) {
+      dispatch(setUserQuestion(questionValue));
+    }
+  };
+
+  const handleCustomQuestionChange = (value: string) => {
+    setCustomQuestion(value);
+    setSelectedPresetQuestion(''); // Очищаем выбранный готовый вопрос
+    dispatch(setUserQuestion(value));
+  };
+
+  // Создаем опции для селекта готовых вопросов
+  const questionOptions = currentSpread?.questions?.map(question => ({
+    value: question,
+    label: question
+  })) || [];
+
+  // Проверяем, есть ли вопрос (готовый или пользовательский)
+  const hasQuestion = Boolean(selectedPresetQuestion || customQuestion.trim());
 
   if (spreadLoading || decksLoading) {
     return (
@@ -249,14 +278,41 @@ export const TaroSpreadDetails: React.FC<TaroSpreadDetailsProps> = ({
           />
         )}
 
-        {/* Поле для вопроса */}
-        <CustomTextarea
-          label="Введите свой вопрос"
-          value={userQuestion}
-          onChange={(value) => dispatch(setUserQuestion(value))}
-          placeholder="Введите вопрос, на который хотите получить ответ..."
-          rows={3}
-        />
+        {/* Поле для вопроса в стиле аффирмаций */}
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '16px'
+        }}>
+          {/* Селект с готовыми вопросами */}
+          <CustomSelect
+            value={selectedPresetQuestion}
+            options={questionOptions}
+            label="Выберите готовый вопрос"
+            placeholder="Выберите готовый вопрос"
+            onChange={handlePresetQuestionSelect}
+          />
+          
+          {/* Разделитель "или" */}
+          <Text style={{ 
+            color: '#ffffff', 
+            textAlign: 'center',
+            margin: '8px 0',
+            fontSize: '14px',
+            opacity: 0.8
+          }}>
+            или
+          </Text>
+          
+          {/* Поле для собственного вопроса */}
+          <CustomTextarea
+            value={customQuestion}
+            placeholder="Введите свой вопрос для гадания..."
+            label="Персональный вопрос"
+            onChange={handleCustomQuestionChange}
+            rows={3}
+          />
+        </div>
 
         {/* Кнопка начать гадание */}
         <div style={{ 
@@ -277,13 +333,13 @@ export const TaroSpreadDetails: React.FC<TaroSpreadDetailsProps> = ({
           <CustomButton 
             onClick={handleStartReading}
             variant="primary"
-            disabled={!currentSpread.available || currentSpread.paid || !selectedDeckId || availableDecks.length === 0 || !userQuestion.trim()}
+            disabled={!currentSpread.available || currentSpread.paid || !selectedDeckId || availableDecks.length === 0 || !hasQuestion}
           >
             {currentSpread.paid 
               ? 'Платный расклад' 
               : availableDecks.length === 0 
                 ? 'Нет доступных колод'
-                : !userQuestion.trim()
+                : !hasQuestion
                   ? 'Введите вопрос'
                   : 'Начать гадание'
             }
