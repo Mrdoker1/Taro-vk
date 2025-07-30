@@ -62,7 +62,18 @@ export const DailyAffirmation: React.FC = () => {
   const [selectedTopic, setSelectedTopic] = useState<string>('');
   const [parsedAffirmation, setParsedAffirmation] = useState<ParsedAffirmation | null>(null);
   const [promptMode, setPromptMode] = useState<'preset' | 'custom'>('preset');
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const { lang } = useAppSelector((state) => state.horoscope); // Используем тот же язык, что и для гороскопа
+
+  // Отслеживаем изменения размера окна
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Функция для выбора иконки по порядку секций
   const getAffirmationIcon = (sectionIndex: number): string => {
@@ -398,17 +409,20 @@ ${parsedAffirmation.usage}
         <div style={{
           display: 'flex',
           justifyContent: 'space-between',
-          alignItems: 'center',
+          alignItems: isMobile ? 'flex-start' : 'center',
+          flexDirection: isMobile ? 'column' : 'row',
+          gap: isMobile ? '12px' : '0',
           marginBottom: '24px'
         }}>
           <Text style={{
             color: '#ffffff',
             fontSize: '14px',
             fontWeight: '400',
-            textAlign: 'left',
+            textAlign: isMobile ? 'center' : 'left',
             fontFamily: 'Jost',
             textTransform: 'uppercase',
-            letterSpacing: '0.5px'
+            letterSpacing: '0.5px',
+            width: isMobile ? '100%' : 'auto'
           }}>
             Сопровождение на день
           </Text>
@@ -416,7 +430,9 @@ ${parsedAffirmation.usage}
           {/* Кнопки действий */}
           <div style={{ 
             display: 'flex', 
-            gap: '12px'
+            gap: '12px',
+            justifyContent: isMobile ? 'center' : 'flex-end',
+            width: isMobile ? '100%' : 'auto'
           }}>
             <Button
               mode="tertiary"
@@ -561,14 +577,19 @@ ${parsedAffirmation.usage}
   // Основной вид компонента
   return (
     <div style={{
-      display: 'flex',
-      gap: '24px',
-      alignItems: 'flex-start'
+
     }}>
+      <div style={{
+        display: 'flex',
+        gap: isMobile ? '16px' : '24px',
+        alignItems: 'flex-start',
+        flexDirection: isMobile ? 'column' : 'row'
+      }}>
       {/* Левая колонка - форма выбора темы */}
       <div style={{
-        flex: '0 0 320px',
-        marginBottom: '24px'
+        flex: isMobile ? '1' : '0 0 320px',
+        width: isMobile ? '100%' : 'auto',
+        marginBottom: isMobile ? '16px' : '24px'
       }}>
         {renderPromptForm()}
       </div>
@@ -576,7 +597,8 @@ ${parsedAffirmation.usage}
       {/* Правая колонка - результат генерации */}
       <div style={{
         flex: '1',
-        minWidth: '0'
+        minWidth: '0',
+        width: isMobile ? '100%' : 'auto'
       }}>
         {/* Единый контейнер для всех состояний */}
         <div style={{
@@ -588,11 +610,12 @@ ${parsedAffirmation.usage}
           {/* Заголовок над контейнером */}
           <Text style={{
             color: '#ffffff',
-            fontSize: '18px',
+            fontSize: isMobile ? '16px' : '18px',
             fontWeight: '400',
             textAlign: 'center',
             fontFamily: 'Jost',
-            marginBottom: '16px'
+            marginBottom: '16px',
+            lineHeight: isMobile ? '1.4' : '1.2'
           }}>
             {isGenerating || parsedAffirmation ? (
               `🌞 Аффирмация на день на ${promptMode === 'custom' 
@@ -616,7 +639,7 @@ ${parsedAffirmation.usage}
               flexDirection: 'column',
               alignItems: parsedAffirmation ? 'stretch' : (isGenerating ? 'center' : 'stretch'),
               justifyContent: parsedAffirmation ? 'flex-start' : (isGenerating ? 'center' : 'center'),
-              padding: parsedAffirmation ? '24px' : '32px 24px',
+              padding: parsedAffirmation ? (isMobile ? '20px 8px' : '24px') : (isMobile ? '16px 8px' : '32px 24px'),
               borderRadius: '0px 0px 4px 4px',
               borderTop: '1px solid rgba(227,199,122,1)',
               minHeight: isGenerating ? '200px' : 'auto'
@@ -706,6 +729,7 @@ ${parsedAffirmation.usage}
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 };

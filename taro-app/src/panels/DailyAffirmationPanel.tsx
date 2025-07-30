@@ -35,6 +35,17 @@ export interface DailyAffirmationPanelProps extends NavIdProps {
 export const DailyAffirmationPanel: FC<DailyAffirmationPanelProps> = ({ id }) => {
   const routeNavigator = useRouteNavigator();
   const [isGenerateDisabled, setIsGenerateDisabled] = useState(true);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  // Отслеживаем изменения размера окна
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Проверяем состояние кнопки каждые 200мс для более плавной реакции
   useEffect(() => {
@@ -93,7 +104,7 @@ export const DailyAffirmationPanel: FC<DailyAffirmationPanelProps> = ({ id }) =>
             borderRadius: '12px',
             overflow: 'hidden',
             position: 'relative',
-            padding: '32px'
+            padding: isMobile ? '16px 8px' : '32px'
           }}>
             {/* Заголовок секции */}
             <div style={{
