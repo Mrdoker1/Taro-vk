@@ -4,8 +4,7 @@ import {
   Text, 
   Title, 
   Card, 
-  Spinner, 
-  Skeleton 
+  Spinner
 } from '@vkontakte/vkui';
 import { Icon24Download, Icon24Share } from '@vkontakte/icons';
 import { useAppDispatch, useAppSelector } from '../store';
@@ -15,7 +14,14 @@ import { ApiType, getLanguageForApi } from '../utils/languageUtils';
 import { saveAffirmationToCalendar } from '../utils/calendarUtils';
 import { CustomSelect } from './CustomSelect';
 import { CustomTextarea } from './CustomTextarea';
+import { MagicLoader } from './MagicLoader';
 import bridge from '../bridge';
+
+// Импорт иконок для аффирмаций
+import affirmationSunIcon from '../assets/affir-sun.svg';
+import affirmationContIcon from '../assets/affir-cont.svg';
+import affirmationEnergIcon from '../assets/affir-energ.svg';
+import affirmationMoonIcon from '../assets/affir-moon.svg';
 
 interface AffirmationTopic {
   value: string;
@@ -57,6 +63,12 @@ export const DailyAffirmation: React.FC = () => {
   const [parsedAffirmation, setParsedAffirmation] = useState<ParsedAffirmation | null>(null);
   const [promptMode, setPromptMode] = useState<'preset' | 'custom'>('preset');
   const { lang } = useAppSelector((state) => state.horoscope); // Используем тот же язык, что и для гороскопа
+
+  // Функция для выбора иконки по порядку секций
+  const getAffirmationIcon = (sectionIndex: number): string => {
+    const icons = [affirmationSunIcon, affirmationContIcon, affirmationEnergIcon, affirmationMoonIcon];
+    return icons[sectionIndex % icons.length];
+  };
 
   // Функция для скачивания файла с аффирмациями
   const handleDownloadPDF = async () => {
@@ -368,166 +380,138 @@ ${parsedAffirmation.usage}
     // Отображение ошибки в результате
     if (parsedAffirmation.error) {
       return (
-        <Card mode="shadow" style={{ 
-          padding: '20px', 
-          marginTop: '24px',
-          background: 'rgba(255, 255, 255, 0.1)',
-          border: '2px solid rgba(255, 107, 107, 0.5)',
-          borderRadius: '12px'
+        <Text style={{ 
+          color: '#ff6b6b',
+          textAlign: 'center',
+          fontSize: '16px',
+          fontFamily: 'Jost'
         }}>
-          <Text style={{ 
-            color: '#ff6b6b',
-            textAlign: 'center',
-            fontSize: '16px',
-            fontFamily: 'Jost'
-          }}>
-            {parsedAffirmation.message || 'Произошла ошибка при генерации аффирмаций'}
-          </Text>
-        </Card>
+          {parsedAffirmation.message || 'Произошла ошибка при генерации аффирмаций'}
+        </Text>
       );
     }
     
-    // Отображение успешного результата
+    // Отображение успешного результата (только содержимое)
     return (
-      <div style={{
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        width: '100%',
-      }}>
-        {/* Заголовок над контейнером */}
-        <Text style={{
-          color: '#ffffff',
-          fontSize: '18px',
-          fontWeight: '400',
-          textAlign: 'center',
-          fontFamily: 'Jost',
-          marginBottom: '16px'
-        }}>
-          🌞 Аффирмация на день для {promptMode === 'custom' 
-            ? customPrompt 
-            : AFFIRMATION_TOPICS.find(t => t.value === selectedTopic)?.label || 'персональной темы'}
-        </Text>
-        
-        {/* Контейнер с результатом */}
+      <>
+        {/* Заголовок и кнопки внутри контейнера */}
         <div style={{
           display: 'flex',
-          justifyContent: 'center',
-          width: '100%',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: '24px'
         }}>
-          <div style={{
-            background: 'rgba(0,0,0,0.2)',
-            display: 'flex',
-            width: '100%',
-            flexDirection: 'column',
-            alignItems: 'stretch',
-            justifyContent: 'flex-start',
-            padding: '24px',
-            borderRadius: '0px 0px 4px 4px',
-            borderTop: '1px solid rgba(227,199,122,1)'
+          <Text style={{
+            color: '#ffffff',
+            fontSize: '14px',
+            fontWeight: '400',
+            textAlign: 'left',
+            fontFamily: 'Jost',
+            textTransform: 'uppercase',
+            letterSpacing: '0.5px'
           }}>
-            {/* Заголовок и кнопки внутри контейнера */}
+            Сопровождение на день
+          </Text>
+          
+          {/* Кнопки действий */}
+          <div style={{ 
+            display: 'flex', 
+            gap: '12px'
+          }}>
+            <Button
+              mode="tertiary"
+              size="s"
+              before={<Icon24Download />}
+              onClick={handleDownloadPDF}
+              style={{ fontSize: '14px' }}
+            >
+              Скачать
+            </Button>
+            <Button
+              mode="tertiary"
+              size="s"
+              before={<Icon24Share />}
+              onClick={handleShareToVK}
+              style={{ fontSize: '14px' }}
+            >
+              Поделиться в VK
+            </Button>
+          </div>
+        </div>
+        
+        {/* Секции аффирмаций */}
+        {parsedAffirmation.sections.map((section, index) => (
+          <div key={index} style={{ 
+            marginBottom: index < parsedAffirmation.sections.length - 1 ? '24px' : '0'
+          }}>
             <div style={{
               display: 'flex',
-              justifyContent: 'space-between',
               alignItems: 'center',
-              marginBottom: '24px'
+              gap: '12px',
+              marginBottom: '12px'
             }}>
-              <Text style={{
-                color: '#ffffff',
-                fontSize: '14px',
-                fontWeight: '400',
-                textAlign: 'left',
+              <img 
+                src={getAffirmationIcon(index)} 
+                alt="" 
+                style={{
+                  width: '20px',
+                  height: '20px',
+                  flexShrink: 0
+                }}
+              />
+              <Title level="3" style={{ 
+                margin: 0,
+                color: '#E3C77A',
+                fontSize: '16px',
+                fontWeight: '500',
                 fontFamily: 'Jost',
                 textTransform: 'uppercase',
                 letterSpacing: '0.5px'
               }}>
-                Сопровождение на день
-              </Text>
-              
-              {/* Кнопки действий */}
-              <div style={{ 
-                display: 'flex', 
-                gap: '12px'
-              }}>
-                <Button
-                  mode="tertiary"
-                  size="s"
-                  before={<Icon24Download />}
-                  onClick={handleDownloadPDF}
-                  style={{ fontSize: '14px' }}
-                >
-                  Скачать
-                </Button>
-                <Button
-                  mode="tertiary"
-                  size="s"
-                  before={<Icon24Share />}
-                  onClick={handleShareToVK}
-                  style={{ fontSize: '14px' }}
-                >
-                  Поделиться в VK
-                </Button>
-              </div>
+                {section.title}
+              </Title>
             </div>
-            
-            {/* Секции аффирмаций */}
-            {parsedAffirmation.sections.map((section, index) => (
-              <div key={index} style={{ 
-                marginBottom: index < parsedAffirmation.sections.length - 1 ? '24px' : '0'
-              }}>
-                <Title level="3" style={{ 
-                  marginBottom: '12px',
-                  color: '#E3C77A',
-                  fontSize: '16px',
-                  fontWeight: '500',
-                  fontFamily: 'Jost'
-                }}>
-                  {section.title}
-                </Title>
-                <Text style={{ 
-                  lineHeight: '1.6', 
-                  fontSize: '15px',
-                  color: '#ffffff',
-                  fontFamily: 'Jost'
-                }}>
-                  {section.text}
-                </Text>
-              </div>
-            ))}
-            
-            {/* Инструкции по использованию */}
-            {parsedAffirmation.usage && (
-              <div style={{ 
-                marginTop: '32px', 
-                padding: '20px',
-                background: 'rgba(227, 199, 122, 0.1)',
-                borderRadius: '8px',
-                border: '1px solid rgba(227, 199, 122, 0.2)'
-              }}>
-                <Title level="3" style={{ 
-                  marginBottom: '12px',
-                  color: '#E3C77A',
-                  fontSize: '16px',
-                  fontWeight: '500',
-                  fontFamily: 'Jost'
-                }}>
-                  Как использовать
-                </Title>
-                <Text style={{ 
-                  lineHeight: '1.6', 
-                  fontSize: '14px',
-                  color: '#ffffff',
-                  whiteSpace: 'pre-line',
-                  fontFamily: 'Jost'
-                }}>
-                  {parsedAffirmation.usage}
-                </Text>
-              </div>
-            )}
+            <Text style={{ 
+              lineHeight: '1.6', 
+              fontSize: '15px',
+              color: '#ffffff',
+              fontFamily: 'Jost'
+            }}>
+              {section.text}
+            </Text>
           </div>
-        </div>
-      </div>
+        ))}
+        
+        {/* Инструкции по использованию */}
+        {parsedAffirmation.usage && (
+          <div style={{ 
+            marginTop: '32px', 
+            padding: '20px',
+            background: 'rgba(227, 199, 122, 0.1)',
+            borderRadius: '8px',
+            border: '1px solid rgba(227, 199, 122, 0.2)'
+          }}>
+            <Title level="3" style={{ 
+              marginBottom: '12px',
+              color: '#E3C77A',
+              fontSize: '16px',
+              fontWeight: '500',
+              fontFamily: 'Jost'
+            }}>
+              Как использовать
+            </Title>
+            <Text style={{ 
+              lineHeight: '1.6', 
+              fontSize: '14px',
+              color: '#ffffff',
+              whiteSpace: 'pre-line',
+              fontFamily: 'Jost'
+            }}>
+              {parsedAffirmation.usage}
+            </Text>
+          </div>
+        )}
+      </>
     );
   };
   
@@ -594,152 +578,133 @@ ${parsedAffirmation.usage}
         flex: '1',
         minWidth: '0'
       }}>
-        {/* Пустой контейнер с инструкциями (изначально показывается) */}
-        {!isGenerating && !parsedAffirmation && (
+        {/* Единый контейнер для всех состояний */}
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          width: '100%',
+        }}>
+          {/* Заголовок над контейнером */}
+          <Text style={{
+            color: '#ffffff',
+            fontSize: '18px',
+            fontWeight: '400',
+            textAlign: 'center',
+            fontFamily: 'Jost',
+            marginBottom: '16px'
+          }}>
+            {isGenerating || parsedAffirmation ? (
+              `🌞 Аффирмация на день на ${promptMode === 'custom' 
+                ? customPrompt 
+                : AFFIRMATION_TOPICS.find(t => t.value === selectedTopic)?.label || 'персональной темы'}`
+            ) : (
+              'Ждём ваш запрос, чтобы подобрать аффирмации'
+            )}
+          </Text>
+          
+          {/* Базовый контейнер */}
           <div style={{
             display: 'flex',
-            flexDirection: 'column',
             justifyContent: 'center',
             width: '100%',
           }}>
-            {/* Заголовок над контейнером */}
-            <Text style={{
-              color: '#ffffff',
-              fontSize: '18px',
-              fontWeight: '400',
-              textAlign: 'center',
-              fontFamily: 'Jost',
-              marginBottom: '16px'
-            }}>
-              Ждём ваш запрос, чтобы подобрать аффирмации
-            </Text>
-            
             <div style={{
+              background: 'rgba(0,0,0,0.2)',
               display: 'flex',
-              justifyContent: 'center',
               width: '100%',
+              flexDirection: 'column',
+              alignItems: parsedAffirmation ? 'stretch' : (isGenerating ? 'center' : 'stretch'),
+              justifyContent: parsedAffirmation ? 'flex-start' : (isGenerating ? 'center' : 'center'),
+              padding: parsedAffirmation ? '24px' : '32px 24px',
+              borderRadius: '0px 0px 4px 4px',
+              borderTop: '1px solid rgba(227,199,122,1)',
+              minHeight: isGenerating ? '200px' : 'auto'
             }}>
-              <div style={{
-                background: 'rgba(0,0,0,0.2)',
-                display: 'flex',
-                width: '100%',
-                flexDirection: 'column',
-                alignItems: 'stretch',
-                justifyContent: 'center',
-                padding: '32px 24px',
-                borderRadius: '0px 0px 4px 4px',
-                borderTop: '1px solid rgba(227,199,122,1)'
-              }}>
-              <div style={{
-                display: 'flex',
-                width: '100%',
-                alignItems: 'center',
-                gap: '16px',
-                lineHeight: 1.3,
-                marginBottom: '16px'
-              }}>
-                <div style={{
-                  border: '1px solid rgba(151,128,65,0.25)',
-                  display: 'flex',
-                  height: '32px',
-                  width: '32px',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '14px',
-                  color: 'rgba(210,175,80,1)',
-                  fontWeight: '500',
-                  textAlign: 'center',
-                  borderRadius: '50%',
-                  flexShrink: 0
-                }}>
-                  1
-                </div>
-                <div style={{
-                  color: 'white',
-                  fontSize: '16px',
-                  fontWeight: '300',
-                  alignSelf: 'stretch',
-                  flex: '1',
-                  margin: 'auto 0',
-                  fontFamily: 'Jost, -apple-system, BlinkMacSystemFont, sans-serif'
-                }}>
-                  Выберите готовую тему из списка или введите свою персональную тему
-                </div>
-              </div>
-              
-              <div style={{
-                display: 'flex',
-                width: '100%',
-                alignItems: 'center',
-                gap: '16px'
-              }}>
-                <div style={{
-                  border: '1px solid rgba(151,128,65,0.25)',
-                  display: 'flex',
-                  height: '32px',
-                  width: '32px',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '14px',
-                  color: 'rgba(210,175,80,1)',
-                  fontWeight: '500',
-                  textAlign: 'center',
-                  borderRadius: '50%',
-                  flexShrink: 0
-                }}>
-                  2
-                </div>
-                <div style={{
-                  color: 'white',
-                  fontSize: '16px',
-                  fontWeight: '300',
-                  lineHeight: '21px',
-                  alignSelf: 'stretch',
-                  flex: '1',
-                  margin: 'auto 0',
-                  fontFamily: 'Jost, -apple-system, BlinkMacSystemFont, sans-serif'
-                }}>
-                  Нажмите кнопку "Получить аффирмации" для генерации персонализированных утверждений
-                </div>
-              </div>
-            </div>
+              {/* Содержимое в зависимости от состояния */}
+              {isGenerating ? (
+                <MagicLoader />
+              ) : parsedAffirmation ? (
+                renderResult()
+              ) : (
+                <>
+                  <div style={{
+                    display: 'flex',
+                    width: '100%',
+                    alignItems: 'center',
+                    gap: '16px',
+                    lineHeight: 1.3,
+                    marginBottom: '16px'
+                  }}>
+                    <div style={{
+                      border: '1px solid rgba(151,128,65,0.25)',
+                      display: 'flex',
+                      height: '32px',
+                      width: '32px',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '14px',
+                      color: 'rgba(210,175,80,1)',
+                      fontWeight: '500',
+                      textAlign: 'center',
+                      borderRadius: '50%',
+                      flexShrink: 0
+                    }}>
+                      1
+                    </div>
+                    <div style={{
+                      color: 'white',
+                      fontSize: '16px',
+                      fontWeight: '300',
+                      alignSelf: 'stretch',
+                      flex: '1',
+                      margin: 'auto 0',
+                      fontFamily: 'Jost, -apple-system, BlinkMacSystemFont, sans-serif'
+                    }}>
+                      Выберите готовую тему из списка или введите свою персональную тему
+                    </div>
+                  </div>
+                  
+                  <div style={{
+                    display: 'flex',
+                    width: '100%',
+                    alignItems: 'center',
+                    gap: '16px'
+                  }}>
+                    <div style={{
+                      border: '1px solid rgba(151,128,65,0.25)',
+                      display: 'flex',
+                      height: '32px',
+                      width: '32px',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '14px',
+                      color: 'rgba(210,175,80,1)',
+                      fontWeight: '500',
+                      textAlign: 'center',
+                      borderRadius: '50%',
+                      flexShrink: 0
+                    }}>
+                      2
+                    </div>
+                    <div style={{
+                      color: 'white',
+                      fontSize: '16px',
+                      fontWeight: '300',
+                      lineHeight: '21px',
+                      alignSelf: 'stretch',
+                      flex: '1',
+                      margin: 'auto 0',
+                      fontFamily: 'Jost, -apple-system, BlinkMacSystemFont, sans-serif'
+                    }}>
+                      Нажмите кнопку "Получить аффирмации" для генерации персонализированных утверждений
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           </div>
-        )}
-
-        {isGenerating && (
-          <Card mode="shadow" style={{ 
-            padding: '20px', 
-            marginTop: '16px',
-            background: 'rgba(255, 255, 255, 0.1)',
-            border: '2px solid rgba(227, 199, 122, 0.3)',
-            borderRadius: '12px'
-          }}>
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginBottom: '16px'
-            }}>
-              <Spinner size="s" />
-              <Text style={{ 
-                marginLeft: '12px',
-                color: '#ffffff',
-                fontFamily: 'Jost'
-              }}>
-                Генерация аффирмаций...
-              </Text>
-            </div>
-            
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-              <Skeleton width="100%" height={60} style={{ borderRadius: '8px' }} />
-              <Skeleton width="100%" height={60} style={{ borderRadius: '8px' }} />
-              <Skeleton width="100%" height={60} style={{ borderRadius: '8px' }} />
-            </div>
-          </Card>
-        )}
-        
-        {renderResult()}
+        </div>
       </div>
     </div>
   );
