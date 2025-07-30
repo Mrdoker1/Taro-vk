@@ -9,6 +9,7 @@ import { CustomSelect } from './CustomSelect';
 import { CustomTextarea } from './CustomTextarea';
 import { CustomButton } from './CustomButton';
 import { MagicLoader } from './MagicLoader';
+import { useResponsive } from '../hooks/useResponsive';
 
 interface TaroSpreadDetailsProps {
   spreadId: string;
@@ -21,6 +22,7 @@ export const TaroSpreadDetails: React.FC<TaroSpreadDetailsProps> = ({
 }) => {
   const dispatch = useAppDispatch();
   const routeNavigator = useRouteNavigator();
+  const isMobile = useResponsive();
   const { currentSpread, spreadLoading, spreadError } = useAppSelector((state) => state.taroSpreads);
   const { decks, decksLoading } = useAppSelector((state) => state.taroDecks);
   const [selectedDeckId, setSelectedDeckId] = useState<string>('');
@@ -132,7 +134,7 @@ export const TaroSpreadDetails: React.FC<TaroSpreadDetailsProps> = ({
         borderRadius: '12px',
         overflow: 'hidden',
         position: 'relative',
-        padding: '32px',
+        padding: isMobile ? '8px' : '32px',
         fontFamily: 'Jost, -apple-system, BlinkMacSystemFont, sans-serif',
         textAlign: 'center'
       }}>
@@ -158,7 +160,7 @@ export const TaroSpreadDetails: React.FC<TaroSpreadDetailsProps> = ({
         borderRadius: '12px',
         overflow: 'hidden',
         position: 'relative',
-        padding: '32px',
+        padding: isMobile ? '8px' : '32px',
         fontFamily: 'Jost, -apple-system, BlinkMacSystemFont, sans-serif',
         textAlign: 'center'
       }}>
@@ -189,7 +191,7 @@ export const TaroSpreadDetails: React.FC<TaroSpreadDetailsProps> = ({
       borderRadius: '12px',
       overflow: 'hidden',
       position: 'relative',
-      padding: '32px',
+      padding: isMobile ? '16px' : '32px',
       fontFamily: 'Jost, -apple-system, BlinkMacSystemFont, sans-serif'
     }}>
       {/* Заголовок секции */}
