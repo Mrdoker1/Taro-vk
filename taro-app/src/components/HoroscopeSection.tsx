@@ -771,7 +771,7 @@ export const HoroscopeSection = () => {
                 right: 0,
                 bottom: 0,
                 borderRadius: '12px',
-                background: `radial-gradient(circle at center, ${getDayColor()}15 0%, ${getDayColor()}08 30%, transparent 70%)`,
+                background: `radial-gradient(circle at center, ${getDayColor()}25 0%, ${getDayColor()}15 30%, transparent 70%)`,
                 pointerEvents: 'none',
                 zIndex: 5,
                 animation: 'overlay-pulse 4s ease-in-out infinite'
