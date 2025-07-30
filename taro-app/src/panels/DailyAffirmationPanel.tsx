@@ -8,12 +8,10 @@ import {
 } from '@vkontakte/vkui';
 import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
 import { DailyAffirmation } from '../components/DailyAffirmation';
-import { CustomButton } from '../components/CustomButton';
 import { Footer } from '../components/Footer';
 import { StarButton } from '../components/StarButton';
 import { AppHeader } from '../components/AppHeader';
 import { useResponsive } from '../hooks/useResponsive';
-import { useButtonState } from '../hooks/useButtonState';
 import { DEFAULT_VIEW_PANELS } from '../routes';
 import affirmationIcon from '../assets/afirmation.svg';
 
@@ -22,17 +20,10 @@ export interface DailyAffirmationPanelProps extends NavIdProps {}
 export const DailyAffirmationPanel: FC<DailyAffirmationPanelProps> = ({ id }) => {
   const routeNavigator = useRouteNavigator();
   const isMobile = useResponsive();
-  const isGenerateDisabled = useButtonState();
 
   const handleBackClick = () => routeNavigator.back();
   const handleAboutApp = () => routeNavigator.push(`/${DEFAULT_VIEW_PANELS.ABOUT_APP}`);
   const handleLegalInfo = () => routeNavigator.push(`/${DEFAULT_VIEW_PANELS.LEGAL_INFO}`);
-
-  const handleGenerate = () => {
-    if (window.affirmationState) {
-      window.affirmationState.handleGenerate();
-    }
-  };
 
   return (
     <ConfigProvider hasCustomPanelHeaderAfter={false}>
@@ -121,53 +112,6 @@ export const DailyAffirmationPanel: FC<DailyAffirmationPanelProps> = ({ id }) =>
             }} />
 
             <DailyAffirmation />
-
-            <div style={{
-              width: '100%',
-              height: '2px',
-              background: 'url(https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/bf65c29bb76ac59b655e89bb29946e4f00f49a6d) center/cover',
-              marginTop: '32px',
-              marginBottom: '16px'
-            }} />
-
-            <div style={{
-              display: 'flex',
-              justifyContent: 'center'
-            }}>
-              <img
-                src="https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/154f96a15bcd974fd38495f6f7aeec22f8b9613a"
-                alt="Decorative element"
-                style={{
-                  width: '90px',
-                  height: 'auto',
-                  objectFit: 'contain'
-                }}
-              />
-            </div>
-
-            {/* Кнопки */}
-            <div style={{
-              display: 'flex',
-              flexDirection: 'row',
-              gap: '12px',
-              marginTop: '24px',
-              justifyContent: 'flex-end'
-            }}>
-              <CustomButton
-                variant="secondary"
-                disabled={false}
-                onClick={handleBackClick}
-              >
-                Назад
-              </CustomButton>
-              <CustomButton
-                variant="primary"
-                disabled={isGenerateDisabled}
-                onClick={handleGenerate}
-              >
-                Получить аффирмации
-              </CustomButton>
-            </div>
           </div>
         </Div>
 

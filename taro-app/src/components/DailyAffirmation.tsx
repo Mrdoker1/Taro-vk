@@ -1,10 +1,12 @@
 import React from 'react';
 import { Text, Card, Spinner } from '@vkontakte/vkui';
+import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
 import { useResponsive } from '../hooks/useResponsive';
 import { useAffirmation } from '../hooks/useAffirmation';
 import { AffirmationForm } from './AffirmationForm';
 import { AffirmationResult } from './AffirmationResult';
 import { MagicLoader } from './MagicLoader';
+import { CustomButton } from './CustomButton';
 import { getCurrentTopic } from '../constants/affirmation';
 
 const EmptyStateContent = () => (
@@ -86,6 +88,7 @@ const EmptyStateContent = () => (
 
 export const DailyAffirmation: React.FC = () => {
   const isMobile = useResponsive();
+  const routeNavigator = useRouteNavigator();
   const {
     customPrompt,
     selectedTopic,
@@ -97,8 +100,19 @@ export const DailyAffirmation: React.FC = () => {
     generationError,
     setCustomPrompt,
     setSelectedTopic,
-    setPromptMode
+    setPromptMode,
+    handleGenerate
   } = useAffirmation();
+
+  // Проверка возможности генерации
+  const canGenerate = () => {
+    if (promptMode === 'preset') return selectedTopic && selectedTopic !== '';
+    return customPrompt && customPrompt.trim() !== '';
+  };
+
+  const handleBackClick = () => {
+    routeNavigator.back();
+  };
 
   // Показываем состояние загрузки шаблона
   if (templateLoading) {
@@ -231,6 +245,54 @@ export const DailyAffirmation: React.FC = () => {
               )}
             </div>
           </div>
+        </div>
+
+        {/* Разделительная линия */}
+        <div style={{
+          width: '100%',
+          height: '2px',
+          background: 'url(https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/bf65c29bb76ac59b655e89bb29946e4f00f49a6d) center/cover',
+          marginTop: '32px',
+          marginBottom: '16px'
+        }} />
+
+        {/* Нижний декоративный элемент */}
+        <div style={{
+          display: 'flex',
+          justifyContent: 'center',
+          marginBottom: '24px'
+        }}>
+          <img
+            src="https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/154f96a15bcd974fd38495f6f7aeec22f8b9613a"
+            alt="Decorative element"
+            style={{
+              width: '90px',
+              height: 'auto',
+              objectFit: 'contain'
+            }}
+          />
+        </div>
+
+        {/* Кнопки */}
+        <div style={{
+          display: 'flex',
+          justifyContent: 'flex-end',
+          gap: '12px'
+        }}>
+          <CustomButton
+            variant="secondary"
+            disabled={false}
+            onClick={handleBackClick}
+          >
+            Назад
+          </CustomButton>
+          <CustomButton
+            variant="primary"
+            disabled={!canGenerate() || isGenerating}
+            onClick={handleGenerate}
+          >
+            {isGenerating ? 'Генерируем...' : 'Получить аффирмации'}
+          </CustomButton>
         </div>
       </div>
     </div>
