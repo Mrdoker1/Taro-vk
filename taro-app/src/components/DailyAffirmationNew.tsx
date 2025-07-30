@@ -7,7 +7,7 @@ import { AffirmationResult } from './AffirmationResult';
 import { MagicLoader } from './MagicLoader';
 import { getCurrentTopic } from '../constants/affirmation';
 
-const EmptyStateContent = () => (
+const EmptyStateContent = ({ isMobile }: { isMobile: boolean }) => (
   <>
     <div style={{
       display: 'flex',
@@ -227,7 +227,7 @@ export const DailyAffirmation: React.FC = () => {
                   isMobile={isMobile}
                 />
               ) : (
-                <EmptyStateContent />
+                <EmptyStateContent isMobile={isMobile} />
               )}
             </div>
           </div>
