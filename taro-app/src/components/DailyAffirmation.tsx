@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { 
   Button, 
   Text, 
@@ -253,7 +253,7 @@ ${parsedAffirmation.usage}
   }, [generatedText]);
   
   // Подготавливаем промпт для генерации
-  const preparePrompt = () => {
+  const preparePrompt = useCallback(() => {
     if (!currentTemplate) {
       console.error('Шаблон промпта не загружен');
       return null;
@@ -282,10 +282,10 @@ ${parsedAffirmation.usage}
       temperature: currentTemplate.temperature || 0.8,
       maxTokens: currentTemplate.maxTokens || 1000
     };
-  };
+  }, [currentTemplate, promptMode, customPrompt, selectedTopic, lang]);
   
   // Обработчик генерации аффирмаций
-  const handleGenerate = () => {
+  const handleGenerate = useCallback(() => {
     const requestData = preparePrompt();
     if (requestData) {
       console.log('Данные для генерации аффирмаций:', requestData);
@@ -293,30 +293,30 @@ ${parsedAffirmation.usage}
     } else {
       console.error('Не удалось подготовить данные для запроса');
     }
-  };
+  }, [dispatch, preparePrompt]);
+  
+  // Экспортируем состояние для использования в панели
+  React.useEffect(() => {
+    // Передаем состояние в глобальную переменную или context
+    window.affirmationState = {
+      customPrompt,
+      selectedTopic,
+      promptMode,
+      isGenerating,
+      handleGenerate
+    };
+  }, [customPrompt, selectedTopic, promptMode, isGenerating, handleGenerate]);
   
   // Форма для выбора темы аффирмации
   const renderPromptForm = () => (
     <div style={{
       display: 'flex',
       flexDirection: 'column',
-      alignItems: 'center',
+      alignItems: 'stretch',
       gap: '16px',
-      maxWidth: '320px',
-      margin: '0 auto'
+      width: '100%'
     }}>
       <div style={{ width: '100%' }}>
-        <Text style={{ 
-          color: '#ffffff',
-          marginBottom: '12px',
-          fontSize: '16px',
-          fontWeight: '400',
-          textAlign: 'center',
-          fontFamily: 'Jost'
-        }}>
-          Выберите тему аффирмации или введите свою
-        </Text>
-        
         <CustomSelect
           value={promptMode === 'preset' ? selectedTopic : ''}
           options={AFFIRMATION_TOPICS}
@@ -349,26 +349,6 @@ ${parsedAffirmation.usage}
         />
       </div>
       
-      <Button 
-        size="l" 
-        mode="primary" 
-        onClick={handleGenerate}
-        disabled={isGenerating || (promptMode === 'preset' && !selectedTopic) || (promptMode === 'custom' && !customPrompt.trim())}
-        loading={isGenerating}
-        stretched
-        style={{
-          background: 'linear-gradient(135deg, #E3C77A 0%, #D4AF37 100%)',
-          border: 'none',
-          borderRadius: '8px',
-          color: '#000',
-          fontWeight: '500',
-          fontSize: '16px',
-          fontFamily: 'Jost'
-        }}
-      >
-        {isGenerating ? 'Генерация...' : 'Получить аффирмации'}
-      </Button>
-      
       {generationError && (
         <Text style={{ 
           color: '#ff6b6b', 
@@ -378,16 +358,6 @@ ${parsedAffirmation.usage}
           Ошибка: {generationError}
         </Text>
       )}
-      
-      <Text style={{ 
-        fontSize: '14px', 
-        color: 'rgba(255, 255, 255, 0.7)',
-        textAlign: 'center',
-        fontFamily: 'Jost'
-      }}>
-        Язык аффирмаций: {lang === 'english' ? 'английский 🇬🇧' : 'русский 🇷🇺'} 
-        (установлен в настройках)
-      </Text>
     </div>
   );
   
@@ -491,46 +461,6 @@ ${parsedAffirmation.usage}
             </Text>
           </div>
         )}
-
-        {/* Кнопки действий с результатом */}
-        <div style={{ 
-          marginTop: '24px', 
-          display: 'flex', 
-          gap: '12px', 
-          justifyContent: 'center',
-          flexWrap: 'wrap'
-        }}>
-          <Button
-            mode="primary"
-            size="m"
-            before={<Icon24Download />}
-            onClick={handleDownloadPDF}
-            style={{
-              background: 'linear-gradient(135deg, #E3C77A 0%, #D4AF37 100%)',
-              border: 'none',
-              color: '#000',
-              fontWeight: '500',
-              fontFamily: 'Jost'
-            }}
-          >
-            Скачать
-          </Button>
-          <Button
-            mode="secondary"
-            size="m"
-            before={<Icon24Share />}
-            onClick={handleShareToVK}
-            style={{
-              background: 'transparent',
-              border: '2px solid #E3C77A',
-              color: '#E3C77A',
-              fontWeight: '500',
-              fontFamily: 'Jost'
-            }}
-          >
-            Поделиться в VK
-          </Button>
-        </div>
       </Card>
     );
   };
@@ -580,46 +510,100 @@ ${parsedAffirmation.usage}
   
   // Основной вид компонента
   return (
-    <div>
+    <div style={{
+      display: 'flex',
+      gap: '24px',
+      alignItems: 'flex-start'
+    }}>
+      {/* Левая колонка - форма выбора темы */}
       <div style={{
+        flex: '0 0 320px',
         marginBottom: '24px'
       }}>
         {renderPromptForm()}
       </div>
       
-      {isGenerating && (
-        <Card mode="shadow" style={{ 
-          padding: '20px', 
-          marginTop: '16px',
-          background: 'rgba(255, 255, 255, 0.1)',
-          border: '2px solid rgba(227, 199, 122, 0.3)',
-          borderRadius: '12px'
-        }}>
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginBottom: '16px'
+      {/* Правая колонка - результат генерации */}
+      <div style={{
+        flex: '1',
+        minWidth: '0'
+      }}>
+        {isGenerating && (
+          <Card mode="shadow" style={{ 
+            padding: '20px', 
+            marginTop: '16px',
+            background: 'rgba(255, 255, 255, 0.1)',
+            border: '2px solid rgba(227, 199, 122, 0.3)',
+            borderRadius: '12px'
           }}>
-            <Spinner size="s" />
-            <Text style={{ 
-              marginLeft: '12px',
-              color: '#ffffff',
-              fontFamily: 'Jost'
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginBottom: '16px'
             }}>
-              Генерация аффирмаций...
-            </Text>
+              <Spinner size="s" />
+              <Text style={{ 
+                marginLeft: '12px',
+                color: '#ffffff',
+                fontFamily: 'Jost'
+              }}>
+                Генерация аффирмаций...
+              </Text>
+            </div>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <Skeleton width="100%" height={60} style={{ borderRadius: '8px' }} />
+              <Skeleton width="100%" height={60} style={{ borderRadius: '8px' }} />
+              <Skeleton width="100%" height={60} style={{ borderRadius: '8px' }} />
+            </div>
+          </Card>
+        )}
+        
+        {renderResult()}
+        
+        {/* Кнопки действий с результатом - под карточкой */}
+        {parsedAffirmation && !parsedAffirmation.error && (
+          <div style={{ 
+            marginTop: '16px', 
+            display: 'flex', 
+            gap: '12px', 
+            justifyContent: 'flex-end',
+            flexWrap: 'wrap'
+          }}>
+            <Button
+              mode="primary"
+              size="m"
+              before={<Icon24Download />}
+              onClick={handleDownloadPDF}
+              style={{
+                background: 'linear-gradient(135deg, #E3C77A 0%, #D4AF37 100%)',
+                border: 'none',
+                color: '#000',
+                fontWeight: '500',
+                fontFamily: 'Jost'
+              }}
+            >
+              Скачать
+            </Button>
+            <Button
+              mode="secondary"
+              size="m"
+              before={<Icon24Share />}
+              onClick={handleShareToVK}
+              style={{
+                background: 'transparent',
+                border: '2px solid #E3C77A',
+                color: '#E3C77A',
+                fontWeight: '500',
+                fontFamily: 'Jost'
+              }}
+            >
+              Поделиться в VK
+            </Button>
           </div>
-          
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            <Skeleton width="100%" height={60} style={{ borderRadius: '8px' }} />
-            <Skeleton width="100%" height={60} style={{ borderRadius: '8px' }} />
-            <Skeleton width="100%" height={60} style={{ borderRadius: '8px' }} />
-          </div>
-        </Card>
-      )}
-      
-      {renderResult()}
+        )}
+      </div>
     </div>
   );
 };

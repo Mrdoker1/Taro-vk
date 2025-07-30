@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useState, useEffect } from 'react';
 import {
   Panel,
   Div,
@@ -8,11 +8,25 @@ import {
 } from '@vkontakte/vkui';
 import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
 import { DailyAffirmation } from '../components/DailyAffirmation';
+import { CustomButton } from '../components/CustomButton';
 import { Footer } from '../components/Footer';
 import { StarButton } from '../components/StarButton';
 import { AppHeader } from '../components/AppHeader';
 import { DEFAULT_VIEW_PANELS } from '../routes';
 import affirmationIcon from '../assets/afirmation.svg';
+
+// Добавляем расширение для window
+declare global {
+  interface Window {
+    affirmationState?: {
+      handleGenerate: () => void;
+      selectedTopic: string;
+      customPrompt: string;
+      promptMode: 'preset' | 'custom';
+      isGenerating: boolean;
+    };
+  }
+}
 
 export interface DailyAffirmationPanelProps extends NavIdProps {
   // Можно добавить дополнительные параметры при необходимости
@@ -20,6 +34,26 @@ export interface DailyAffirmationPanelProps extends NavIdProps {
 
 export const DailyAffirmationPanel: FC<DailyAffirmationPanelProps> = ({ id }) => {
   const routeNavigator = useRouteNavigator();
+  const [isGenerateDisabled, setIsGenerateDisabled] = useState(true);
+
+  // Проверяем состояние кнопки каждые 200мс для более плавной реакции
+  useEffect(() => {
+    const checkButtonState = () => {
+      if (window.affirmationState) {
+        const { selectedTopic, customPrompt, promptMode } = window.affirmationState;
+        const hasPresetTopic = promptMode === 'preset' && selectedTopic && selectedTopic !== '';
+        const hasCustomPrompt = promptMode === 'custom' && customPrompt && customPrompt.trim() !== '';
+        setIsGenerateDisabled(!(hasPresetTopic || hasCustomPrompt));
+      } else {
+        setIsGenerateDisabled(true);
+      }
+    };
+
+    const interval = setInterval(checkButtonState, 200);
+    checkButtonState(); // Проверим сразу
+
+    return () => clearInterval(interval);
+  }, []);
 
   const handleBackClick = () => {
     routeNavigator.back();
@@ -152,6 +186,34 @@ export const DailyAffirmationPanel: FC<DailyAffirmationPanelProps> = ({ id }) =>
                   objectFit: 'contain'
                 }}
               />
+            </div>
+
+            {/* Кнопки под декоративным элементом */}
+            <div style={{
+              display: 'flex',
+              flexDirection: 'row',
+              gap: '12px',
+              marginTop: '24px',
+              justifyContent: 'flex-end'
+            }}>
+              <CustomButton
+                variant="secondary"
+                disabled={false}
+                onClick={() => routeNavigator.back()}
+              >
+                Назад
+              </CustomButton>
+              <CustomButton
+                variant="primary"
+                disabled={isGenerateDisabled}
+                onClick={() => {
+                  if (window.affirmationState) {
+                    window.affirmationState.handleGenerate();
+                  }
+                }}
+              >
+                Получить аффирмации
+              </CustomButton>
             </div>
           </div>
         </Div>
