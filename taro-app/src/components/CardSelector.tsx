@@ -2,8 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../store';
 import { fetchDeckDetails } from '../store/slices/taroDecksSlice';
 import { fetchSpreadDetails } from '../store/slices/taroSpreadsSlice';
-import { Spinner, Button, Div, Title, Text, Group, Card, Select, Switch, FormItem } from '@vkontakte/vkui';
+import { Spinner, Div, Text } from '@vkontakte/vkui';
 import CardDndSelector from './dnd/CardDndSelector';
+import { CustomSelect } from './CustomSelect';
+import { CustomButton } from './CustomButton';
+import { CustomToggle } from './CustomToggle';
+import { useResponsive } from '../hooks/useResponsive';
+import tshirtIcon from '../assets/tshirt.svg';
 
 interface CardSelectorProps {
   spreadId: string;
@@ -30,6 +35,7 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
   const { currentSpread } = useAppSelector((state) => state.taroSpreads);
   const { currentDeck, deckLoading, deckError } = useAppSelector((state) => state.taroDecks);
   const { useManualCardSelection } = useAppSelector((state) => state.app);
+  const isMobile = useResponsive();
   const [selectedCards, setSelectedCards] = useState<SelectedCard[]>([]);
   const [allPositions, setAllPositions] = useState<number[]>([]);
   const [shuffledCards, setShuffledCards] = useState<Array<{id: string; name: string; imageUrl?: string}>>([]);
@@ -133,29 +139,90 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
   };
 
   if (deckLoading) {
-    return <Spinner size="m" />;
+    return (
+      <Div style={{ 
+        padding: '20px 12px',
+        display: 'flex',
+        justifyContent: 'center'
+      }}>
+        <div style={{
+          width: '100%',
+          background: 'url(https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/3b830249f16752184ecb361cce592c7795bcf9ad) center/cover',
+          borderRadius: '12px',
+          overflow: 'hidden',
+          position: 'relative',
+          padding: isMobile ? '16px 8px' : '32px',
+          minHeight: '200px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}>
+          <Spinner size="m" />
+        </div>
+      </Div>
+    );
   }
 
   if (deckError) {
     return (
-      <Div>
-        <Text style={{ color: 'var(--vkui--color_text_negative)' }}>
-          Ошибка: {deckError}
-        </Text>
-        <Button onClick={onBack} size="m" mode="secondary" style={{ marginTop: 16 }}>
-          Назад
-        </Button>
+      <Div style={{ 
+        padding: '20px 12px',
+        display: 'flex',
+        justifyContent: 'center'
+      }}>
+        <div style={{
+          width: '100%',
+          background: 'url(https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/3b830249f16752184ecb361cce592c7795bcf9ad) center/cover',
+          borderRadius: '12px',
+          overflow: 'hidden',
+          position: 'relative',
+          padding: isMobile ? '16px 8px' : '32px',
+          textAlign: 'center'
+        }}>
+          <Text style={{ 
+            color: '#ffffff',
+            fontSize: '16px',
+            marginBottom: '24px',
+            fontFamily: 'Jost'
+          }}>
+            Ошибка: {deckError}
+          </Text>
+          <CustomButton onClick={onBack} variant="secondary" size="m">
+            Назад
+          </CustomButton>
+        </div>
       </Div>
     );
   }
 
   if (!currentDeck || !currentSpread) {
     return (
-      <Div>
-        <Text>Не удалось загрузить данные колоды или расклада</Text>
-        <Button onClick={onBack} size="m" mode="secondary" style={{ marginTop: 16 }}>
-          Назад
-        </Button>
+      <Div style={{ 
+        padding: '20px 12px',
+        display: 'flex',
+        justifyContent: 'center'
+      }}>
+        <div style={{
+          width: '100%',
+          background: 'url(https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/3b830249f16752184ecb361cce592c7795bcf9ad) center/cover',
+          borderRadius: '12px',
+          overflow: 'hidden',
+          position: 'relative',
+          padding: isMobile ? '16px 8px' : '32px',
+          textAlign: 'center'
+        }}>
+          <Text style={{ 
+            color: '#ffffff',
+            fontSize: '16px',
+            marginBottom: '24px',
+            fontFamily: 'Jost'
+          }}>
+            Не удалось загрузить данные колоды или расклада
+          </Text>
+          <CustomButton onClick={onBack} variant="secondary" size="m">
+            Назад
+          </CustomButton>
+        </div>
       </Div>
     );
   }
@@ -184,77 +251,292 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
 
   // Если включен ручной режим, показываем выбор из списка
   return (
-    <Group>
-      <Div>
-        <Title level="1">Выбор карт для расклада</Title>
-        <Text style={{ marginTop: 8, marginBottom: 16 }}>
-          {`${currentSpread.name} - ${currentDeck.name}`}
-        </Text>
+    <Div style={{ 
+      padding: '20px 12px',
+      display: 'flex',
+      justifyContent: 'center'
+    }}>
+      <div style={{
+        width: '100%',
+        background: 'url(https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/3b830249f16752184ecb361cce592c7795bcf9ad) center/cover',
+        borderRadius: '12px',
+        overflow: 'hidden',
+        position: 'relative',
+        padding: isMobile ? '16px 8px' : '32px'
+      }}>
+        {/* Заголовок секции */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '12px',
+          marginBottom: '32px'
+        }}>
+          <img
+            src={currentSpread.imageURL || tshirtIcon}
+            alt="Spread icon"
+            style={{
+              width: '60px',
+              height: '60px',
+              objectFit: 'contain'
+            }}
+          />
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <h1 style={{
+              color: '#ffffff',
+              fontSize: '24px',
+              fontWeight: '400',
+              margin: 0,
+              fontFamily: 'Jost',
+              lineHeight: 1.2,
+              marginBottom: '8px'
+            }}>
+              Выбор карт для расклада
+            </h1>
+            <div style={{
+              color: '#ffffff',
+              fontSize: '16px',
+              lineHeight: '1.5',
+              textAlign: 'left',
+              fontFamily: 'Jost',
+              opacity: 0.9
+            }}>
+              {`${currentSpread.name} - ${currentDeck.name}`}
+            </div>
+          </div>
+        </div>
 
-        <div style={{ marginTop: 24, marginBottom: 24 }}>
-          <Title level="3" style={{ marginBottom: 16 }}>
-            Выберите карты для каждой позиции:
-          </Title>
+        {/* Декоративные элементы */}
+        <div style={{
+          display: 'flex',
+          justifyContent: 'center',
+          marginBottom: '16px'
+        }}>
+          <img
+            src="https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/a73aa4a82442cd6022e0ae5e650a0c240ffa4f01"
+            alt="Decorative element"
+            style={{
+              width: '90px',
+              height: 'auto',
+              objectFit: 'contain'
+            }}
+          />
+        </div>
+
+        <div style={{
+          width: '100%',
+          height: '2px',
+          background: 'url(https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/bf65c29bb76ac59b655e89bb29946e4f00f49a6d) center/cover',
+          marginBottom: '32px'
+        }} />
+
+        {/* Форма выбора карт */}
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '24px',
+          margin: '0 auto'
+        }}>
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: '8px'
+          }}>
+            <div style={{
+              color: '#ffffff',
+              fontSize: '18px',
+              fontWeight: '500',
+              fontFamily: 'Jost'
+            }}>
+              Выберите карты для каждой позиции:
+            </div>
+            
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px'
+            }}>
+              <div style={{
+                color: '#ffffff',
+                fontSize: '16px',
+                fontWeight: '500',
+                fontFamily: 'Jost',
+                opacity: 0.9
+              }}>
+                Заполнено: {selectedCards.length} из {allPositions.length}
+              </div>
+              <div style={{
+                width: '100px',
+                height: '4px',
+                background: 'rgba(255, 255, 255, 0.2)',
+                borderRadius: '2px',
+                overflow: 'hidden'
+              }}>
+                <div style={{
+                  width: `${(selectedCards.length / allPositions.length) * 100}%`,
+                  height: '100%',
+                  background: 'linear-gradient(90deg, rgba(227, 199, 122, 1), rgba(255, 215, 0, 0.8))',
+                  borderRadius: '2px',
+                  transition: 'all 0.3s ease'
+                }} />
+              </div>
+            </div>
+          </div>
+
+          {/* Кнопка очистки */}
+          {selectedCards.length > 0 && (
+            <div style={{
+              display: 'flex',
+              justifyContent: 'flex-start',
+              marginBottom: '8px'
+            }}>
+              <CustomButton
+                variant="secondary"
+                onClick={() => setSelectedCards([])}
+                size="s"
+                style={{
+                  opacity: 0.8,
+                  fontSize: '14px'
+                }}
+              >
+                Очистить все
+              </CustomButton>
+            </div>
+          )}
 
           {allPositions.map(position => {
             const selectedCard = selectedCards.find(card => card.position === position);
             const positionLabel = currentSpread.meta[position.toString()]?.label || `Позиция ${position}`;
+            const isCompleted = selectedCard && selectedCard.cardId;
             
             return (
-              <Card key={position} mode="shadow" style={{ 
-                marginBottom: 16, 
-                padding: 16,
-                borderRadius: '12px', // Добавляем закругление
-                backgroundColor: 'var(--vkui--color_background_content)'
-              }}>
-                <Title level="3" style={{ marginBottom: 8 }}>
-                  {positionLabel}
-                </Title>
-                
-                <FormItem top="Выберите карту">
-                  <Select
-                    value={selectedCard?.cardId || ''}
-                    onChange={(e) => handleCardSelect(position, e.target.value)}
-                    options={cards.map(card => ({
-                      label: card.name,
-                      value: card.id
-                    }))}
-                    placeholder="Выберите карту для этой позиции"
-                  />
-                </FormItem>
+              <div 
+                key={position}
+                style={{
+                  paddingBottom: '20px',
+                  position: 'relative'
+                }}
+              >
+                {/* Чекмарк */}
+                <div style={{
+                  position: 'absolute',
+                  top: '0',
+                  right: '0',
+                  width: '20px',
+                  height: '20px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  opacity: isCompleted ? 1 : 0,
+                  transition: 'all 0.3s ease'
+                }}>
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path 
+                      d="M13.5 4.5L6 12L2.5 8.5" 
+                      stroke="rgba(227, 199, 122, 1)" 
+                      strokeWidth="2" 
+                      strokeLinecap="round" 
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </div>
 
-                {selectedCard && (
-                  <FormItem>
-                    <div style={{ display: 'flex', alignItems: 'center' }}>
-                      <Switch 
+                <div style={{
+                  color: '#ffffff',
+                  fontSize: '16px',
+                  fontWeight: '500',
+                  marginBottom: '16px',
+                  fontFamily: 'Jost',
+                  paddingRight: '30px'
+                }}>
+                  {positionLabel}
+                </div>
+                
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'flex-end',
+                  gap: '16px'
+                }}>
+                  <div style={{ flex: 1 }}>
+                    <CustomSelect
+                      value={selectedCard?.cardId || ''}
+                      options={cards.map(card => ({
+                        label: card.name,
+                        value: card.id
+                      }))}
+                      label=""
+                      placeholder="Выберите карту для этой позиции"
+                      onChange={(value) => handleCardSelect(position, value)}
+                    />
+                  </div>
+
+                  {selectedCard && (
+                    <div style={{ flexShrink: 0 }}>
+                      <CustomToggle
                         checked={selectedCard.isReversed}
                         onChange={() => handleCardReversedToggle(position, !selectedCard.isReversed)}
+                        label="Перевернута"
                       />
-                      <Text style={{ marginLeft: 12 }}>Карта в перевернутом положении</Text>
                     </div>
-                  </FormItem>
-                )}
-              </Card>
+                  )}
+                </div>
+              </div>
             );
           })}
         </div>
 
-        <Div style={{ display: 'flex', gap: '12px', marginTop: 20 }}>
-          <Button size="m" mode="secondary" onClick={onBack} stretched>
-            Назад
-          </Button>
-          <Button 
-            size="m" 
-            mode="primary" 
-            onClick={handleSubmit}
-            stretched
-            disabled={!isReadyToSubmit()}
+        {/* Нижний разделитель */}
+        <div style={{
+          width: '100%',
+          height: '2px',
+          background: 'url(https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/bf65c29bb76ac59b655e89bb29946e4f00f49a6d) center/cover',
+          marginTop: '32px',
+          marginBottom: '16px'
+        }} />
+
+        {/* Нижний декоративный элемент */}
+        <div style={{
+          display: 'flex',
+          justifyContent: 'center',
+          marginBottom: '32px'
+        }}>
+          <img
+            src="https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/154f96a15bcd974fd38495f6f7aeec22f8b9613a"
+            alt="Decorative element"
+            style={{
+              width: '90px',
+              height: 'auto',
+              objectFit: 'contain'
+            }}
+          />
+        </div>
+
+        {/* Кнопки */}
+        <div style={{
+          display: 'flex',
+          gap: '12px',
+          margin: '0 auto',
+          justifyContent: 'flex-end',
+          alignItems: 'center'
+        }}>
+          <CustomButton
+            variant="secondary"
+            onClick={onBack}
+            size="m"
           >
-            Продолжить
-          </Button>
-        </Div>
-      </Div>
-    </Group>
+            Назад
+          </CustomButton>
+          <CustomButton 
+            variant="primary"
+            onClick={handleSubmit}
+            disabled={!isReadyToSubmit()}
+            size="m"
+          >
+            {isReadyToSubmit() ? 'Продолжить' : 'Заполните все позиции'}
+          </CustomButton>
+        </div>
+      </div>
+    </Div>
   );
 };
 
