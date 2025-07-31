@@ -23,6 +23,7 @@ export const InstructionsPanel: React.FC<InstructionsPanelProps> = ({ windowWidt
         borderRadius: '0px 0px 4px 4px',
         borderTop: '1px solid rgba(227,199,122,1)'
       }}>
+
         <div style={{
           display: 'flex',
           width: '100%',
@@ -45,6 +46,42 @@ export const InstructionsPanel: React.FC<InstructionsPanelProps> = ({ windowWidt
             flexShrink: 0
           }}>
             1
+          </div>
+          <div style={{
+            color: 'white',
+            fontSize: windowWidth <= 480 ? '14px' : '16px',
+            fontWeight: '300',
+            alignSelf: 'stretch',
+            flex: '1',
+            margin: 'auto 0',
+            fontFamily: 'Jost, -apple-system, BlinkMacSystemFont, sans-serif'
+          }}>
+           Перетасуйте колоду перед началом чтения
+          </div>
+        </div>
+
+        <div style={{
+          display: 'flex',
+          width: '100%',
+          alignItems: 'center',
+          gap: windowWidth <= 480 ? '12px' : '16px',
+          lineHeight: 1.3
+        }}>
+          <div style={{
+            border: '1px solid rgba(151,128,65,0.25)',
+            display: 'flex',
+            height: windowWidth <= 480 ? '28px' : '32px',
+            width: windowWidth <= 480 ? '28px' : '32px',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: windowWidth <= 480 ? '12px' : '14px',
+            color: 'rgba(210,175,80,1)',
+            fontWeight: '500',
+            textAlign: 'center',
+            borderRadius: '50%',
+            flexShrink: 0
+          }}>
+            2
           </div>
           <div style={{
             color: 'white',
@@ -80,7 +117,7 @@ export const InstructionsPanel: React.FC<InstructionsPanelProps> = ({ windowWidt
             borderRadius: '50%',
             flexShrink: 0
           }}>
-            2
+            3
           </div>
           <div style={{
             color: 'white',
