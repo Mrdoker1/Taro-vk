@@ -187,16 +187,42 @@ export const generateText = createAsyncThunk(
       // Напрямую выполняем запрос с полным логированием
       console.log('Отправка запроса на генерацию...');
       
-      const response = await fetch(`${API_URL}/generate`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: requestBody,
-      });
+      // Создаем AbortController для обработки таймаута
+      const controller = new AbortController();
       
-      console.log('Статус ответа API:', response.status, response.statusText);
-      console.log('Заголовки ответа:', response.headers);
+      // Определяем таймаут в зависимости от устройства
+      const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      
+      // Базовый таймаут 20 секунд, увеличиваем для мобильных устройств
+      let timeoutDuration = 20000; // 20 секунд
+      if (isMobile) {
+        timeoutDuration = 30000; // 30 секунд для мобильных устройств
+      }
+      
+      console.log(`Таймаут установлен на: ${timeoutDuration / 1000} секунд`);
+      const startTime = Date.now();
+      
+      const timeoutId = setTimeout(() => {
+        controller.abort();
+      }, timeoutDuration);
+      
+      try {
+        const response = await fetch(`${API_URL}/generate`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: requestBody,
+          signal: controller.signal
+        });
+        
+        // Очищаем таймаут, если запрос успешно выполнился
+        clearTimeout(timeoutId);
+        
+        const executionTime = Date.now() - startTime;
+        console.log('Статус ответа API:', response.status, response.statusText);
+        console.log('Заголовки ответа:', response.headers);
+        console.log(`Время выполнения запроса: ${executionTime}мс`);
       
       // Читаем тело ответа как текст для отладки
       const responseText = await response.text();
@@ -269,11 +295,19 @@ export const generateText = createAsyncThunk(
           return rejectWithValue('Неожиданный формат ответа от сервера');
         }
       }
+      } catch (fetchError) {
+        // Очищаем таймаут в случае ошибки
+        clearTimeout(timeoutId);
+        throw fetchError;
+      }
     } catch (error) {
       console.error('Ошибка при выполнении запроса:', error);
       let errorMessage = 'Не удалось сгенерировать текст';
       
-      if (error instanceof Error) {
+      // Проверяем, является ли ошибка таймаутом
+      if (error instanceof Error && error.name === 'AbortError') {
+        errorMessage = 'Превышено время ожидания ответа от сервера. Попробуйте еще раз.';
+      } else if (error instanceof Error) {
         errorMessage = `${errorMessage}: ${error.message}`;
       } else if (typeof error === 'string') {
         errorMessage = `${errorMessage}: ${error}`;

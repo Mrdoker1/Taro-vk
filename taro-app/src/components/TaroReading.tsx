@@ -418,6 +418,9 @@ ${systemPromptText}`;
     console.log('Текущая колода:', currentDeck);
     console.log('Выбранные карты:', selectedCards);
     
+    // Очищаем предыдущую ошибку перед началом новой генерации
+    dispatch(clearGeneratedText());
+    
     const requestData = preparePrompt();
     if (requestData) {
       console.log('=== ФИНАЛЬНЫЕ ДАННЫЕ ДЛЯ LLM ===');
@@ -619,14 +622,39 @@ ${systemPromptText}`;
                   {generationError.includes("не относится к таро") ? 
                     generationError : 
                     <>
-                      Ошибка: {generationError}
-                      <br />
-                      <span style={{ fontSize: '12px' }}>
-                        Проверьте соединение с интернетом или попробуйте позже.
-                      </span>
+                      {generationError.includes("Превышено время ожидания") ? (
+                        <>
+                          <strong>Превышено время ожидания</strong>
+                          <br />
+                          <span style={{ fontSize: '14px' }}>
+                            Сервер слишком долго не отвечает. Это может быть связано с высокой нагрузкой.
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          Ошибка: {generationError}
+                          <br />
+                          <span style={{ fontSize: '12px' }}>
+                            Проверьте соединение с интернетом или попробуйте позже.
+                          </span>
+                        </>
+                      )}
                     </>
                   }
                 </Text>
+                {/* Кнопка повторной отправки */}
+                {!generationError.includes("не относится к таро") && (
+                  <div style={{ marginTop: '16px' }}>
+                    <CustomButton
+                      variant="primary"
+                      size="m"
+                      onClick={handleGenerate}
+                      disabled={isGenerating}
+                    >
+                      {isGenerating ? 'Отправляем...' : 'Попробовать снова'}
+                    </CustomButton>
+                  </div>
+                )}
               </div>
             )}
 
