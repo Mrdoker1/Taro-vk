@@ -70,7 +70,7 @@ export const Footer: FC<FooterProps> = ({ onAboutApp, onLegalInfo }) => {
       }}>
         <img 
           src={logoSvg} 
-          alt="Taro VK Logo" 
+          alt="Seluna - расклады и советы Таро" 
           style={{ 
             width: isMobile ? '100px' : '115px', 
             height: 'auto' 

@@ -29,7 +29,7 @@ export const createFileContent = (
     content += `🔧 КАК ИСПОЛЬЗОВАТЬ:\n${parsedAffirmation.usage}\n\n`;
   }
   
-  content += `Создано в приложении Taro VK\nДата создания: ${currentDate} ${currentTime}`;
+  content += `Создано в приложении Seluna - расклады и советы Таро\nДата создания: ${currentDate} ${currentTime}`;
   return content;
 };
 

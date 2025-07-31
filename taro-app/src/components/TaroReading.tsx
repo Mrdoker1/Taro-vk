@@ -113,7 +113,6 @@ export const TaroReading: React.FC<TaroReadingProps> = ({
 📊 РАСКЛАД: ${currentSpread.name}
 📅 ДАТА: ${currentDate}
 🕐 ВРЕМЯ: ${currentTime}
-🎯 ИСТОЧНИК: Taro VK Mini App
 
 `;
       
@@ -153,7 +152,7 @@ ${pos.interpretation}
       }
 
       content += `═══════════════════════════════════════════════════════════════
-Создано в приложении Taro VK
+Создано в приложении Seluna - расклады и советы Таро
 Дата создания: ${currentDate} ${currentTime}
 ═══════════════════════════════════════════════════════════════`;
 

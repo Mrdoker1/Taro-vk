@@ -48,7 +48,7 @@ export const AboutApp: FC<AboutAppProps> = ({ id }) => {
         <Group>
           <Div style={{ padding: '16px' }}>
             <Title level="2" style={{ marginBottom: '16px' }}>
-              Taro VK
+              Seluna - расклады и советы Таро
             </Title>
             <Text style={{ marginBottom: '16px' }}>
               Приложение для гадания на картах Таро, получения ежедневных аффирмаций 
