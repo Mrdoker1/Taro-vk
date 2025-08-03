@@ -6,11 +6,8 @@ import {
   Card,
   Button,
   Textarea,
-  Spacing,
   Group,
-  Header,
   Badge,
-  SimpleCell,
   IconButton,
   ModalPage,
   ModalPageHeader,
@@ -203,7 +200,6 @@ export const Calendar: React.FC<CalendarProps> = () => {
             width: `${markerSize}px`,
             height: `${markerSize}px`,
             backgroundColor: '#9c27b0', // Фиолетовый для Таро
-            borderRadius: '50%',
             zIndex: 1
           }}
         />
@@ -222,7 +218,6 @@ export const Calendar: React.FC<CalendarProps> = () => {
             width: `${markerSize}px`,
             height: `${markerSize}px`,
             backgroundColor: '#ff9800', // Оранжевый для аффирмаций
-            borderRadius: '50%',
             zIndex: 1
           }}
         />
@@ -241,7 +236,6 @@ export const Calendar: React.FC<CalendarProps> = () => {
             width: `${markerSize}px`,
             height: `${markerSize}px`,
             backgroundColor: '#4caf50', // Зеленый для заметок
-            borderRadius: '50%',
             zIndex: 1
           }}
         />
@@ -260,7 +254,6 @@ export const Calendar: React.FC<CalendarProps> = () => {
             width: `${markerSize}px`,
             height: `${markerSize}px`,
             backgroundColor: '#2196f3', // Синий для других активностей
-            borderRadius: '50%',
             zIndex: 1
           }}
         />
@@ -295,305 +288,372 @@ export const Calendar: React.FC<CalendarProps> = () => {
 
   return (
     <>
-      <Div style={{ padding: '0 16px' }}>
-        <Group header={<Header size="l">Календарь активностей</Header>}>
-          <Card mode="shadow">
-            <Div style={{ padding: '16px' }}>
-              {/* Calendar Header */}
-              <div style={{ 
-                display: 'flex', 
-                justifyContent: 'space-between', 
-                alignItems: 'center', 
-                marginBottom: '16px' 
+      <div style={{
+        display: 'flex',
+        gap: '16px',
+        width: '100%',
+        minHeight: '400px'
+      }}>
+      {/* Левая часть - Календарь и обозначения (50%) */}
+      <div style={{
+        flex: '1',
+        background: 'rgba(0, 0, 0, 0.5)',
+        padding: '16px'
+      }}>
+        {/* Calendar Header */}
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center', 
+          marginBottom: '16px' 
+        }}>
+          <IconButton onClick={() => navigateMonth('prev')}>
+            <Icon24ChevronLeft />
+          </IconButton>
+          <Title level="2" style={{ color: '#ffffff' }}>
+            {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
+          </Title>
+          <IconButton onClick={() => navigateMonth('next')}>
+            <Icon24ChevronRight />
+          </IconButton>
+        </div>
+
+        {/* Day Names */}
+        <div style={{ 
+          display: 'grid', 
+          gridTemplateColumns: 'repeat(7, 1fr)', 
+          gap: '4px',
+          marginBottom: '8px'
+        }}>
+          {dayNames.map((day) => (
+            <div key={day} style={{ 
+              textAlign: 'center', 
+              fontWeight: 'bold',
+              fontSize: '12px',
+              color: '#E8D28C',
+              padding: '8px 4px'
+            }}>
+              {day}
+            </div>
+          ))}
+        </div>
+
+        {/* Calendar Days */}
+        <div style={{ 
+          display: 'grid', 
+          gridTemplateColumns: 'repeat(7, 1fr)', 
+          gap: '4px',
+          marginBottom: '16px'
+        }}>
+          {days.map((day, index) => {
+            if (!day) {
+              return <div key={index} style={{ height: '40px' }} />;
+            }
+
+            const dateStr = formatDate(day);
+            const isSelected = selectedDate === dateStr;
+            const isToday = formatDate(new Date()) === dateStr;
+
+            return (
+              <Button
+                key={dateStr}
+                mode={isSelected ? 'primary' : 'tertiary'}
+                size="s"
+                onClick={() => handleDateSelect(dateStr)}
+                style={{ 
+                  height: '40px',
+                  minWidth: '40px',
+                  position: 'relative',
+                  backgroundColor: isSelected ? '#978041' : (isToday ? 'var(--vkui--color_background_accent)' : undefined),
+                  color: isSelected ? '#ffffff' : undefined
+                }}
+              >
+                {day.getDate()}
+                {getDayMarkers(day)}
+              </Button>
+            );
+          })}
+        </div>
+        
+        {/* Разделительная линия */}
+        <div style={{
+          width: '100%',
+          height: '1px',
+          background: 'rgba(232, 210, 140, 0.3)',
+          marginBottom: '16px'
+        }} />
+        
+        {/* Легенда для маркеров */}
+        <div>
+          <Text style={{ 
+            fontSize: '12px', 
+            fontWeight: 'bold', 
+            marginBottom: '8px',
+            color: '#ffffff'
+          }}>
+            Обозначения:
+          </Text>
+          <div style={{ 
+            display: 'flex', 
+            flexWrap: 'wrap', 
+            gap: '12px',
+            fontSize: '11px'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <div style={{
+                width: '8px',
+                height: '8px',
+                backgroundColor: '#9c27b0'
+              }} />
+              <Text style={{ fontSize: '11px', color: '#E8D28C' }}>Расклад Таро</Text>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <div style={{
+                width: '8px',
+                height: '8px',
+                backgroundColor: '#ff9800'
+              }} />
+              <Text style={{ fontSize: '11px', color: '#E8D28C' }}>Аффирмация</Text>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <div style={{
+                width: '8px',
+                height: '8px',
+                backgroundColor: '#4caf50'
+              }} />
+              <Text style={{ fontSize: '11px', color: '#E8D28C' }}>Заметка</Text>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <div style={{
+                width: '8px',
+                height: '8px',
+                backgroundColor: '#2196f3'
+              }} />
+              <Text style={{ fontSize: '11px', color: '#E8D28C' }}>Другая активность</Text>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Правая часть - Активности и заметки (50%) */}
+      <div style={{
+        flex: '1',
+        background: 'rgba(0, 0, 0, 0.5)',
+        padding: '16px',
+        display: 'flex',
+        flexDirection: 'column'
+      }}>
+        {selectedDate ? (
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '16px',
+            height: '100%'
+          }}>
+            {/* Заголовок выбранной даты */}
+            <div style={{ marginBottom: '8px' }}>
+              <Text style={{ 
+                fontSize: '14px', 
+                fontWeight: 'bold',
+                color: '#ffffff',
+                marginBottom: '4px'
               }}>
-                <IconButton onClick={() => navigateMonth('prev')}>
-                  <Icon24ChevronLeft />
-                </IconButton>
-                <Title level="2">
-                  {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
-                </Title>
-                <IconButton onClick={() => navigateMonth('next')}>
-                  <Icon24ChevronRight />
-                </IconButton>
-              </div>
-
-              {/* Day Names */}
-              <div style={{ 
-                display: 'grid', 
-                gridTemplateColumns: 'repeat(7, 1fr)', 
-                gap: '4px',
-                marginBottom: '8px'
-              }}>
-                {dayNames.map((day) => (
-                  <div key={day} style={{ 
-                    textAlign: 'center', 
-                    fontWeight: 'bold',
-                    fontSize: '12px',
-                    color: 'var(--vkui--color_text_secondary)',
-                    padding: '8px 4px'
-                  }}>
-                    {day}
-                  </div>
-                ))}
-              </div>
-
-              {/* Calendar Days */}
-              <div style={{ 
-                display: 'grid', 
-                gridTemplateColumns: 'repeat(7, 1fr)', 
-                gap: '4px'
-              }}>
-                {days.map((day, index) => {
-                  if (!day) {
-                    return <div key={index} style={{ height: '40px' }} />;
-                  }
-
-                  const dateStr = formatDate(day);
-                  const isSelected = selectedDate === dateStr;
-                  const isToday = formatDate(new Date()) === dateStr;
-
-                  return (
-                    <Button
-                      key={dateStr}
-                      mode={isSelected ? 'primary' : 'tertiary'}
-                      size="s"
-                      onClick={() => handleDateSelect(dateStr)}
-                      style={{ 
-                        height: '40px',
-                        minWidth: '40px',
-                        position: 'relative',
-                        backgroundColor: isToday ? 'var(--vkui--color_background_accent)' : undefined,
-                        borderRadius: '8px'
-                      }}
-                    >
-                      {day.getDate()}
-                      {getDayMarkers(day)}
-                    </Button>
-                  );
-                })}
-              </div>
-            </Div>
-          </Card>
-          
-          {/* Легенда для маркеров */}
-          <Card mode="outline" style={{ marginTop: '8px' }}>
-            <Div style={{ padding: '12px' }}>
-              <Text style={{ fontSize: '12px', fontWeight: 'bold', marginBottom: '8px' }}>
-                Обозначения:
+                {(() => {
+                  const [year, month, day] = selectedDate.split('-').map(Number);
+                  const date = new Date(year, month - 1, day);
+                  return date.toLocaleDateString('ru-RU', { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                  });
+                })()}
               </Text>
-              <div style={{ 
-                display: 'flex', 
-                flexWrap: 'wrap', 
-                gap: '12px',
-                fontSize: '11px'
-              }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  <div style={{
-                    width: '8px',
-                    height: '8px',
-                    backgroundColor: '#9c27b0',
-                    borderRadius: '50%'
-                  }} />
-                  <Text style={{ fontSize: '11px' }}>Расклад Таро</Text>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  <div style={{
-                    width: '8px',
-                    height: '8px',
-                    backgroundColor: '#ff9800',
-                    borderRadius: '50%'
-                  }} />
-                  <Text style={{ fontSize: '11px' }}>Аффирмация</Text>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  <div style={{
-                    width: '8px',
-                    height: '8px',
-                    backgroundColor: '#4caf50',
-                    borderRadius: '50%'
-                  }} />
-                  <Text style={{ fontSize: '11px' }}>Заметка</Text>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  <div style={{
-                    width: '8px',
-                    height: '8px',
-                    backgroundColor: '#2196f3',
-                    borderRadius: '50%'
-                  }} />
-                  <Text style={{ fontSize: '11px' }}>Другая активность</Text>
-                </div>
-              </div>
-            </Div>
-          </Card>
-        </Group>
-      </Div>
+            </div>
 
-      {selectedDate && (
-        <Group header={<Header size="s">{(() => {
-          const [year, month, day] = selectedDate.split('-').map(Number);
-          const date = new Date(year, month - 1, day);
-          return date.toLocaleDateString('ru-RU', { 
-            weekday: 'long', 
-            year: 'numeric', 
-            month: 'long', 
-            day: 'numeric' 
-          });
-        })()}</Header>}>
-          
-          {/* Activities Section */}
-          {hasActivities && (
-            <Card mode="shadow" style={{ marginBottom: '12px' }}>
-              <Group header={<Header size="s">Активности дня</Header>}>
-                <div style={{ padding: '0 16px' }}>
+            {/* Activities Section */}
+            {hasActivities && (
+              <div style={{
+                background: 'rgba(255, 255, 255, 0.1)',
+                borderRadius: '8px',
+                padding: '12px',
+                marginBottom: '16px'
+              }}>
+                <Text style={{ 
+                  fontSize: '12px', 
+                  fontWeight: 'bold', 
+                  marginBottom: '8px',
+                  color: '#ffffff'
+                }}>
+                  Активности дня:
+                </Text>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                   {selectedDateData!.activities.map((activity) => (
-                    <SimpleCell
-                      key={activity.id}
-                      before={
-                        <div style={{ 
-                          display: 'flex', 
-                          alignItems: 'center', 
-                          gap: '8px' 
-                        }}>
-                          <span style={{ fontSize: '20px' }}>
-                            {getActivityIcon(activity.type)}
-                          </span>
-                          <Badge mode="prominent">
+                    <div key={activity.id} style={{
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      borderRadius: '6px',
+                      padding: '8px',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center'
+                    }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <span style={{ fontSize: '16px' }}>
+                          {getActivityIcon(activity.type)}
+                        </span>
+                        <div>
+                          <Text style={{ fontSize: '11px', color: '#ffffff', fontWeight: '500' }}>
+                            {activity.title}
+                          </Text>
+                          <Text style={{ fontSize: '10px', color: '#E8D28C' }}>
                             {getActivityTypeLabel(activity.type)}
-                          </Badge>
-                        </div>
-                      }
-                      after={
-                        <div style={{ display: 'flex', gap: '4px' }}>
-                          <IconButton
-                            aria-label="Посмотреть детали"
-                            onClick={() => handleViewActivity(activity)}
-                          >
-                            <Icon24View />
-                          </IconButton>
-                          <IconButton
-                            aria-label="Удалить активность"
-                            onClick={() => handleDeleteActivity(activity, selectedDate!)}
-                          >
-                            <Icon24Delete />
-                          </IconButton>
-                        </div>
-                      }
-                      subtitle={
-                        <>
-                          <Text style={{ fontSize: '12px', color: 'var(--vkui--color_text_secondary)' }}>
-                            {activity.summary}
                           </Text>
-                          <Text style={{ fontSize: '11px', color: 'var(--vkui--color_text_tertiary)' }}>
-                            {new Date(activity.timestamp).toLocaleTimeString('ru-RU', { 
-                              hour: '2-digit', 
-                              minute: '2-digit' 
-                            })}
-                          </Text>
-                        </>
-                      }
-                    >
-                      {activity.title}
-                    </SimpleCell>
+                        </div>
+                      </div>
+                      <div style={{ display: 'flex', gap: '2px' }}>
+                        <IconButton
+                          aria-label="Посмотреть детали"
+                          onClick={() => handleViewActivity(activity)}
+                          style={{ padding: '4px' }}
+                        >
+                          <Icon24View style={{ width: '16px', height: '16px' }} />
+                        </IconButton>
+                        <IconButton
+                          aria-label="Удалить активность"
+                          onClick={() => handleDeleteActivity(activity, selectedDate!)}
+                          style={{ padding: '4px' }}
+                        >
+                          <Icon24Delete style={{ width: '16px', height: '16px' }} />
+                        </IconButton>
+                      </div>
+                    </div>
                   ))}
                 </div>
-              </Group>
-            </Card>
-          )}
+              </div>
+            )}
 
-          {/* Notes Section */}
-          <Card mode="shadow">
-            <Group header={
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Header size="s">Заметки</Header>
+            {/* Notes Section */}
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.1)',
+              borderRadius: '8px',
+              padding: '12px',
+              flex: 1
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                <Text style={{ 
+                  fontSize: '12px', 
+                  fontWeight: 'bold',
+                  color: '#ffffff'
+                }}>
+                  Заметки:
+                </Text>
                 {!isEditingNote && (
                   <Button
                     mode="tertiary"
                     size="s"
                     onClick={() => setIsEditingNote(true)}
+                    style={{ padding: '4px 8px', fontSize: '10px' }}
                   >
                     {hasNote ? 'Редактировать' : 'Добавить'}
                   </Button>
                 )}
               </div>
-            }>
-              <Div style={{ padding: '16px' }}>
-                {isEditingNote ? (
-                  <>
-                    <Textarea
-                      value={noteText}
-                      onChange={(e) => setNoteText(e.target.value)}
-                      placeholder="Введите заметку для этого дня..."
-                      rows={4}
-                      style={{ marginBottom: '12px' }}
-                    />
-                    <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-                      <Button
-                        mode="tertiary"
-                        size="s"
-                        onClick={handleCancelEdit}
-                      >
-                        Отмена
-                      </Button>
-                      <Button
-                        mode="primary"
-                        size="s"
-                        onClick={handleSaveNote}
-                      >
-                        Сохранить
-                      </Button>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    {hasNote ? (
-                      <div>
-                        <Text style={{ whiteSpace: 'pre-wrap', lineHeight: '1.4' }}>
-                          {selectedDateData!.note!.content}
-                        </Text>
-                        <Spacing size={8} />
-                        <Text style={{ 
-                          fontSize: '12px', 
-                          color: 'var(--vkui--color_text_tertiary)' 
-                        }}>
-                          Последнее изменение: {new Date(selectedDateData!.note!.timestamp).toLocaleString('ru-RU')}
-                        </Text>
-                      </div>
-                    ) : (
+              
+              {isEditingNote ? (
+                <div>
+                  <Textarea
+                    value={noteText}
+                    onChange={(e) => setNoteText(e.target.value)}
+                    placeholder="Введите заметку для этого дня..."
+                    rows={4}
+                    style={{ marginBottom: '8px', fontSize: '12px' }}
+                  />
+                  <div style={{ display: 'flex', gap: '4px', justifyContent: 'flex-end' }}>
+                    <Button
+                      mode="tertiary"
+                      size="s"
+                      onClick={handleCancelEdit}
+                      style={{ padding: '4px 8px', fontSize: '10px' }}
+                    >
+                      Отмена
+                    </Button>
+                    <Button
+                      mode="primary"
+                      size="s"
+                      onClick={handleSaveNote}
+                      style={{ padding: '4px 8px', fontSize: '10px' }}
+                    >
+                      Сохранить
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <div>
+                  {hasNote ? (
+                    <div>
                       <Text style={{ 
-                        color: 'var(--vkui--color_text_secondary)', 
-                        fontStyle: 'italic' 
+                        whiteSpace: 'pre-wrap', 
+                        lineHeight: '1.4',
+                        fontSize: '11px',
+                        color: '#E8D28C'
                       }}>
-                        Заметок пока нет. Нажмите "Добавить" чтобы создать заметку для этого дня.
+                        {selectedDateData!.note!.content}
                       </Text>
-                    )}
-                  </>
-                )}
-              </Div>
-            </Group>
-          </Card>
-        </Group>
-      )}
-
-      {!selectedDate && (
-        <Card mode="shadow">
-          <Div style={{ padding: '32px', textAlign: 'center' }}>
+                      <Text style={{ 
+                        fontSize: '10px', 
+                        color: 'rgba(232, 210, 140, 0.6)',
+                        marginTop: '4px'
+                      }}>
+                        {new Date(selectedDateData!.note!.timestamp).toLocaleString('ru-RU')}
+                      </Text>
+                    </div>
+                  ) : (
+                    <Text style={{ 
+                      color: 'rgba(232, 210, 140, 0.6)', 
+                      fontStyle: 'italic',
+                      fontSize: '11px'
+                    }}>
+                      Заметок пока нет
+                    </Text>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        ) : (
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            height: '100%',
+            textAlign: 'center'
+          }}>
             <Icon28CalendarOutline style={{ 
-              color: 'var(--vkui--color_text_secondary)', 
-              marginBottom: '16px' 
+              color: 'rgba(232, 210, 140, 0.6)', 
+              marginBottom: '12px' 
             }} />
-            <Title level="3" style={{ marginBottom: '8px' }}>
+            <Text style={{ 
+              fontSize: '14px', 
+              fontWeight: 'bold',
+              color: '#ffffff',
+              marginBottom: '4px'
+            }}>
               Выберите дату
-            </Title>
-            <Text style={{ color: 'var(--vkui--color_text_secondary)' }}>
-              Выберите дату в календаре, чтобы просмотреть активности и заметки
             </Text>
-          </Div>
-        </Card>
-      )}
-      
-      {/* Модальные окна */}
-      <ModalRoot activeModal={activeModal} onClose={closeModal}>
+            <Text style={{ 
+              color: 'rgba(232, 210, 140, 0.6)',
+              fontSize: '12px'
+            }}>
+              Выберите дату в календаре для просмотра активностей и заметок
+            </Text>
+          </div>
+        )}
+      </div>
+    </div>
+
+    {/* Модальные окна */}
+    <ModalRoot activeModal={activeModal} onClose={closeModal}>
         {/* Детали активности */}
         <ModalPage
           id="activity-details"

@@ -127,12 +127,7 @@ export const CalendarPanel: FC<CalendarPanelProps> = ({ id }) => {
             }} />
 
             {/* Календарь */}
-            <div style={{
-              display: 'flex',
-              justifyContent: 'center'
-            }}>
-              <Calendar />
-            </div>
+            <Calendar />
 
             {/* Нижний разделитель */}
             <div style={{
