@@ -1,11 +1,18 @@
 import { FC } from 'react';
-import { Panel, NavIdProps, Button } from '@vkontakte/vkui';
+import {
+  Panel,
+  Div,
+  NavIdProps,
+  ConfigProvider,
+  Button,
+} from '@vkontakte/vkui';
 import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
 import { Calendar } from '../components/Calendar';
 import { Footer } from '../components/Footer';
 import { StarButton } from '../components/StarButton';
 import { AppHeader } from '../components/AppHeader';
 import { DEFAULT_VIEW_PANELS } from '../routes';
+import calendarIcon from '../assets/calendar.svg';
 
 export interface CalendarPanelProps extends NavIdProps {}
 
@@ -25,24 +32,140 @@ export const CalendarPanel: FC<CalendarPanelProps> = ({ id }) => {
   };
 
   return (
-    <Panel id={id}>
-      <AppHeader
-        left={
-          <Button
-            mode="tertiary"
-            onClick={handleBackClick}
-          >
-            Назад
-          </Button>
-        }
-        right={<StarButton size="s" />}
-      />
-      <Calendar />
-      
-      <Footer 
-        onAboutApp={handleAboutApp}
-        onLegalInfo={handleLegalInfo}
-      />
-    </Panel>
+    <ConfigProvider hasCustomPanelHeaderAfter={false}>
+      <Panel id={id}>
+        <AppHeader
+          left={
+            <Button
+              mode="tertiary"
+              onClick={handleBackClick}
+            >
+              Назад
+            </Button>
+          }
+          right={<StarButton size="s" />}
+        />
+
+        <Div style={{ 
+          padding: '20px 12px',
+          display: 'flex',
+          justifyContent: 'center'
+        }}>
+          <div style={{
+            width: '100%',
+            background: 'url(https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/3b830249f16752184ecb361cce592c7795bcf9ad) center/cover',
+            borderRadius: '12px',
+            overflow: 'hidden',
+            position: 'relative',
+            padding: '32px'
+          }}>
+            {/* Заголовок секции */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              marginBottom: '8px'
+            }}>
+              <img
+                src={calendarIcon}
+                alt="Calendar icon"
+                style={{
+                  width: '60px',
+                  height: '60px',
+                  objectFit: 'contain'
+                }}
+              />
+              <div style={{ flex: 1 }}>
+                <h1 style={{
+                  color: '#ffffff',
+                  fontSize: '24px',
+                  fontWeight: '400',
+                  margin: 0,
+                  fontFamily: 'Jost',
+                  lineHeight: 1.2,
+                  marginBottom: '4px'
+                }}>
+                  Календарь активностей
+                </h1>
+                <p style={{
+                  color: '#E8D28C',
+                  fontSize: '14px',
+                  fontWeight: '300',
+                  margin: 0,
+                  fontFamily: 'Jost',
+                  lineHeight: 1.3,
+                  opacity: 0.8
+                }}>
+                  Удобный способ отслеживать расклады, аффирмации, заметки и другие активности по дням.
+                </p>
+              </div>
+            </div>
+
+            {/* Декоративный элемент */}
+            <div style={{
+              display: 'flex',
+              justifyContent: 'center',
+              marginBottom: '16px'
+            }}>
+              <img
+                src="https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/a73aa4a82442cd6022e0ae5e650a0c240ffa4f01"
+                alt="Decorative element"
+                style={{
+                  width: '90px',
+                  height: 'auto',
+                  objectFit: 'contain'
+                }}
+              />
+            </div>
+
+            {/* Разделитель */}
+            <div style={{
+              width: '100%',
+              height: '2px',
+              background: 'url(https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/bf65c29bb76ac59b655e89bb29946e4f00f49a6d) center/cover',
+              marginBottom: '32px'
+            }} />
+
+            {/* Календарь */}
+            <div style={{
+              display: 'flex',
+              justifyContent: 'center'
+            }}>
+              <Calendar />
+            </div>
+
+            {/* Нижний разделитель */}
+            <div style={{
+              width: '100%',
+              height: '2px',
+              background: 'url(https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/bf65c29bb76ac59b655e89bb29946e4f00f49a6d) center/cover',
+              marginTop: '32px',
+              marginBottom: '16px'
+            }} />
+
+            {/* Нижний декоративный элемент */}
+            <div style={{
+              display: 'flex',
+              justifyContent: 'center'
+            }}>
+              <img
+                src="https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/154f96a15bcd974fd38495f6f7aeec22f8b9613a"
+                alt="Decorative element"
+                style={{
+                  width: '90px',
+                  height: 'auto',
+                  objectFit: 'contain'
+                }}
+              />
+            </div>
+          </div>
+        </Div>
+
+        <Footer 
+          onAboutApp={handleAboutApp}
+          onLegalInfo={handleLegalInfo}
+        />
+      </Panel>
+    </ConfigProvider>
   );
 }; 
