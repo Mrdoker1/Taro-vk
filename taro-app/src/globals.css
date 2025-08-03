@@ -237,3 +237,58 @@ div button.vkuiButton--mode-primary,
     opacity: 0.8;
   }
 }
+
+/* Убираем фон у полей формы */
+.vkuiFormField__hover,
+.vkuiFormField__modeDefault {
+  background-color: transparent !important;
+}
+
+/* Убираем фон у Textarea в календаре */
+.vkuiTextarea,
+.vkuiTextarea__el {
+  background-color: transparent !important;
+}
+
+/* Изменяем цвет фокуса с синего на золотой */
+.vkuiTextarea:focus,
+.vkuiTextarea__el:focus,
+.vkuiFormField__focused,
+.vkuiFormField__hover:focus-within,
+.vkuiFormField__modeDefault:focus-within {
+  border-color: #978041 !important;
+  outline: 2px solid #978041 !important;
+  outline-offset: 0px !important;
+}
+
+/* Дополнительные стили для состояния фокуса */
+.vkuiTextarea:focus-within,
+.vkuiInput:focus-within,
+.vkuiInput__el:focus {
+  border-color: #978041 !important;
+  outline: 2px solid #978041 !important;
+  outline-offset: 0px !important;
+}
+
+/* Убираем все возможные синие обводки и заменяем на золотые */
+textarea:focus,
+input:focus,
+.vkuiTextarea:focus,
+.vkuiTextarea__el:focus,
+.vkuiInput:focus,
+.vkuiInput__el:focus,
+.vkuiFormField:focus-within,
+.vkuiFormField__focused,
+.vkuiFormField__hover:focus-within,
+.vkuiFormField__modeDefault:focus-within,
+[class*="vkui"] textarea:focus,
+[class*="vkui"] input:focus {
+  outline: 2px solid #978041 !important;
+}
+
+/* Переопределяем стандартные CSS переменные VKUI для фокуса */
+:root {
+  --vkui--color_field_border_alpha: #978041 !important;
+  --vkui--color_stroke_accent: #978041 !important;
+  --vkui--color_background_accent: #978041 !important;
+}

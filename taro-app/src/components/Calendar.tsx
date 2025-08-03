@@ -634,14 +634,14 @@ export const Calendar: React.FC<CalendarProps> = () => {
                       <Text style={{ 
                         whiteSpace: 'pre-wrap', 
                         lineHeight: '1.4',
-                        fontSize: '11px',
+                        fontSize: '14px',
                         color: '#E8D28C',
                         marginBottom: '8px'
                       }}>
                         {selectedDateData!.note!.content}
                       </Text>
                       <Text style={{ 
-                        fontSize: '10px', 
+                        fontSize: '12px', 
                         color: 'rgba(232, 210, 140, 0.6)',
                         marginBottom: '12px'
                       }}>
