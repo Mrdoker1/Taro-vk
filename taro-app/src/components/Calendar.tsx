@@ -16,6 +16,8 @@ import {
 } from '@vkontakte/vkui';
 import { Icon24ChevronLeft, Icon24ChevronRight, Icon28CalendarOutline, Icon24View, Icon24Delete, Icon24Dismiss } from '@vkontakte/icons';
 import { useAppDispatch, useAppSelector } from '../store';
+import calendarSpreadIcon from '../assets/calendar-spread.svg';
+import calendarAffirmIcon from '../assets/calendar-affirm.svg';
 import {
   setSelectedDate,
   loadCalendarData,
@@ -113,14 +115,39 @@ export const Calendar: React.FC<CalendarProps> = () => {
     setActivityToDelete(null);
   };
 
-  const getActivityIcon = (type: CalendarActivity['type']) => {
+  const getActivityIcon = (type: CalendarActivity['type'], size: 'small' | 'normal' = 'normal') => {
+    const iconSize = size === 'small' ? '32px' : '40px';
+    
     switch (type) {
       case 'tarot_reading':
-        return '🔮';
+        return (
+          <img 
+            src={calendarSpreadIcon} 
+            alt="Расклад Таро" 
+            style={{ width: iconSize, height: iconSize }}
+          />
+        );
       case 'affirmation':
-        return '✨';
+        return (
+          <img 
+            src={calendarAffirmIcon} 
+            alt="Аффирмация" 
+            style={{ width: iconSize, height: iconSize }}
+          />
+        );
       default:
-        return '📝';
+        return (
+          <div style={{ 
+            fontSize: size === 'small' ? '20px' : '24px', 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center',
+            width: iconSize, 
+            height: iconSize 
+          }}>
+            📝
+          </div>
+        );
     }
   };
 
@@ -133,6 +160,45 @@ export const Calendar: React.FC<CalendarProps> = () => {
       default:
         return 'Активность';
     }
+  };
+
+  const formatActivityTime = (timestamp: number) => {
+    const date = new Date(timestamp);
+    return date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+  };
+
+  const getActivityDetails = (activity: CalendarActivity) => {
+    if (activity.type === 'tarot_reading') {
+      // Для расклада Таро показываем summary (колода и карты)
+      return activity.summary;
+    } else if (activity.type === 'affirmation') {
+      // Для аффирмации пытаемся извлечь структурированную информацию
+      try {
+        if (activity.fullContent) {
+          const data = JSON.parse(activity.fullContent);
+          if (data && typeof data === 'object' && Array.isArray(data.sections)) {
+            // Если есть структурированные данные аффирмации с sections
+            const parts = data.sections.map((section: { title: string; text: string }) => {
+              const shortText = section.text.length > 40 
+                ? section.text.substring(0, 40) + '...' 
+                : section.text;
+              return `${section.title}: ${shortText}`;
+            });
+            
+            const text = parts.join(' | ');
+            return text.length > 80 ? text.substring(0, 80) + '...' : text;
+          }
+        }
+      } catch (e) {
+        // Если не удается парсить, используем summary
+        console.error('Error parsing affirmation data:', e);
+      }
+      
+      // Fallback к summary или обрезанному тексту
+      const content = activity.summary;
+      return content.length > 80 ? content.substring(0, 80) + '...' : content;
+    }
+    return activity.summary;
   };
 
   const getDaysInMonth = (date: Date) => {
@@ -508,25 +574,44 @@ export const Calendar: React.FC<CalendarProps> = () => {
                     <div key={activity.id} style={{
                       background: 'rgba(255, 255, 255, 0.05)',
                       borderRadius: '6px',
-                      padding: '8px',
+                      padding: '12px',
                       display: 'flex',
                       justifyContent: 'space-between',
-                      alignItems: 'center'
+                      alignItems: 'flex-start'
                     }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        <span style={{ fontSize: '16px' }}>
-                          {getActivityIcon(activity.type)}
-                        </span>
-                        <div>
-                          <Text style={{ fontSize: '11px', color: '#ffffff', fontWeight: '500' }}>
+                      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', flex: 1 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '32px', height: '32px', flexShrink: 0 }}>
+                          {getActivityIcon(activity.type, 'small')}
+                        </div>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <Text style={{ 
+                            fontSize: '12px', 
+                            color: '#ffffff', 
+                            fontWeight: '500',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.5px',
+                            marginBottom: '4px'
+                          }}>
                             {activity.title}
                           </Text>
-                          <Text style={{ fontSize: '10px', color: '#E8D28C' }}>
-                            {getActivityTypeLabel(activity.type)}
+                          <Text style={{ 
+                            fontSize: '11px', 
+                            color: '#E8D28C',
+                            marginBottom: '4px'
+                          }}>
+                            {formatActivityTime(activity.timestamp)}
+                          </Text>
+                          <Text style={{ 
+                            fontSize: '12px', 
+                            color: 'rgba(232, 210, 140, 0.8)',
+                            lineHeight: '1.3',
+                            wordBreak: 'break-word'
+                          }}>
+                            {getActivityDetails(activity)}
                           </Text>
                         </div>
                       </div>
-                      <div style={{ display: 'flex', gap: '2px' }}>
+                      <div style={{ display: 'flex', gap: '2px', flexShrink: 0, marginLeft: '8px' }}>
                         <IconButton
                           aria-label="Посмотреть детали"
                           onClick={() => handleViewActivity(activity)}
@@ -753,9 +838,9 @@ export const Calendar: React.FC<CalendarProps> = () => {
               <Card mode="shadow" style={{ margin: '16px' }}>
                 <Div style={{ padding: '16px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-                    <span style={{ fontSize: '24px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '40px', height: '40px' }}>
                       {getActivityIcon(selectedActivity.type)}
-                    </span>
+                    </div>
                     <Badge mode="prominent">
                       {getActivityTypeLabel(selectedActivity.type)}
                     </Badge>
@@ -803,19 +888,31 @@ export const Calendar: React.FC<CalendarProps> = () => {
                     Вы действительно хотите удалить эту активность?
                   </Title>
                   
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-                    <span style={{ fontSize: '20px' }}>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', marginBottom: '12px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '40px', height: '40px' }}>
                       {getActivityIcon(activityToDelete.activity.type)}
-                    </span>
-                    <Text weight="3">{activityToDelete.activity.title}</Text>
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <Text weight="3" style={{ marginBottom: '4px' }}>
+                        {activityToDelete.activity.title}
+                      </Text>
+                      <Text style={{ 
+                        fontSize: '12px', 
+                        color: 'var(--vkui--color_text_secondary)',
+                        marginBottom: '4px'
+                      }}>
+                        {formatActivityTime(activityToDelete.activity.timestamp)}
+                      </Text>
+                    </div>
                   </div>
                   
                   <Text style={{ 
-                    fontSize: '14px', 
+                    fontSize: '15px', 
                     color: 'var(--vkui--color_text_secondary)',
-                    marginBottom: '16px'
+                    marginBottom: '16px',
+                    lineHeight: '1.4'
                   }}>
-                    {activityToDelete.activity.summary}
+                    {getActivityDetails(activityToDelete.activity)}
                   </Text>
                   
                   <div style={{ display: 'flex', gap: '8px' }}>

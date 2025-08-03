@@ -156,12 +156,13 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
     left: 0,
     right: 0,
     bottom: 0,
-    background: (isHovered && !isTouch) 
+    background: (isHovered && !isTouch && variant !== 'tertiary') 
       ? 'linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.3) 50%, transparent 70%)'
       : 'none',
-    animation: (isHovered && !isTouch) ? 'magicSparkle 2s infinite' : 'none',
+    animation: (isHovered && !isTouch && variant !== 'tertiary') ? 'magicSparkle 2s infinite' : 'none',
     pointerEvents: 'none',
-    borderRadius: '3px'
+    borderRadius: '3px',
+    display: variant === 'tertiary' ? 'none' : 'block'
   });
 
   return (
