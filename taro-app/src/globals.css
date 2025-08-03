@@ -143,18 +143,48 @@ p, span, div, a {
   }
 }
 
-/* Универсальные фиксы для всех браузеров */
-* {
+/* Универсальные фиксы для всех браузеров, кроме primary кнопок */
+*:not(.vkuiButton--mode-primary) {
   color: inherit !important;
 }
 
-/* Принудительное задание цвета для всех кнопок */
-button {
+/* Принудительное задание цвета для всех кнопок, кроме primary */
+button:not(.vkuiButton--mode-primary) {
   color: #ffffff !important;
 }
 
-/* Принудительное задание белого цвета для всех VK UI компонентов */
-[class*="vkui"] button,
+/* Фикс для primary кнопок - используем стандартные цвета VKUI */
+.vkuiButton--mode-primary {
+  color: var(--vkui--color_text_contrast) !important;
+  background-color: var(--vkui--color_background_accent) !important;
+}
+
+/* Дополнительный фикс для primary кнопок */
+button.vkuiButton--mode-primary {
+  color: #000000 !important;
+  background-color: #3f8ae0 !important;
+}
+
+/* Максимальная специфичность для primary кнопок */
+div button.vkuiButton--mode-primary,
+[class*="vkui"] button.vkuiButton--mode-primary {
+  color: #000000 !important;
+  background-color: #978041 !important;
+}
+
+/* Специальный класс для кнопки "Сохранить" в календаре */
+.calendar-save-button.vkuiButton--mode-primary {
+  color: #000000 !important;
+  background-color: #978041 !important;
+  border: 1px solid #E8D28C !important;
+}
+
+.calendar-save-button.vkuiButton--mode-primary * {
+  color: #000000 !important;
+}
+
+/* Принудительное задание белого цвета для всех VK UI компонентов, кроме primary кнопок */
+[class*="vkui"] button:not(.vkuiButton--mode-primary),
 [class*="vkui"] div,
 [class*="vkui"] span,
 [class*="vkui"] p,

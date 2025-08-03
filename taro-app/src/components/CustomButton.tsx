@@ -2,7 +2,7 @@ import React from 'react';
 import { Button } from '@vkontakte/vkui';
 
 interface CustomButtonProps {
-  variant?: 'primary' | 'secondary';
+  variant?: 'primary' | 'secondary' | 'tertiary';
   children: React.ReactNode;
   onClick?: () => void;
   disabled?: boolean;
@@ -116,6 +116,25 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
       };
     }
 
+    if (variant === 'tertiary') {
+      return {
+        ...baseStyles,
+        border: 'none !important',
+        backgroundColor: 'transparent !important',
+        color: shouldShowHoverEffects ? '#E8D28C' : 'rgba(232, 210, 140, 0.8)',
+        boxShadow: 'none !important',
+        transform: isActive ? 'scale(0.97)' : (shouldShowHoverEffects ? 'scale(1.02)' : 'none'),
+        textDecoration: 'none',
+        padding: '0 !important',
+        margin: '0 !important',
+        minHeight: isMobile ? '28px' : '32px',
+        width: 'auto !important',
+        minWidth: 'auto !important',
+        outline: 'none !important',
+        borderRadius: '0 !important',
+      };
+    }
+
     // Secondary style с магическими эффектами
     return {
       ...baseStyles,
@@ -160,6 +179,61 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
             box-shadow: 0 0 20px rgba(151, 128, 65, 0.6), 0 0 30px rgba(151, 128, 65, 0.4);
           }
         }
+        .custom-button-tertiary {
+          padding: 0 !important;
+          margin: 0 !important;
+          border: none !important;
+          background: transparent !important;
+          box-shadow: none !important;
+          min-width: auto !important;
+          width: auto !important;
+          outline: none !important;
+        }
+        .custom-button-tertiary .vkuiButton__content {
+          padding: 0 !important;
+          margin: 0 !important;
+        }
+        .custom-button-tertiary .vkuiButton__content:first-child {
+          padding-left: 0 !important;
+        }
+        .custom-button-tertiary .vkuiButton__content:last-child {
+          padding-right: 0 !important;
+        }
+        .custom-button-tertiary:hover {
+          background: transparent !important;
+          box-shadow: none !important;
+          border: none !important;
+          padding: 0 !important;
+          margin: 0 !important;
+        }
+        .custom-button-tertiary:hover .vkuiButton__content {
+          padding: 0 !important;
+        }
+        .custom-button-tertiary:active {
+          background: transparent !important;
+          box-shadow: none !important;
+          border: none !important;
+          padding: 0 !important;
+          margin: 0 !important;
+        }
+        .custom-button-tertiary:active .vkuiButton__content {
+          padding: 0 !important;
+        }
+        .custom-button-tertiary:focus {
+          background: transparent !important;
+          box-shadow: none !important;
+          border: none !important;
+          padding: 0 !important;
+          margin: 0 !important;
+          outline: none !important;
+        }
+        .custom-button-tertiary:focus .vkuiButton__content {
+          padding: 0 !important;
+        }
+        .custom-button-tertiary > * {
+          margin: 0 !important;
+          padding: 0 !important;
+        }
       `}</style>
       <Button
         mode="primary"
@@ -168,6 +242,7 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
         disabled={disabled}
         stretched={stretched}
         style={getButtonStyles()}
+        className={variant === 'tertiary' ? 'custom-button-tertiary' : undefined}
         onMouseEnter={() => !disabled && !isTouch && setIsHovered(true)}
         onMouseLeave={() => !disabled && !isTouch && setIsHovered(false)}
         onMouseDown={() => !disabled && setIsActive(true)}
@@ -182,7 +257,9 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
           fontSize: isMobile ? getMobileFontSize() : undefined,
           display: 'flex',
           alignItems: 'center',
-          gap: icon ? (isMobile ? '6px' : '8px') : '0'
+          gap: icon ? (isMobile ? '6px' : '8px') : '0',
+          margin: variant === 'tertiary' ? '0' : undefined,
+          padding: variant === 'tertiary' ? '0' : undefined,
         }}>
           {icon && (
             <span style={{ 

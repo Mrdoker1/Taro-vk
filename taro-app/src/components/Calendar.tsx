@@ -25,6 +25,7 @@ import {
   CalendarActivity
 } from '../store/slices/calendarSlice';
 import { ActivityContentDisplay } from './ActivityContentDisplay';
+import { CustomButton } from './CustomButton';
 
 interface CalendarProps {
   activeModal?: string;
@@ -364,8 +365,10 @@ export const Calendar: React.FC<CalendarProps> = () => {
                   height: '40px',
                   minWidth: '40px',
                   position: 'relative',
-                  backgroundColor: isSelected ? '#978041' : (isToday ? 'var(--vkui--color_background_accent)' : undefined),
-                  color: isSelected ? '#ffffff' : undefined
+                  backgroundColor: isSelected ? '#978041' : (isToday ? '#B8985C' : undefined),
+                  color: isSelected ? '#ffffff' : (isToday ? '#ffffff' : undefined),
+                  border: isToday ? '2px solid #E8D28C' : undefined,
+                  fontWeight: isToday ? 'bold' : undefined
                 }}
               >
                 {day.getDate()}
@@ -441,7 +444,8 @@ export const Calendar: React.FC<CalendarProps> = () => {
         background: 'rgba(0, 0, 0, 0.5)',
         padding: '16px',
         display: 'flex',
-        flexDirection: 'column'
+        flexDirection: 'column',
+        borderTop: '1px solid rgba(227,199,122,1)'
       }}>
         {selectedDate ? (
           <div style={{
@@ -451,12 +455,13 @@ export const Calendar: React.FC<CalendarProps> = () => {
             height: '100%'
           }}>
             {/* Заголовок выбранной даты */}
-            <div style={{ marginBottom: '8px' }}>
+            <div>
               <Text style={{ 
                 fontSize: '14px', 
-                fontWeight: 'bold',
+                fontWeight: '300',
                 color: '#ffffff',
-                marginBottom: '4px'
+                textTransform: 'uppercase',
+                letterSpacing: '0.5px'
               }}>
                 {(() => {
                   const [year, month, day] = selectedDate.split('-').map(Number);
@@ -469,25 +474,36 @@ export const Calendar: React.FC<CalendarProps> = () => {
                   });
                 })()}
               </Text>
+              {/* Тонкая белая линия */}
+              <div style={{
+                width: '100%',
+                height: '1px',
+                background: 'rgba(255, 255, 255, 0.2)',
+                marginTop: '8px',
+                marginBottom: '16px'
+              }} />
             </div>
 
             {/* Activities Section */}
             {hasActivities && (
-              <div style={{
-                background: 'rgba(255, 255, 255, 0.1)',
-                borderRadius: '8px',
-                padding: '12px',
-                marginBottom: '16px'
-              }}>
+              <>
                 <Text style={{ 
-                  fontSize: '12px', 
-                  fontWeight: 'bold', 
-                  marginBottom: '8px',
-                  color: '#ffffff'
+                  fontSize: '14px', 
+                  fontWeight: '300',
+                  color: '#ffffff',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.5px'
                 }}>
-                  Активности дня:
+                  Активности дня
                 </Text>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                {/* Разделитель */}
+                <div style={{
+                  width: '100%',
+                  height: '1px',
+                  background: 'rgba(255, 255, 255, 0.2)',
+                  marginBottom: '12px'
+                }} />
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '16px' }}>
                   {selectedDateData!.activities.map((activity) => (
                     <div key={activity.id} style={{
                       background: 'rgba(255, 255, 255, 0.05)',
@@ -529,38 +545,29 @@ export const Calendar: React.FC<CalendarProps> = () => {
                     </div>
                   ))}
                 </div>
-              </div>
+              </>
             )}
 
             {/* Notes Section */}
-            <div style={{
-              background: 'rgba(255, 255, 255, 0.1)',
-              borderRadius: '8px',
-              padding: '12px',
-              flex: 1
-            }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                <Text style={{ 
-                  fontSize: '12px', 
-                  fontWeight: 'bold',
-                  color: '#ffffff'
-                }}>
-                  Заметки:
-                </Text>
-                {!isEditingNote && (
-                  <Button
-                    mode="tertiary"
-                    size="s"
-                    onClick={() => setIsEditingNote(true)}
-                    style={{ padding: '4px 8px', fontSize: '10px' }}
-                  >
-                    {hasNote ? 'Редактировать' : 'Добавить'}
-                  </Button>
-                )}
-              </div>
-              
+            <div style={{ flex: 1 }}>
               {isEditingNote ? (
-                <div>
+                <>
+                  <Text style={{ 
+                    fontSize: '14px', 
+                    fontWeight: '300',
+                    color: '#ffffff',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.5px',
+                    marginBottom: '8px'
+                  }}>
+                    Редактирование заметки
+                  </Text>
+                  <div style={{
+                    width: '100%',
+                    height: '1px',
+                    background: 'rgba(255, 255, 255, 0.2)',
+                    marginBottom: '12px'
+                  }} />
                   <Textarea
                     value={noteText}
                     onChange={(e) => setNoteText(e.target.value)}
@@ -568,12 +575,12 @@ export const Calendar: React.FC<CalendarProps> = () => {
                     rows={4}
                     style={{ marginBottom: '8px', fontSize: '12px' }}
                   />
-                  <div style={{ display: 'flex', gap: '4px', justifyContent: 'flex-end' }}>
+                  <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end', alignItems: 'center' }}>
                     <Button
                       mode="tertiary"
                       size="s"
                       onClick={handleCancelEdit}
-                      style={{ padding: '4px 8px', fontSize: '10px' }}
+                      style={{ fontSize: '10px' }}
                     >
                       Отмена
                     </Button>
@@ -581,42 +588,111 @@ export const Calendar: React.FC<CalendarProps> = () => {
                       mode="primary"
                       size="s"
                       onClick={handleSaveNote}
-                      style={{ padding: '4px 8px', fontSize: '10px' }}
+                      style={{ 
+                        fontSize: '10px',
+                        color: '#000000',
+                        backgroundColor: '#978041',
+                        border: '1px solid #E8D28C',
+                        transition: 'all 0.2s ease'
+                      }}
+                      className="calendar-save-button"
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor = '#B8985C';
+                        e.currentTarget.style.transform = 'translateY(-1px)';
+                        e.currentTarget.style.boxShadow = '0 4px 8px rgba(232, 210, 140, 0.3)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = '#978041';
+                        e.currentTarget.style.transform = 'translateY(0)';
+                        e.currentTarget.style.boxShadow = 'none';
+                      }}
                     >
-                      Сохранить
+                      <span style={{ color: '#000000 !important' }}>Сохранить</span>
                     </Button>
                   </div>
-                </div>
+                </>
               ) : (
-                <div>
+                <>
                   {hasNote ? (
-                    <div>
+                    <>
+                      <Text style={{ 
+                        fontSize: '14px', 
+                        fontWeight: '300',
+                        color: '#ffffff',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.5px'
+                      }}>
+                        Заметка
+                      </Text>
+                      <div style={{
+                        width: '100%',
+                        height: '1px',
+                        background: 'rgba(255, 255, 255, 0.2)',
+                        marginTop: '8px',
+                        marginBottom: '12px'
+                      }} />
                       <Text style={{ 
                         whiteSpace: 'pre-wrap', 
                         lineHeight: '1.4',
                         fontSize: '11px',
-                        color: '#E8D28C'
+                        color: '#E8D28C',
+                        marginBottom: '8px'
                       }}>
                         {selectedDateData!.note!.content}
                       </Text>
                       <Text style={{ 
                         fontSize: '10px', 
                         color: 'rgba(232, 210, 140, 0.6)',
-                        marginTop: '4px'
+                        marginBottom: '12px'
                       }}>
                         {new Date(selectedDateData!.note!.timestamp).toLocaleString('ru-RU')}
                       </Text>
-                    </div>
+                      <CustomButton
+                        variant="tertiary"
+                        size="s"
+                        onClick={() => setIsEditingNote(true)}
+                        style={{ fontSize: '11px' }}
+                      >
+                        Редактировать заметку
+                      </CustomButton>
+                    </>
                   ) : (
-                    <Text style={{ 
-                      color: 'rgba(232, 210, 140, 0.6)', 
-                      fontStyle: 'italic',
-                      fontSize: '11px'
-                    }}>
-                      Заметок пока нет
-                    </Text>
+                    <>
+                      <Text style={{ 
+                        fontSize: '14px', 
+                        fontWeight: '300',
+                        color: '#ffffff',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.5px'
+                      }}>
+                        Заметок пока нет
+                      </Text>
+                      <div style={{
+                        width: '100%',
+                        height: '1px',
+                        background: 'rgba(255, 255, 255, 0.2)',
+                        marginTop: '8px',
+                        marginBottom: '12px'
+                      }} />
+                      <Text style={{ 
+                        color: 'rgba(232, 210, 140, 0.8)', 
+                        fontSize: '11px',
+                        marginBottom: '12px',
+                        lineHeight: '1.4'
+                      }}>
+                        Нажмите "Добавить" чтобы создать заметку для этого дня.
+                      </Text>
+                      <CustomButton
+                        variant="tertiary"
+                        size="s"
+                        onClick={() => setIsEditingNote(true)}
+                        style={{ fontSize: '11px' }}
+                      >
+                        Добавить заметку
+                      </CustomButton>
+                    </>
                   )}
-                </div>
+                </>
               )}
             </div>
           </div>
@@ -635,15 +711,18 @@ export const Calendar: React.FC<CalendarProps> = () => {
             }} />
             <Text style={{ 
               fontSize: '14px', 
-              fontWeight: 'bold',
+              fontWeight: '300',
               color: '#ffffff',
-              marginBottom: '4px'
+              textTransform: 'uppercase',
+              letterSpacing: '0.5px',
+              marginBottom: '8px'
             }}>
               Выберите дату
             </Text>
             <Text style={{ 
               color: 'rgba(232, 210, 140, 0.6)',
-              fontSize: '12px'
+              fontSize: '11px',
+              lineHeight: '1.4'
             }}>
               Выберите дату в календаре для просмотра активностей и заметок
             </Text>
