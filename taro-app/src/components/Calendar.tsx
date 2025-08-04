@@ -7,7 +7,6 @@ import {
   Button,
   Textarea,
   Group,
-  Badge,
   IconButton,
   ModalPage,
   ModalPageHeader,
@@ -26,8 +25,8 @@ import {
   removeCalendarActivity,
   CalendarActivity
 } from '../store/slices/calendarSlice';
-import { ActivityContentDisplay } from './ActivityContentDisplay';
 import { CustomButton } from './CustomButton';
+import { ActivityDetailPopup } from './ActivityDetailPopup';
 
 interface CalendarProps {
   activeModal?: string;
@@ -148,17 +147,6 @@ export const Calendar: React.FC<CalendarProps> = () => {
             📝
           </div>
         );
-    }
-  };
-
-  const getActivityTypeLabel = (type: CalendarActivity['type']) => {
-    switch (type) {
-      case 'tarot_reading':
-        return 'Расклад Таро';
-      case 'affirmation':
-        return 'Аффирмация';
-      default:
-        return 'Активность';
     }
   };
 
@@ -816,55 +804,15 @@ export const Calendar: React.FC<CalendarProps> = () => {
       </div>
     </div>
 
+    {/* Кастомный попап для деталей активности */}
+    <ActivityDetailPopup 
+      activity={selectedActivity!}
+      isOpen={activeModal === 'activity-details' && selectedActivity !== null}
+      onClose={closeModal}
+    />
+
     {/* Модальные окна */}
-    <ModalRoot activeModal={activeModal} onClose={closeModal}>
-        {/* Детали активности */}
-        <ModalPage
-          id="activity-details"
-          header={
-            <ModalPageHeader
-              before={
-                <PanelHeaderButton onClick={closeModal}>
-                  <Icon24Dismiss />
-                </PanelHeaderButton>
-              }
-            >
-              Детали активности
-            </ModalPageHeader>
-          }
-        >
-          {selectedActivity && (
-            <Group>
-              <Card mode="shadow" style={{ margin: '16px' }}>
-                <Div style={{ padding: '16px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '40px', height: '40px' }}>
-                      {getActivityIcon(selectedActivity.type)}
-                    </div>
-                    <Badge mode="prominent">
-                      {getActivityTypeLabel(selectedActivity.type)}
-                    </Badge>
-                  </div>
-                  
-                  <Title level="2" style={{ marginBottom: '8px' }}>
-                    {selectedActivity.title}
-                  </Title>
-                  
-                  {/* Отображаем полный контент через специальный компонент */}
-                  <ActivityContentDisplay activity={selectedActivity} />
-                  
-                  <Text style={{ 
-                    fontSize: '12px', 
-                    color: 'var(--vkui--color_text_tertiary)' 
-                  }}>
-                    Время: {new Date(selectedActivity.timestamp).toLocaleString('ru-RU')}
-                  </Text>
-                </Div>
-              </Card>
-            </Group>
-          )}
-        </ModalPage>
-        
+    <ModalRoot activeModal={activeModal === 'delete-confirm' ? activeModal : null} onClose={closeModal}>
         {/* Подтверждение удаления */}
         <ModalPage
           id="delete-confirm"
