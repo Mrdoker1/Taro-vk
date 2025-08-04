@@ -3,17 +3,11 @@ import {
   Div,
   Text,
   Title,
-  Card,
   Button,
   Textarea,
-  Group,
-  IconButton,
-  ModalPage,
-  ModalPageHeader,
-  PanelHeaderButton,
-  ModalRoot
+  IconButton
 } from '@vkontakte/vkui';
-import { Icon24ChevronLeft, Icon24ChevronRight, Icon28CalendarOutline, Icon24View, Icon24Delete, Icon24Dismiss } from '@vkontakte/icons';
+import { Icon24ChevronLeft, Icon24ChevronRight, Icon28CalendarOutline, Icon24View, Icon24Delete } from '@vkontakte/icons';
 import { useAppDispatch, useAppSelector } from '../store';
 import calendarSpreadIcon from '../assets/calendar-spread.svg';
 import calendarAffirmIcon from '../assets/calendar-affirm.svg';
@@ -27,6 +21,7 @@ import {
 } from '../store/slices/calendarSlice';
 import { CustomButton } from './CustomButton';
 import { ActivityDetailPopup } from './ActivityDetailPopup';
+import { DeleteActivityPopup } from './DeleteActivityPopup';
 
 interface CalendarProps {
   activeModal?: string;
@@ -811,83 +806,15 @@ export const Calendar: React.FC<CalendarProps> = () => {
       onClose={closeModal}
     />
 
-    {/* Модальные окна */}
-    <ModalRoot activeModal={activeModal === 'delete-confirm' ? activeModal : null} onClose={closeModal}>
-        {/* Подтверждение удаления */}
-        <ModalPage
-          id="delete-confirm"
-          header={
-            <ModalPageHeader
-              before={
-                <PanelHeaderButton onClick={closeModal}>
-                  <Icon24Dismiss />
-                </PanelHeaderButton>
-              }
-            >
-              Удаление активности
-            </ModalPageHeader>
-          }
-        >
-          {activityToDelete && (
-            <Group>
-              <Card mode="shadow" style={{ margin: '16px' }}>
-                <Div style={{ padding: '16px' }}>
-                  <Title level="3" style={{ marginBottom: '8px' }}>
-                    Вы действительно хотите удалить эту активность?
-                  </Title>
-                  
-                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', marginBottom: '12px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '40px', height: '40px' }}>
-                      {getActivityIcon(activityToDelete.activity.type)}
-                    </div>
-                    <div style={{ flex: 1 }}>
-                      <Text weight="3" style={{ marginBottom: '4px' }}>
-                        {activityToDelete.activity.title}
-                      </Text>
-                      <Text style={{ 
-                        fontSize: '12px', 
-                        color: 'var(--vkui--color_text_secondary)',
-                        marginBottom: '4px'
-                      }}>
-                        {formatActivityTime(activityToDelete.activity.timestamp)}
-                      </Text>
-                    </div>
-                  </div>
-                  
-                  <Text style={{ 
-                    fontSize: '15px', 
-                    color: 'var(--vkui--color_text_secondary)',
-                    marginBottom: '16px',
-                    lineHeight: '1.4'
-                  }}>
-                    {getActivityDetails(activityToDelete.activity)}
-                  </Text>
-                  
-                  <div style={{ display: 'flex', gap: '8px' }}>
-                    <Button 
-                      mode="outline" 
-                      size="m"
-                      onClick={confirmDeleteActivity}
-                      stretched
-                      style={{ color: 'var(--vkui--color_text_negative)' }}
-                    >
-                      Удалить
-                    </Button>
-                    <Button 
-                      mode="secondary" 
-                      size="m"
-                      onClick={closeModal}
-                      stretched
-                    >
-                      Отмена
-                    </Button>
-                  </div>
-                </Div>
-              </Card>
-            </Group>
-          )}
-        </ModalPage>
-      </ModalRoot>
+    {/* Кастомный попап для удаления активности */}
+    <DeleteActivityPopup
+      activity={activityToDelete?.activity || null}
+      isOpen={activeModal === 'delete-confirm' && activityToDelete !== null}
+      onClose={closeModal}
+      onConfirm={confirmDeleteActivity}
+      getActivityDetails={getActivityDetails}
+    />
+
     </>
   );
 }; 
