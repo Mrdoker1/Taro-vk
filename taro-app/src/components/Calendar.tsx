@@ -462,32 +462,32 @@ export const Calendar: React.FC<CalendarProps> = () => {
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
               <div style={{
-                width: isMobile ? '6px' : '8px',
-                height: isMobile ? '6px' : '8px',
+                width: isMobile ? '10px' : '12px',
+                height: isMobile ? '10px' : '12px',
                 backgroundColor: '#9c27b0'
               }} />
               <Text style={{ fontSize: isMobile ? '10px' : '11px', color: '#E8D28C' }}>Расклад Таро</Text>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
               <div style={{
-                width: isMobile ? '6px' : '8px',
-                height: isMobile ? '6px' : '8px',
+                width: isMobile ? '10px' : '12px',
+                height: isMobile ? '10px' : '12px',
                 backgroundColor: '#ff9800'
               }} />
               <Text style={{ fontSize: isMobile ? '10px' : '11px', color: '#E8D28C' }}>Аффирмация</Text>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
               <div style={{
-                width: isMobile ? '6px' : '8px',
-                height: isMobile ? '6px' : '8px',
+                width: isMobile ? '10px' : '12px',
+                height: isMobile ? '10px' : '12px',
                 backgroundColor: '#4caf50'
               }} />
               <Text style={{ fontSize: isMobile ? '10px' : '11px', color: '#E8D28C' }}>Заметка</Text>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
               <div style={{
-                width: isMobile ? '6px' : '8px',
-                height: isMobile ? '6px' : '8px',
+                width: isMobile ? '10px' : '12px',
+                height: isMobile ? '10px' : '12px',
                 backgroundColor: '#2196f3'
               }} />
               <Text style={{ fontSize: isMobile ? '10px' : '11px', color: '#E8D28C' }}>Другая активность</Text>
@@ -753,11 +753,11 @@ export const Calendar: React.FC<CalendarProps> = () => {
                       }} />
                       <Text style={{ 
                         color: 'rgba(232, 210, 140, 0.8)', 
-                        fontSize: isMobile ? '10px' : '11px',
+                        fontSize: isMobile ? '13px' : '14px',
                         marginBottom: isMobile ? '8px' : '12px',
                         lineHeight: '1.4'
                       }}>
-                        Нажмите "Добавить" чтобы создать заметку для этого дня.
+                        Нажмите "Добавить заметку" чтобы создать заметку для этого дня.
                       </Text>
                       <CustomButton
                         variant="tertiary"
