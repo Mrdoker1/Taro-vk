@@ -3,7 +3,8 @@ import { Button, Text, Title } from '@vkontakte/vkui';
 import { Icon24Download, Icon24Share } from '@vkontakte/icons';
 import { ParsedAffirmation } from '../types/affirmation';
 import { getAffirmationIcon } from '../constants/affirmation';
-import { downloadAffirmation, shareToVK } from '../utils/affirmationUtils';
+import { downloadActivity, shareActivityToVK } from '../utils/shareUtils';
+import { CalendarActivity } from '../store/slices/calendarSlice';
 
 interface AffirmationResultProps {
   parsedAffirmation: ParsedAffirmation;
@@ -36,8 +37,56 @@ export const AffirmationResult: React.FC<AffirmationResultProps> = ({
     );
   }
 
-  const handleDownload = () => downloadAffirmation(parsedAffirmation, promptMode, customPrompt, selectedTopic);
-  const handleShare = () => shareToVK(parsedAffirmation, promptMode, customPrompt, selectedTopic);
+  const getCurrentTopic = () => {
+    if (promptMode === 'custom') return customPrompt || 'Пользовательская тема';
+    return selectedTopic || 'Общие аффирмации';
+  };
+
+  const handleDownload = async () => {
+    try {
+      // Создаем временную активность для использования с новой утилитой
+      const affirmationData = {
+        sections: parsedAffirmation.sections || [],
+        usage: undefined // В результатах аффирмаций обычно нет поля usage
+      };
+
+      const tempActivity: CalendarActivity = {
+        id: `temp_${Date.now()}`,
+        type: 'affirmation',
+        title: 'Ежедневная аффирмация',
+        summary: parsedAffirmation.title || getCurrentTopic(),
+        timestamp: Date.now(),
+        fullContent: JSON.stringify(affirmationData)
+      };
+
+      await downloadActivity(tempActivity);
+    } catch (error) {
+      console.error('Ошибка при скачивании аффирмации:', error);
+    }
+  };
+
+  const handleShare = async () => {
+    try {
+      // Создаем временную активность для использования с новой утилитой
+      const affirmationData = {
+        sections: parsedAffirmation.sections || [],
+        usage: undefined
+      };
+
+      const tempActivity: CalendarActivity = {
+        id: `temp_${Date.now()}`,
+        type: 'affirmation',
+        title: 'Ежедневная аффирмация',
+        summary: parsedAffirmation.title || getCurrentTopic(),
+        timestamp: Date.now(),
+        fullContent: JSON.stringify(affirmationData)
+      };
+
+      await shareActivityToVK(tempActivity);
+    } catch (error) {
+      console.error('Ошибка при поделиться аффирмацией:', error);
+    }
+  };
 
   return (
     <>

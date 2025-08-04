@@ -4,12 +4,13 @@ import { fetchPromptTemplate, clearCurrentTemplate } from '../store/slices/promp
 import { generateText, clearGeneratedText } from '../store/slices/generationSlice';
 import { Button, Text } from '@vkontakte/vkui';
 import { Icon24Download, Icon24Share } from '@vkontakte/icons';
+import { downloadActivity, shareActivityToVK } from '../utils/shareUtils';
+import { CalendarActivity } from '../store/slices/calendarSlice';
 import { CustomButton } from './CustomButton';
 import { MagicLoader } from './MagicLoader';
 import { CustomTooltip } from './CustomTooltip';
 import { fetchDeckDetails } from '../store/slices/taroDecksSlice';
 import { saveTarotReadingToCalendar } from '../utils/calendarUtils';
-import bridge from '../bridge';
 
 interface TaroReadingProps {
   spreadId: string;
@@ -102,77 +103,33 @@ export const TaroReading: React.FC<TaroReadingProps> = ({
     if (!parsedInterpretation || !currentSpread) return;
 
     try {
-      const currentDate = new Date().toLocaleDateString('ru-RU');
-      const currentTime = new Date().toLocaleTimeString('ru-RU');
-      
-      // Создаем структурированный текст
-      let content = `═══════════════════════════════════════════════════════════════
-                        🔮 РАСКЛАД ТАРО 🔮
-═══════════════════════════════════════════════════════════════
+      // Создаем временную активность для использования с новой утилитой
+      const fullReadingInfo = {
+        question: question.trim() || undefined,
+        cards: selectedCards.map((card) => {
+          const cardInfo = currentDeck?.cards?.find(c => c.id === card.cardId);
+          const positionInfo = currentSpread?.meta[card.position.toString()];
+          return {
+            position: card.position,
+            cardName: cardInfo?.name || 'Неизвестная карта',
+            positionLabel: positionInfo?.label || `Позиция ${card.position}`,
+            isReversed: card.isReversed
+          };
+        }),
+        interpretation: parsedInterpretation.message,
+        detailedPositions: parsedInterpretation.positions || []
+      };
 
-📊 РАСКЛАД: ${currentSpread.name}
-📅 ДАТА: ${currentDate}
-🕐 ВРЕМЯ: ${currentTime}
+      const tempActivity: CalendarActivity = {
+        id: `temp_${Date.now()}`,
+        type: 'tarot_reading',
+        title: currentSpread.name,
+        summary: `Колода: ${currentDeck?.name || 'Неизвестная колода'}`,
+        timestamp: Date.now(),
+        fullContent: JSON.stringify(fullReadingInfo)
+      };
 
-`;
-      
-      if (question.trim()) {
-        content += `❓ ВАША ТЕМА/ВОПРОС:
-${question}
-
-`;
-      }
-
-      content += `✨ ОБЩЕЕ ТОЛКОВАНИЕ:
-${parsedInterpretation.message}
-
-`;
-
-      if (parsedInterpretation.positions && parsedInterpretation.positions.length > 0) {
-        content += `🃏 ДЕТАЛЬНОЕ ТОЛКОВАНИЕ КАРТ:
-───────────────────────────────────────────────────────────────
-
-`;
-        
-        parsedInterpretation.positions.forEach((pos, index) => {
-          const position = selectedCards.find(card => card.position === pos.index);
-          const positionInfo = position && currentSpread?.meta[position.position.toString()];
-          const positionLabel = positionInfo?.label || `Позиция ${pos.index}`;
-          const cardInfo = position && currentDeck?.cards?.find(c => c.id === position.cardId);
-          const cardName = cardInfo?.name || 'Неизвестная карта';
-          const reversedText = position?.isReversed ? ' (Перевернутая)' : '';
-          
-          content += `${index + 1}. ${positionLabel}
-🃏 Карта: ${cardName}${reversedText}
-
-${pos.interpretation}
-
-`;
-        });
-      }
-
-      content += `═══════════════════════════════════════════════════════════════
-Создано в приложении Seluna - расклады и советы Таро
-Дата создания: ${currentDate} ${currentTime}
-═══════════════════════════════════════════════════════════════`;
-
-      // Создаем blob с UTF-8 BOM для корректного отображения в Windows
-      const BOM = '\uFEFF';
-      const blob = new Blob([BOM + content], { type: 'text/plain;charset=utf-8' });
-      const url = URL.createObjectURL(blob);
-      
-      // Создаем ссылку для скачивания
-      const link = document.createElement('a');
-      link.href = url;
-      const spreadName = currentSpread.name.replace(/[^\w\s-]/g, '').replace(/\s+/g, '-');
-      link.download = `Тaro-${spreadName}-${new Date().toISOString().split('T')[0]}.txt`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      
-      URL.revokeObjectURL(url);
-      
-      console.log('Файл с толкованием скачан');
+      await downloadActivity(tempActivity);
     } catch (error) {
       console.error('Ошибка при скачивании файла:', error);
     }
@@ -183,26 +140,33 @@ ${pos.interpretation}
     if (!parsedInterpretation || !currentSpread) return;
 
     try {
-      let shareText = `🔮 Расклад Таро "${currentSpread.name}"\n\n`;
-      
-      if (question.trim()) {
-        shareText += `❓ Вопрос: ${question}\n\n`;
-      }
+      // Создаем временную активность для использования с новой утилитой
+      const fullReadingInfo = {
+        question: question.trim() || undefined,
+        cards: selectedCards.map((card) => {
+          const cardInfo = currentDeck?.cards?.find(c => c.id === card.cardId);
+          const positionInfo = currentSpread?.meta[card.position.toString()];
+          return {
+            position: card.position,
+            cardName: cardInfo?.name || 'Неизвестная карта',
+            positionLabel: positionInfo?.label || `Позиция ${card.position}`,
+            isReversed: card.isReversed
+          };
+        }),
+        interpretation: parsedInterpretation.message,
+        detailedPositions: parsedInterpretation.positions || []
+      };
 
-      // Ограничиваем длину сообщения
-      let interpretation = parsedInterpretation.message;
-      if (interpretation.length > 200) {
-        interpretation = interpretation.substring(0, 200) + '...';
-      }
-      
-      shareText += `✨ ${interpretation}\n\n`;
-      shareText += `#ТароГадание #ВКМиниАпп`;
+      const tempActivity: CalendarActivity = {
+        id: `temp_${Date.now()}`,
+        type: 'tarot_reading',
+        title: currentSpread.name,
+        summary: `Колода: ${currentDeck?.name || 'Неизвестная колода'}`,
+        timestamp: Date.now(),
+        fullContent: JSON.stringify(fullReadingInfo)
+      };
 
-      await bridge.send('VKWebAppShowWallPostBox', {
-        message: shareText
-      });
-
-      console.log('Публикация в VK успешна');
+      await shareActivityToVK(tempActivity);
     } catch (error) {
       console.error('Ошибка при публикации в VK:', error);
     }

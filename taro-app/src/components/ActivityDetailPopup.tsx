@@ -3,6 +3,7 @@ import { Button, Text, IconButton, Title } from '@vkontakte/vkui';
 import { Icon24Download, Icon24Share, Icon24Dismiss } from '@vkontakte/icons';
 import { CalendarActivity } from '../store/slices/calendarSlice';
 import { getAffirmationIcon } from '../constants/affirmation';
+import { downloadActivity, shareActivityToVK } from '../utils/shareUtils';
 import calendarSpreadIcon from '../assets/calendar-spread.svg';
 import calendarAffirmIcon from '../assets/calendar-affirm.svg';
 
@@ -76,14 +77,12 @@ export const ActivityDetailPopup: React.FC<ActivityDetailPopupProps> = ({
     }
   };
 
-  const handleDownload = () => {
-    // TODO: Implement download functionality based on activity type
-    console.log('Download activity:', activity);
+  const handleDownload = async () => {
+    await downloadActivity(activity);
   };
 
-  const handleShare = () => {
-    // TODO: Implement share functionality based on activity type
-    console.log('Share activity:', activity);
+  const handleShare = async () => {
+    await shareActivityToVK(activity);
   };
 
   const renderActivityContent = () => {
