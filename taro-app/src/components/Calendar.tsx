@@ -9,6 +9,7 @@ import {
 } from '@vkontakte/vkui';
 import { Icon24ChevronLeft, Icon24ChevronRight, Icon28CalendarOutline, Icon24View, Icon24Delete } from '@vkontakte/icons';
 import { useAppDispatch, useAppSelector } from '../store';
+import { useResponsive } from '../hooks/useResponsive';
 import calendarSpreadIcon from '../assets/calendar-spread.svg';
 import calendarAffirmIcon from '../assets/calendar-affirm.svg';
 import {
@@ -31,6 +32,7 @@ interface CalendarProps {
 export const Calendar: React.FC<CalendarProps> = () => {
   const dispatch = useAppDispatch();
   const { daysData, selectedDate, loading, error } = useAppSelector((state) => state.calendar);
+  const isMobile = useResponsive();
   const [noteText, setNoteText] = useState('');
   const [isEditingNote, setIsEditingNote] = useState(false);
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -340,27 +342,33 @@ export const Calendar: React.FC<CalendarProps> = () => {
     <>
       <div style={{
         display: 'flex',
-        gap: '16px',
+        flexDirection: isMobile ? 'column' : 'row',
+        gap: isMobile ? '12px' : '16px',
         width: '100%',
-        minHeight: '400px'
+        minHeight: isMobile ? 'auto' : '400px'
       }}>
-      {/* Левая часть - Календарь и обозначения (50%) */}
+      {/* Левая часть (на десктопе) / Верхняя часть (на мобиле) - Календарь и обозначения */}
       <div style={{
-        flex: '1',
+        flex: isMobile ? 'none' : '1',
         background: 'rgba(0, 0, 0, 0.5)',
-        padding: '16px'
+        padding: isMobile ? '12px' : '16px',
+        borderRadius: '8px'
       }}>
         {/* Calendar Header */}
         <div style={{ 
           display: 'flex', 
           justifyContent: 'space-between', 
           alignItems: 'center', 
-          marginBottom: '16px' 
+          marginBottom: isMobile ? '12px' : '16px'
         }}>
           <IconButton onClick={() => navigateMonth('prev')}>
             <Icon24ChevronLeft />
           </IconButton>
-          <Title level="2" style={{ color: '#ffffff' }}>
+          <Title level="2" style={{ 
+            color: '#ffffff',
+            fontSize: isMobile ? '16px' : '18px',
+            textAlign: 'center'
+          }}>
             {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
           </Title>
           <IconButton onClick={() => navigateMonth('next')}>
@@ -372,16 +380,16 @@ export const Calendar: React.FC<CalendarProps> = () => {
         <div style={{ 
           display: 'grid', 
           gridTemplateColumns: 'repeat(7, 1fr)', 
-          gap: '4px',
-          marginBottom: '8px'
+          gap: isMobile ? '2px' : '4px',
+          marginBottom: isMobile ? '6px' : '8px'
         }}>
           {dayNames.map((day) => (
             <div key={day} style={{ 
               textAlign: 'center', 
               fontWeight: 'bold',
-              fontSize: '12px',
+              fontSize: isMobile ? '10px' : '12px',
               color: '#E8D28C',
-              padding: '8px 4px'
+              padding: isMobile ? '4px 2px' : '8px 4px'
             }}>
               {day}
             </div>
@@ -392,12 +400,12 @@ export const Calendar: React.FC<CalendarProps> = () => {
         <div style={{ 
           display: 'grid', 
           gridTemplateColumns: 'repeat(7, 1fr)', 
-          gap: '4px',
-          marginBottom: '16px'
+          gap: isMobile ? '2px' : '4px',
+          marginBottom: isMobile ? '12px' : '16px'
         }}>
           {days.map((day, index) => {
             if (!day) {
-              return <div key={index} style={{ height: '40px' }} />;
+              return <div key={index} style={{ height: isMobile ? '32px' : '40px' }} />;
             }
 
             const dateStr = formatDate(day);
@@ -411,13 +419,14 @@ export const Calendar: React.FC<CalendarProps> = () => {
                 size="s"
                 onClick={() => handleDateSelect(dateStr)}
                 style={{ 
-                  height: '40px',
-                  minWidth: '40px',
+                  height: isMobile ? '32px' : '40px',
+                  minWidth: isMobile ? '32px' : '40px',
                   position: 'relative',
                   backgroundColor: isSelected ? '#978041' : (isToday ? '#B8985C' : undefined),
                   color: isSelected ? '#ffffff' : (isToday ? '#ffffff' : undefined),
                   border: isToday ? '2px solid #E8D28C' : undefined,
-                  fontWeight: isToday ? 'bold' : undefined
+                  fontWeight: isToday ? 'bold' : undefined,
+                  fontSize: isMobile ? '12px' : '14px'
                 }}
               >
                 {day.getDate()}
@@ -432,15 +441,15 @@ export const Calendar: React.FC<CalendarProps> = () => {
           width: '100%',
           height: '1px',
           background: 'rgba(232, 210, 140, 0.3)',
-          marginBottom: '16px'
+          marginBottom: isMobile ? '12px' : '16px'
         }} />
         
         {/* Легенда для маркеров */}
         <div>
           <Text style={{ 
-            fontSize: '12px', 
+            fontSize: isMobile ? '11px' : '12px', 
             fontWeight: 'bold', 
-            marginBottom: '8px',
+            marginBottom: isMobile ? '6px' : '8px',
             color: '#ffffff'
           }}>
             Обозначения:
@@ -448,40 +457,40 @@ export const Calendar: React.FC<CalendarProps> = () => {
           <div style={{ 
             display: 'flex', 
             flexWrap: 'wrap', 
-            gap: '12px',
-            fontSize: '11px'
+            gap: isMobile ? '8px' : '12px',
+            fontSize: isMobile ? '10px' : '11px'
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
               <div style={{
-                width: '8px',
-                height: '8px',
+                width: isMobile ? '6px' : '8px',
+                height: isMobile ? '6px' : '8px',
                 backgroundColor: '#9c27b0'
               }} />
-              <Text style={{ fontSize: '11px', color: '#E8D28C' }}>Расклад Таро</Text>
+              <Text style={{ fontSize: isMobile ? '10px' : '11px', color: '#E8D28C' }}>Расклад Таро</Text>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
               <div style={{
-                width: '8px',
-                height: '8px',
+                width: isMobile ? '6px' : '8px',
+                height: isMobile ? '6px' : '8px',
                 backgroundColor: '#ff9800'
               }} />
-              <Text style={{ fontSize: '11px', color: '#E8D28C' }}>Аффирмация</Text>
+              <Text style={{ fontSize: isMobile ? '10px' : '11px', color: '#E8D28C' }}>Аффирмация</Text>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
               <div style={{
-                width: '8px',
-                height: '8px',
+                width: isMobile ? '6px' : '8px',
+                height: isMobile ? '6px' : '8px',
                 backgroundColor: '#4caf50'
               }} />
-              <Text style={{ fontSize: '11px', color: '#E8D28C' }}>Заметка</Text>
+              <Text style={{ fontSize: isMobile ? '10px' : '11px', color: '#E8D28C' }}>Заметка</Text>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
               <div style={{
-                width: '8px',
-                height: '8px',
+                width: isMobile ? '6px' : '8px',
+                height: isMobile ? '6px' : '8px',
                 backgroundColor: '#2196f3'
               }} />
-              <Text style={{ fontSize: '11px', color: '#E8D28C' }}>Другая активность</Text>
+              <Text style={{ fontSize: isMobile ? '10px' : '11px', color: '#E8D28C' }}>Другая активность</Text>
             </div>
           </div>
         </div>
@@ -491,10 +500,10 @@ export const Calendar: React.FC<CalendarProps> = () => {
       <div style={{
         flex: '1',
         background: 'rgba(0, 0, 0, 0.5)',
-        padding: '16px',
+        padding: isMobile ? '12px' : '16px',
         display: 'flex',
         flexDirection: 'column',
-        borderTop: '1px solid rgba(227,199,122,1)'
+        borderTop: isMobile ? 'none' : '1px solid rgba(227,199,122,1)'
       }}>
         {selectedDate ? (
           <div style={{
@@ -506,7 +515,7 @@ export const Calendar: React.FC<CalendarProps> = () => {
             {/* Заголовок выбранной даты */}
             <div>
               <Text style={{ 
-                fontSize: '14px', 
+                fontSize: isMobile ? '12px' : '14px', 
                 fontWeight: '300',
                 color: '#ffffff',
                 textTransform: 'uppercase',
@@ -528,8 +537,8 @@ export const Calendar: React.FC<CalendarProps> = () => {
                 width: '100%',
                 height: '1px',
                 background: 'rgba(255, 255, 255, 0.2)',
-                marginTop: '8px',
-                marginBottom: '16px'
+                marginTop: isMobile ? '6px' : '8px',
+                marginBottom: isMobile ? '12px' : '16px'
               }} />
             </div>
 
@@ -537,7 +546,7 @@ export const Calendar: React.FC<CalendarProps> = () => {
             {hasActivities && (
               <>
                 <Text style={{ 
-                  fontSize: '14px', 
+                  fontSize: isMobile ? '12px' : '14px', 
                   fontWeight: '300',
                   color: '#ffffff',
                   textTransform: 'uppercase',
@@ -550,25 +559,25 @@ export const Calendar: React.FC<CalendarProps> = () => {
                   width: '100%',
                   height: '1px',
                   background: 'rgba(255, 255, 255, 0.2)',
-                  marginBottom: '12px'
+                  marginBottom: isMobile ? '8px' : '12px'
                 }} />
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '16px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: isMobile ? '6px' : '8px', marginBottom: isMobile ? '12px' : '16px' }}>
                   {selectedDateData!.activities.map((activity) => (
                     <div key={activity.id} style={{
                       background: 'rgba(255, 255, 255, 0.05)',
                       borderRadius: '6px',
-                      padding: '12px',
+                      padding: isMobile ? '8px' : '12px',
                       display: 'flex',
                       justifyContent: 'space-between',
                       alignItems: 'flex-start'
                     }}>
-                      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', flex: 1 }}>
+                      <div style={{ display: 'flex', alignItems: 'flex-start', gap: isMobile ? '6px' : '8px', flex: 1 }}>
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '32px', height: '32px', flexShrink: 0 }}>
                           {getActivityIcon(activity.type, 'small')}
                         </div>
                         <div style={{ flex: 1, minWidth: 0 }}>
                           <Text style={{ 
-                            fontSize: '12px', 
+                            fontSize: isMobile ? '11px' : '12px', 
                             color: '#ffffff', 
                             fontWeight: '500',
                             textTransform: 'uppercase',
@@ -594,18 +603,18 @@ export const Calendar: React.FC<CalendarProps> = () => {
                           </Text>
                         </div>
                       </div>
-                      <div style={{ display: 'flex', gap: '2px', flexShrink: 0, marginLeft: '8px' }}>
+                      <div style={{ display: 'flex', gap: isMobile ? '1px' : '2px', flexShrink: 0, marginLeft: isMobile ? '4px' : '8px' }}>
                         <IconButton
                           aria-label="Посмотреть детали"
                           onClick={() => handleViewActivity(activity)}
-                          style={{ padding: '4px' }}
+                          style={{ padding: isMobile ? '2px' : '4px' }}
                         >
                           <Icon24View style={{ width: '16px', height: '16px' }} />
                         </IconButton>
                         <IconButton
                           aria-label="Удалить активность"
                           onClick={() => handleDeleteActivity(activity, selectedDate!)}
-                          style={{ padding: '4px' }}
+                          style={{ padding: isMobile ? '2px' : '4px' }}
                         >
                           <Icon24Delete style={{ width: '16px', height: '16px' }} />
                         </IconButton>
@@ -621,12 +630,12 @@ export const Calendar: React.FC<CalendarProps> = () => {
               {isEditingNote ? (
                 <>
                   <Text style={{ 
-                    fontSize: '14px', 
+                    fontSize: isMobile ? '12px' : '14px', 
                     fontWeight: '300',
                     color: '#ffffff',
                     textTransform: 'uppercase',
                     letterSpacing: '0.5px',
-                    marginBottom: '8px'
+                    marginBottom: isMobile ? '6px' : '8px'
                   }}>
                     Редактирование заметки
                   </Text>
@@ -634,21 +643,21 @@ export const Calendar: React.FC<CalendarProps> = () => {
                     width: '100%',
                     height: '1px',
                     background: 'rgba(255, 255, 255, 0.2)',
-                    marginBottom: '12px'
+                    marginBottom: isMobile ? '8px' : '12px'
                   }} />
                   <Textarea
                     value={noteText}
                     onChange={(e) => setNoteText(e.target.value)}
                     placeholder="Введите заметку для этого дня..."
-                    rows={4}
-                    style={{ marginBottom: '8px', fontSize: '12px' }}
+                    rows={isMobile ? 3 : 4}
+                    style={{ marginBottom: isMobile ? '6px' : '8px', fontSize: isMobile ? '11px' : '12px' }}
                   />
-                  <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end', alignItems: 'center' }}>
+                  <div style={{ display: 'flex', gap: isMobile ? '6px' : '8px', justifyContent: 'flex-end', alignItems: 'center' }}>
                     <Button
                       mode="tertiary"
                       size="s"
                       onClick={handleCancelEdit}
-                      style={{ fontSize: '10px' }}
+                      style={{ fontSize: isMobile ? '9px' : '10px' }}
                     >
                       Отмена
                     </Button>
@@ -657,7 +666,7 @@ export const Calendar: React.FC<CalendarProps> = () => {
                       size="s"
                       onClick={handleSaveNote}
                       style={{ 
-                        fontSize: '10px',
+                        fontSize: isMobile ? '9px' : '10px',
                         color: '#000000',
                         backgroundColor: '#978041',
                         border: '1px solid #E8D28C',
@@ -684,7 +693,7 @@ export const Calendar: React.FC<CalendarProps> = () => {
                   {hasNote ? (
                     <>
                       <Text style={{ 
-                        fontSize: '14px', 
+                        fontSize: isMobile ? '12px' : '14px', 
                         fontWeight: '300',
                         color: '#ffffff',
                         textTransform: 'uppercase',
@@ -696,22 +705,22 @@ export const Calendar: React.FC<CalendarProps> = () => {
                         width: '100%',
                         height: '1px',
                         background: 'rgba(255, 255, 255, 0.2)',
-                        marginTop: '8px',
-                        marginBottom: '12px'
+                        marginTop: isMobile ? '6px' : '8px',
+                        marginBottom: isMobile ? '8px' : '12px'
                       }} />
                       <Text style={{ 
                         whiteSpace: 'pre-wrap', 
                         lineHeight: '1.4',
-                        fontSize: '14px',
+                        fontSize: isMobile ? '12px' : '14px',
                         color: '#E8D28C',
-                        marginBottom: '8px'
+                        marginBottom: isMobile ? '6px' : '8px'
                       }}>
                         {selectedDateData!.note!.content}
                       </Text>
                       <Text style={{ 
-                        fontSize: '12px', 
+                        fontSize: isMobile ? '10px' : '12px', 
                         color: 'rgba(232, 210, 140, 0.6)',
-                        marginBottom: '12px'
+                        marginBottom: isMobile ? '8px' : '12px'
                       }}>
                         {new Date(selectedDateData!.note!.timestamp).toLocaleString('ru-RU')}
                       </Text>
@@ -719,7 +728,7 @@ export const Calendar: React.FC<CalendarProps> = () => {
                         variant="tertiary"
                         size="s"
                         onClick={() => setIsEditingNote(true)}
-                        style={{ fontSize: '11px' }}
+                        style={{ fontSize: isMobile ? '10px' : '11px' }}
                       >
                         Редактировать заметку
                       </CustomButton>
@@ -727,7 +736,7 @@ export const Calendar: React.FC<CalendarProps> = () => {
                   ) : (
                     <>
                       <Text style={{ 
-                        fontSize: '14px', 
+                        fontSize: isMobile ? '12px' : '14px', 
                         fontWeight: '300',
                         color: '#ffffff',
                         textTransform: 'uppercase',
@@ -739,13 +748,13 @@ export const Calendar: React.FC<CalendarProps> = () => {
                         width: '100%',
                         height: '1px',
                         background: 'rgba(255, 255, 255, 0.2)',
-                        marginTop: '8px',
-                        marginBottom: '12px'
+                        marginTop: isMobile ? '6px' : '8px',
+                        marginBottom: isMobile ? '8px' : '12px'
                       }} />
                       <Text style={{ 
                         color: 'rgba(232, 210, 140, 0.8)', 
-                        fontSize: '11px',
-                        marginBottom: '12px',
+                        fontSize: isMobile ? '10px' : '11px',
+                        marginBottom: isMobile ? '8px' : '12px',
                         lineHeight: '1.4'
                       }}>
                         Нажмите "Добавить" чтобы создать заметку для этого дня.
@@ -754,7 +763,7 @@ export const Calendar: React.FC<CalendarProps> = () => {
                         variant="tertiary"
                         size="s"
                         onClick={() => setIsEditingNote(true)}
-                        style={{ fontSize: '11px' }}
+                        style={{ fontSize: isMobile ? '10px' : '11px' }}
                       >
                         Добавить заметку
                       </CustomButton>
@@ -773,26 +782,28 @@ export const Calendar: React.FC<CalendarProps> = () => {
             height: '100%',
             textAlign: 'center'
           }}>
-            <Icon28CalendarOutline style={{ 
+                        <Icon28CalendarOutline style={{ 
               color: 'rgba(232, 210, 140, 0.6)', 
-              marginBottom: '12px' 
+              marginBottom: isMobile ? '8px' : '12px',
+              width: '28px',
+              height: '28px'
             }} />
             <Text style={{ 
-              fontSize: '14px', 
+              fontSize: isMobile ? '12px' : '14px', 
               fontWeight: '300',
               color: '#ffffff',
               textTransform: 'uppercase',
               letterSpacing: '0.5px',
-              marginBottom: '8px'
+              marginBottom: isMobile ? '6px' : '8px'
             }}>
               Выберите дату
             </Text>
             <Text style={{ 
               color: 'rgba(232, 210, 140, 0.6)',
-              fontSize: '11px',
+              fontSize: isMobile ? '10px' : '11px',
               lineHeight: '1.4'
             }}>
-              Выберите дату в календаре для просмотра активностей и заметок
+              Кликните на дату в календаре, чтобы посмотреть активности и заметки
             </Text>
           </div>
         )}

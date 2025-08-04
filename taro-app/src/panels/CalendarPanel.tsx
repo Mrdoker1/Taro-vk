@@ -11,6 +11,7 @@ import { Calendar } from '../components/Calendar';
 import { Footer } from '../components/Footer';
 import { StarButton } from '../components/StarButton';
 import { AppHeader } from '../components/AppHeader';
+import { useResponsive } from '../hooks/useResponsive';
 import { DEFAULT_VIEW_PANELS } from '../routes';
 import calendarIcon from '../assets/calendar.svg';
 
@@ -18,6 +19,7 @@ export interface CalendarPanelProps extends NavIdProps {}
 
 export const CalendarPanel: FC<CalendarPanelProps> = ({ id }) => {
   const routeNavigator = useRouteNavigator();
+  const isMobile = useResponsive();
 
   const handleBackClick = () => {
     routeNavigator.back();
@@ -57,7 +59,7 @@ export const CalendarPanel: FC<CalendarPanelProps> = ({ id }) => {
             borderRadius: '12px',
             overflow: 'hidden',
             position: 'relative',
-            padding: '32px'
+            padding: isMobile ? '16px' : '32px'
           }}>
             {/* Заголовок секции */}
             <div style={{
