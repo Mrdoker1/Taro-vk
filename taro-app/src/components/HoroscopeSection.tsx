@@ -1084,7 +1084,7 @@ export const HoroscopeSection = () => {
                         content="Эмоциональное состояние, которое будет преобладать в этот день"
                         ariaLabel="Показать справку о настроении"
                       />
-                      Настроение:
+                      Настроение
                     </div>
                     <div style={valueContainerStyle}>
                       <div style={moodValueStyle}>{horoscope.mood}</div>
@@ -1098,7 +1098,7 @@ export const HoroscopeSection = () => {
                         content="Число, которое принесет удачу и поможет в принятии важных решений"
                         ariaLabel="Показать справку о счастливом числе"
                       />
-                      Счастливое число:
+                      Счастливое число
                     </div>
                     <div style={valueContainerStyle}>
                       <img
@@ -1117,7 +1117,7 @@ export const HoroscopeSection = () => {
                         content="Цвет, который поможет привлечь позитивную энергию и удачу в этот день"
                         ariaLabel="Показать справку о цвете дня"
                       />
-                      Цвет дня:
+                      Цвет дня
                     </div>
                     <div style={valueContainerStyle}>
                       {/* SVG Футболка в цвете дня */}
