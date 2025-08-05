@@ -13,6 +13,8 @@ import { AppHeader } from '../components/AppHeader';
 import { Footer } from '../components/Footer';
 import { StarButton } from '../components/StarButton';
 import { useResponsive } from '../hooks/useResponsive';
+import { useAppSelector, useAppDispatch } from '../store';
+import { resetPins } from '../store/slices/pinsSlice';
 import { DEFAULT_VIEW_PANELS } from '../routes';
 import pinAffirmation from '../assets/pin-affirmation.png';
 import pinCalendar from '../assets/pin-calendar.png';
@@ -21,46 +23,20 @@ import pinIcon from '../assets/pin.svg';
 
 export interface CollectionPinsProps extends NavIdProps {}
 
-interface CollectionPin {
-  id: string;
-  name: string;
-  description: string;
-  requirement: string;
-  image: string;
-  isUnlocked: boolean;
-}
-
-// Моковые данные для пинов (в будущем будет из Redux store)
-const collectionPins: CollectionPin[] = [
-  {
-    id: 'affirmation',
-    name: 'Мастер Аффирмаций',
-    description: 'Первые шаги в мире позитивных утверждений',
-    requirement: 'Создайте свою первую аффирмацию',
-    image: pinAffirmation,
-    isUnlocked: false, // TODO: Получать из store
-  },
-  {
-    id: 'calendar',
-    name: 'Хранитель Воспоминаний',
-    description: 'Ведение дневника - путь к самопознанию',
-    requirement: 'Оставьте заметку в календаре',
-    image: pinCalendar,
-    isUnlocked: false, // TODO: Получать из store
-  },
-  {
-    id: 'spreads',
-    name: 'Ученик Таро',
-    description: 'Первое знакомство с мудростью карт',
-    requirement: 'Проведите свой первый расклад',
-    image: pinSpreads,
-    isUnlocked: true, // TODO: Получать из store
-  },
-];
+// Маппинг изображений для пинов
+const pinImages: Record<string, string> = {
+  affirmation: pinAffirmation,
+  calendar: pinCalendar,
+  spreads: pinSpreads,
+};
 
 export const CollectionPins: FC<CollectionPinsProps> = ({ id }) => {
   const routeNavigator = useRouteNavigator();
   const isMobile = useResponsive();
+  const dispatch = useAppDispatch();
+  
+  // Получаем пины из store
+  const pins = useAppSelector(state => state.pins.pins);
 
   const handleBackClick = () => {
     routeNavigator.back();
@@ -74,9 +50,13 @@ export const CollectionPins: FC<CollectionPinsProps> = ({ id }) => {
     routeNavigator.push(`/${DEFAULT_VIEW_PANELS.LEGAL_INFO}`);
   };
 
+  const handleResetPins = () => {
+    dispatch(resetPins());
+  };
+
   // Подсчет разблокированных пинов
-  const unlockedCount = collectionPins.filter(pin => pin.isUnlocked).length;
-  const totalCount = collectionPins.length;
+  const unlockedCount = pins.filter(pin => pin.isUnlocked).length;
+  const totalCount = pins.length;
 
   return (
     <ConfigProvider hasCustomPanelHeaderAfter={false}>
@@ -165,7 +145,7 @@ export const CollectionPins: FC<CollectionPinsProps> = ({ id }) => {
               gridTemplateColumns: isMobile ? 'repeat(auto-fit, minmax(280px, 1fr))' : 'repeat(3, 1fr)',
               gap: isMobile ? '16px' : '20px'
             }}>
-              {collectionPins.map((pin) => (
+              {pins.map((pin) => (
                 <div
                   key={pin.id}
                   style={{
@@ -200,7 +180,7 @@ export const CollectionPins: FC<CollectionPinsProps> = ({ id }) => {
                     position: 'relative'
                   }}>
                     <img 
-                      src={pin.image} 
+                      src={pinImages[pin.id] || pin.image} 
                       alt={pin.name}
                       style={{
                         width: isMobile ? '120px' : '150px',
@@ -320,6 +300,28 @@ export const CollectionPins: FC<CollectionPinsProps> = ({ id }) => {
                 Продолжайте исследовать мир Таро и аффирмаций!
               </Text>
             </div>
+
+            {/* Кнопка сброса для разработки */}
+            {import.meta.env.DEV && (
+              <div style={{
+                textAlign: 'center',
+                marginTop: '16px',
+                paddingTop: '16px',
+                borderTop: '1px solid rgba(255, 255, 255, 0.1)'
+              }}>
+                <Button 
+                  mode="tertiary" 
+                  size="s" 
+                  onClick={handleResetPins}
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.5)',
+                    fontSize: '12px'
+                  }}
+                >
+                  Сбросить пины (разработка)
+                </Button>
+              </div>
+            )}
           </div>
         </Div>
 

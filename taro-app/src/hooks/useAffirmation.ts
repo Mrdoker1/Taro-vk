@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useAppDispatch, useAppSelector } from '../store';
 import { fetchPromptTemplate, clearCurrentTemplate } from '../store/slices/promptSlice';
 import { generateText, clearGeneratedText } from '../store/slices/generationSlice';
+import { checkPinConditions } from '../store/slices/pinsSlice';
 import { ApiType, getLanguageForApi } from '../utils/languageUtils';
 import { saveAffirmationToCalendar } from '../utils/calendarUtils';
 import { ParsedAffirmation, PromptMode } from '../types/affirmation';
@@ -69,6 +70,9 @@ export const useAffirmation = () => {
           .map((section: { title: string; text: string }) => `${section.title}: ${section.text}`)
           .join(' | ');
         saveAffirmationToCalendar(affirmationText, parsedData).catch(console.error);
+        
+        // Проверяем условие для разблокировки пина "Мастер Аффирмаций"
+        dispatch(checkPinConditions({ type: 'affirmation_created', data: parsedData }));
       } else {
         throw new Error('Неверная структура данных');
       }
@@ -82,7 +86,7 @@ export const useAffirmation = () => {
         message: 'Не удалось разобрать ответ сервера'
       });
     }
-  }, [generatedText]);
+  }, [generatedText, dispatch]);
 
   // Подготовка промпта для генерации
   const preparePrompt = useCallback(() => {

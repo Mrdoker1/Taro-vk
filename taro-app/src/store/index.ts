@@ -7,6 +7,7 @@ import taroSpreadsReducer from './slices/taroSpreadsSlice';
 import promptReducer from './slices/promptSlice';
 import generationReducer from './slices/generationSlice';
 import calendarReducer from './slices/calendarSlice';
+import pinsReducer from './slices/pinsSlice';
 
 export const store = configureStore({
   reducer: {
@@ -17,6 +18,7 @@ export const store = configureStore({
     prompt: promptReducer,
     generation: generationReducer,
     calendar: calendarReducer,
+    pins: pinsReducer,
   },
 });
 

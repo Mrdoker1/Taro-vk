@@ -10,6 +10,7 @@ import bridge from './bridge';
 import { store } from './store';
 import { loadUserQuestion } from './store/slices/appSlice';
 import { AppWrapper } from './components/AppWrapper';
+import { PinNotificationPopup } from './components/PinNotificationPopup';
 
 export const App = () => {
   const { panel: activePanel = DEFAULT_VIEW_PANELS.HOME } = useActiveVkuiLocation();
@@ -68,6 +69,9 @@ export const App = () => {
           </SplitCol>
           {popout}
         </SplitLayout>
+        
+        {/* Глобальный попап для уведомлений о пинах */}
+        <PinNotificationPopup />
       </AppWrapper>
     </Provider>
   );

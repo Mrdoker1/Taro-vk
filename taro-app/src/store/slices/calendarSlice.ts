@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import bridge from '@vkontakte/vk-bridge';
 import type { AppDispatch, RootState } from '../index';
+import { checkPinConditions } from './pinsSlice';
 
 export interface CalendarActivity {
   id: string;
@@ -207,6 +208,9 @@ export const updateCalendarNote = (date: string, note: CalendarNote) => async (d
   dispatch(updateNote({ date, note }));
   const { calendar } = getState();
   await dispatch(saveCalendarData(calendar.daysData));
+  
+  // Проверяем условие для разблокировки пина "Хранитель Воспоминаний"
+  dispatch(checkPinConditions({ type: 'calendar_note_added', data: note }));
 };
 
 export const deleteCalendarNote = (date: string) => async (dispatch: AppDispatch, getState: () => RootState) => {

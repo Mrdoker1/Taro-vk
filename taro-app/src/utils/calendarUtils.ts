@@ -1,5 +1,6 @@
 import { store } from '../store';
 import { addCalendarActivity, CalendarActivity } from '../store/slices/calendarSlice';
+import { checkPinConditions } from '../store/slices/pinsSlice';
 
 const formatDate = (date: Date): string => {
   const year = date.getFullYear();
@@ -37,6 +38,12 @@ export const saveTarotReadingToCalendar = async (
   const summary = `Колода: ${deckName}. Карты: ${cards.slice(0, 3).join(', ')}${cards.length > 3 ? '...' : ''}`;
   
   await saveActivityToCalendar('tarot_reading', title, summary, fullReading);
+  
+  // Проверяем условие для разблокировки пина "Ученик Таро"
+  store.dispatch(checkPinConditions({ 
+    type: 'tarot_reading_completed', 
+    data: { spreadName, deckName, cards } 
+  }));
 };
 
 export const saveAffirmationToCalendar = async (
