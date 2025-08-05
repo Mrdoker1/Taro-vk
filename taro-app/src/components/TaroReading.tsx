@@ -447,7 +447,7 @@ ${systemPromptText}`;
         background: 'url(https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/3b830249f16752184ecb361cce592c7795bcf9ad) center/cover',
         borderRadius: '12px',
         position: 'relative',
-        minHeight: isMobile ? '400px' : '600px',
+        // minHeight: isMobile ? '400px' : '600px',
         padding: isMobile ? '16px' : '32px'
       }}>
         {/* Заголовок секции */}
@@ -870,7 +870,7 @@ ${systemPromptText}`;
                           >
                             {showAllPositions 
                               ? `Скрыть детали (${parsedInterpretation.positions.length - 2} поз.)`
-                              : `Подробное толкование каждой карты (еще ${parsedInterpretation.positions.length - 2} поз.)`
+                              : `Подробнее (еще ${parsedInterpretation.positions.length - 2} поз.)`
                             }
                           </CustomButton>
                         </div>
