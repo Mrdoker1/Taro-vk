@@ -131,6 +131,23 @@ export const CollectionPins: FC<CollectionPinsProps> = ({ id }) => {
               </p>
             </div>
 
+            {/* Верхний декоративный элемент */}
+            <div style={{
+              display: 'flex',
+              justifyContent: 'center',
+              marginBottom: '16px'
+            }}>
+              <img
+                src="https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/a73aa4a82442cd6022e0ae5e650a0c240ffa4f01"
+                alt="Decorative element"
+                style={{
+                  width: '90px',
+                  height: 'auto',
+                  objectFit: 'contain'
+                }}
+              />
+            </div>
+
             {/* Разделитель */}
             <div style={{
               width: '100%',
@@ -276,18 +293,11 @@ export const CollectionPins: FC<CollectionPinsProps> = ({ id }) => {
               ))}
             </div>
 
-            {/* Нижний разделитель */}
-            <div style={{
-              width: '100%',
-              height: '1px',
-              background: 'rgba(232, 210, 140, 0.15)',
-              margin: '24px 0 16px 0'
-            }} />
-
             {/* Мотивационный текст */}
             <div style={{
               textAlign: 'center',
-              padding: '16px'
+              padding: '16px',
+              marginTop: '8px'
             }}>
               <Text style={{
                 color: 'rgba(255, 255, 255, 0.7)',
@@ -299,6 +309,31 @@ export const CollectionPins: FC<CollectionPinsProps> = ({ id }) => {
                 Каждый пин - это веха на вашем пути самопознания. 
                 Продолжайте исследовать мир Таро и аффирмаций!
               </Text>
+            </div>
+
+            {/* Нижний разделитель */}
+            <div style={{
+              width: '100%',
+              height: '1px',
+              background: 'rgba(232, 210, 140, 0.15)',
+              margin: '24px 0 16px 0'
+            }} />
+
+            {/* Нижний декоративный элемент */}
+            <div style={{
+              display: 'flex',
+              justifyContent: 'center',
+              marginBottom: '16px'
+            }}>
+              <img
+                src="https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/154f96a15bcd974fd38495f6f7aeec22f8b9613a"
+                alt="Decorative element"
+                style={{
+                  width: '90px',
+                  height: 'auto',
+                  objectFit: 'contain'
+                }}
+              />
             </div>
 
             {/* Кнопка сброса для разработки */}
