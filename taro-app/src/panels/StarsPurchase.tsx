@@ -170,11 +170,11 @@ export const StarsPurchase: FC<StarsPurchaseProps> = ({ id }) => {
               textAlign: 'left'
             }}>
               <img
-                src="https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/05fdce831d108d4f8d653ab20d8db93848f86a31?placeholderIfAbsent=true"
+                src="/src/assets/starbuy.svg"
                 alt="Star icon"
                 style={{
-                  width: '48px',
-                  height: '48px',
+                  width: '60px',
+                  height: '60px',
                   objectFit: 'contain',
                   marginRight: '8px'
                 }}
