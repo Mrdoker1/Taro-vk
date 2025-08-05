@@ -185,11 +185,16 @@ div button.vkuiButton--mode-primary,
 
 /* Принудительное задание белого цвета для всех VK UI компонентов, кроме primary кнопок */
 [class*="vkui"] button:not(.vkuiButton--mode-primary),
-[class*="vkui"] div,
-[class*="vkui"] span,
+[class*="vkui"] div:not(.checkmark-gold),
+[class*="vkui"] span:not(.checkmark-gold),
 [class*="vkui"] p,
 [class*="vkui"] a {
   color: #ffffff !important;
+}
+
+/* Специальный класс для золотых галочек */
+.checkmark-gold {
+  color: #E8D28C !important;
 }
 
 /* Дополнительные фиксы для Safari на iOS */

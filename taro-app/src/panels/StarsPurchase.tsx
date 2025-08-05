@@ -355,12 +355,15 @@ export const StarsPurchase: FC<StarsPurchaseProps> = ({ id }) => {
                         'Коллекционные пины',
                       ].map((item, index) => (
                         <div key={index} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <div style={{
-                            width: '6px',
-                            height: '6px',
-                            background: '#E8D28C',
-                            borderRadius: '50%'
-                          }} />
+                          <div 
+                            className="checkmark-gold"
+                            style={{
+                              fontSize: '14px',
+                              fontWeight: 'bold'
+                            }}
+                          >
+                            ✓
+                          </div>
                           <Text style={{
                             color: 'rgba(255, 255, 255, 0.8)',
                             fontSize: '14px',
