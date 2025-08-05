@@ -17,6 +17,7 @@ import { DEFAULT_VIEW_PANELS } from '../routes';
 import pinAffirmation from '../assets/pin-affirmation.png';
 import pinCalendar from '../assets/pin-calendar.png';
 import pinSpreads from '../assets/pin-spreads.png';
+import pinIcon from '../assets/pin.svg';
 
 export interface CollectionPinsProps extends NavIdProps {}
 
@@ -106,59 +107,48 @@ export const CollectionPins: FC<CollectionPinsProps> = ({ id }) => {
             <div style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '16px',
-              marginBottom: '24px',
-              justifyContent: 'center',
-              textAlign: 'center',
-              flexDirection: 'column'
+              gap: '12px',
+              marginBottom: '32px'
             }}>
-              <div style={{
-                width: '80px',
-                height: '80px',
-                background: 'linear-gradient(135deg, rgba(232, 210, 140, 0.15), rgba(180, 163, 86, 0.1))',
-                borderRadius: '50%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                border: '2px solid #E8D28C',
-                boxShadow: '0 8px 32px rgba(232, 210, 140, 0.25)',
-                fontSize: '32px'
-              }}>
-                🏆
-              </div>
-              
-              <div>
-                <Title level="1" style={{
+              <img 
+                src={pinIcon} 
+                alt="Pin Icon"
+                style={{
+                  width: '60px',
+                  height: '60px',
+                  objectFit: 'contain'
+                }}
+              />
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <h1 style={{
                   color: '#ffffff',
-                  fontSize: isMobile ? '24px' : '28px',
-                  fontWeight: '600',
+                  fontSize: '24px',
+                  fontWeight: '400',
                   margin: 0,
                   fontFamily: 'Jost',
                   lineHeight: 1.2
                 }}>
                   Коллекция Пинов
-                </Title>
-                <Text style={{
+                </h1>
+                <p style={{
                   color: '#E8D28C',
                   fontSize: '14px',
                   fontWeight: '300',
-                  margin: 0,
-                  fontFamily: 'Jost',
-                  marginTop: '4px'
+                  margin: '4px 0 0 0',
+                  fontFamily: 'Jost'
                 }}>
                   Собирайте достижения на вашем пути к мудрости
-                </Text>
-                <Text style={{
-                  color: 'rgba(255, 255, 255, 0.7)',
-                  fontSize: '12px',
-                  fontWeight: '400',
-                  margin: 0,
-                  fontFamily: 'Jost',
-                  marginTop: '8px'
-                }}>
-                  Собрано: {unlockedCount}/{totalCount}
-                </Text>
+                </p>
               </div>
+              <p style={{
+                color: 'rgba(255, 255, 255, 0.7)',
+                fontSize: '12px',
+                fontWeight: '400',
+                margin: 0,
+                fontFamily: 'Jost'
+              }}>
+                Собрано: {unlockedCount}/{totalCount}
+              </p>
             </div>
 
             {/* Разделитель */}
@@ -186,7 +176,7 @@ export const CollectionPins: FC<CollectionPinsProps> = ({ id }) => {
                     border: pin.isUnlocked 
                       ? '2px solid #E8D28C' 
                       : '1px solid rgba(255, 255, 255, 0.1)',
-                    borderRadius: '12px',
+                    borderRadius: '4px',
                     boxShadow: pin.isUnlocked 
                       ? '0 8px 32px rgba(232, 210, 140, 0.25)' 
                       : '0 4px 16px rgba(0, 0, 0, 0.3)',
@@ -217,7 +207,12 @@ export const CollectionPins: FC<CollectionPinsProps> = ({ id }) => {
                         height: isMobile ? '120px' : '150px',
                         objectFit: 'contain',
                         opacity: pin.isUnlocked ? 1 : 0.3,
-                        filter: pin.isUnlocked ? 'none' : 'grayscale(100%)',
+                        filter: pin.isUnlocked ? 
+                          `drop-shadow(0 0 15px rgba(232, 210, 140, 0.3)) 
+                           drop-shadow(0 0 25px rgba(232, 210, 140, 0.2)) 
+                           drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3))
+                           brightness(1.05) saturate(1.1)` 
+                          : 'grayscale(100%) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3))',
                         transition: 'all 0.3s ease'
                       }}
                     />
