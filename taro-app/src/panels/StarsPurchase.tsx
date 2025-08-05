@@ -223,8 +223,8 @@ export const StarsPurchase: FC<StarsPurchaseProps> = ({ id }) => {
             {/* Разделитель */}
             <div style={{
               width: '100%',
-              height: '2px',
-              background: 'url(https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/bf65c29bb76ac59b655e89bb29946e4f00f49a6d) center/cover',
+              height: '1px',
+              background: 'rgba(232, 210, 140, 0.15)',
               marginBottom: '24px'
             }} />
 
@@ -241,7 +241,8 @@ export const StarsPurchase: FC<StarsPurchaseProps> = ({ id }) => {
                 <div style={{
                   background: 'rgba(0, 0, 0, 0.3)',
                   padding: '24px',
-                  height: 'fit-content'
+                  height: 'fit-content',
+                  borderTop: '1px solid rgba(227,199,122,1)'
                 }}>
                   <Title level="2" style={{
                     color: '#E8D28C',
@@ -286,7 +287,7 @@ export const StarsPurchase: FC<StarsPurchaseProps> = ({ id }) => {
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          border: '2px solid #E8D28C'
+                          border: '1px solid #E8D28C'
                         }}>
                           <Text style={{ color: '#E8D28C', fontSize: '12px', fontWeight: '400' }}>+1</Text>
                         </div>
@@ -309,7 +310,7 @@ export const StarsPurchase: FC<StarsPurchaseProps> = ({ id }) => {
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          border: '2px solid #E8D28C',
+                          border: '1px solid #E8D28C',
                         }}>
                           <Text style={{ color: '#E8D28C', fontSize: '12px', fontWeight: '400' }}>+1</Text>
                         </div>
@@ -549,8 +550,8 @@ export const StarsPurchase: FC<StarsPurchaseProps> = ({ id }) => {
             {/* Нижний разделитель */}
             <div style={{
               width: '100%',
-              height: '2px',
-              background: 'url(https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/bf65c29bb76ac59b655e89bb29946e4f00f49a6d) center/cover',
+              height: '1px',
+              background: 'rgba(232, 210, 140, 0.15)',
               marginBottom: '16px'
             }} />
 

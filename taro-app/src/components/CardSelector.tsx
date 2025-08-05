@@ -324,8 +324,8 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
 
         <div style={{
           width: '100%',
-          height: '2px',
-          background: 'url(https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/bf65c29bb76ac59b655e89bb29946e4f00f49a6d) center/cover',
+          height: '1px',
+          background: 'rgba(232, 210, 140, 0.15)',
           marginBottom: '32px'
         }} />
 
@@ -368,7 +368,7 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
               <div style={{
                 width: '100px',
                 height: '4px',
-                background: 'rgba(255, 255, 255, 0.2)',
+                background: 'linear-gradient(90deg, transparent, rgba(232, 210, 140, 0.3), transparent)',
                 borderRadius: '2px',
                 overflow: 'hidden'
               }}>
@@ -488,8 +488,8 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
         {/* Нижний разделитель */}
         <div style={{
           width: '100%',
-          height: '2px',
-          background: 'url(https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/bf65c29bb76ac59b655e89bb29946e4f00f49a6d) center/cover',
+          height: '1px',
+          background: 'rgba(232, 210, 140, 0.15)',
           marginTop: '32px',
           marginBottom: '16px'
         }} />

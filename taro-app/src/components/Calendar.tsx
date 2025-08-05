@@ -440,7 +440,7 @@ export const Calendar: React.FC<CalendarProps> = () => {
         <div style={{
           width: '100%',
           height: '1px',
-          background: 'rgba(232, 210, 140, 0.3)',
+          background: 'linear-gradient(90deg, transparent, rgba(232, 210, 140, 0.3), transparent)',
           marginBottom: isMobile ? '12px' : '16px'
         }} />
         
@@ -536,7 +536,7 @@ export const Calendar: React.FC<CalendarProps> = () => {
               <div style={{
                 width: '100%',
                 height: '1px',
-                background: 'rgba(255, 255, 255, 0.2)',
+                background: 'linear-gradient(90deg, transparent, rgba(232, 210, 140, 0.3), transparent)',
                 marginTop: isMobile ? '6px' : '8px',
                 marginBottom: isMobile ? '12px' : '16px'
               }} />
@@ -558,7 +558,7 @@ export const Calendar: React.FC<CalendarProps> = () => {
                 <div style={{
                   width: '100%',
                   height: '1px',
-                  background: 'rgba(255, 255, 255, 0.2)',
+                  background: 'linear-gradient(90deg, transparent, rgba(232, 210, 140, 0.3), transparent)',
                   marginBottom: isMobile ? '8px' : '12px'
                 }} />
                 <div style={{ display: 'flex', flexDirection: 'column', gap: isMobile ? '6px' : '8px', marginBottom: isMobile ? '12px' : '16px' }}>
@@ -660,7 +660,7 @@ export const Calendar: React.FC<CalendarProps> = () => {
                   <div style={{
                     width: '100%',
                     height: '1px',
-                    background: 'rgba(255, 255, 255, 0.2)',
+                    background: 'linear-gradient(90deg, transparent, rgba(232, 210, 140, 0.3), transparent)',
                     marginBottom: isMobile ? '8px' : '12px'
                   }} />
                   <Textarea
@@ -722,7 +722,7 @@ export const Calendar: React.FC<CalendarProps> = () => {
                       <div style={{
                         width: '100%',
                         height: '1px',
-                        background: 'rgba(255, 255, 255, 0.2)',
+                        background: 'linear-gradient(90deg, transparent, rgba(232, 210, 140, 0.3), transparent)',
                         marginTop: isMobile ? '6px' : '8px',
                         marginBottom: isMobile ? '8px' : '12px'
                       }} />
@@ -765,7 +765,7 @@ export const Calendar: React.FC<CalendarProps> = () => {
                       <div style={{
                         width: '100%',
                         height: '1px',
-                        background: 'rgba(255, 255, 255, 0.2)',
+                        background: 'linear-gradient(90deg, transparent, rgba(232, 210, 140, 0.3), transparent)',
                         marginTop: isMobile ? '6px' : '8px',
                         marginBottom: isMobile ? '8px' : '12px'
                       }} />

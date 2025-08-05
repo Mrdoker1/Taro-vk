@@ -258,8 +258,8 @@ export const DeckDetails: FC<DeckDetailsProps> = ({ id }) => {
             {/* Разделитель */}
             <div style={{
               width: '100%',
-              height: '2px',
-              background: 'url(https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/bf65c29bb76ac59b655e89bb29946e4f00f49a6d) center/cover',
+              height: '1px',
+              background: 'rgba(232, 210, 140, 0.15)',
               marginBottom: '32px'
             }} />
 
@@ -318,8 +318,8 @@ export const DeckDetails: FC<DeckDetailsProps> = ({ id }) => {
             {/* Нижний разделитель */}
             <div style={{
               width: '100%',
-              height: '2px',
-              background: 'url(https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/bf65c29bb76ac59b655e89bb29946e4f00f49a6d) center/cover',
+              height: '1px',
+              background: 'rgba(232, 210, 140, 0.15)',
               marginBottom: '16px'
             }} />
 

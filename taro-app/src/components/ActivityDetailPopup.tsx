@@ -146,7 +146,7 @@ export const ActivityDetailPopup: React.FC<ActivityDetailPopupProps> = ({
                   <div style={{
                     width: '100%',
                     height: '0.5px',
-                    background: 'rgba(255, 255, 255, 0.2)',
+                    background: 'linear-gradient(90deg, transparent, rgba(232, 210, 140, 0.3), transparent)',
                     margin: '12px 0'
                   }} />
                 )}
@@ -157,7 +157,7 @@ export const ActivityDetailPopup: React.FC<ActivityDetailPopupProps> = ({
                 <div style={{
                   width: '100%',
                   height: '0.5px',
-                  background: 'rgba(255, 255, 255, 0.2)',
+                  background: 'linear-gradient(90deg, transparent, rgba(232, 210, 140, 0.3), transparent)',
                   margin: '16px 0 12px 0'
                 }} />
                 <Title level="3" style={{ 
@@ -344,7 +344,7 @@ export const ActivityDetailPopup: React.FC<ActivityDetailPopupProps> = ({
                   <div style={{
                     width: '100%',
                     height: '0.5px',
-                    background: 'rgba(255, 255, 255, 0.2)',
+                    background: 'linear-gradient(90deg, transparent, rgba(232, 210, 140, 0.3), transparent)',
                     margin: '12px 0'
                   }} />
                 )}

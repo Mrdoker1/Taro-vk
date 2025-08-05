@@ -88,7 +88,7 @@ export const RewardsSection: FC<RewardsSectionProps> = ({ onLearnMore }) => {
                     display: 'flex', 
                     alignItems: 'center', 
                     justifyContent: 'center',
-                    border: '2px solid #E8D28C',
+                    border: '1px solid #E8D28C',
                     boxShadow: '0 0 8px rgba(232, 210, 140, 0.5)'
                   }}>
                     <span style={{ color: '#E8D28C', fontSize: '12px', fontWeight: '400' }}>+1</span>
@@ -106,7 +106,7 @@ export const RewardsSection: FC<RewardsSectionProps> = ({ onLearnMore }) => {
                     display: 'flex', 
                     alignItems: 'center', 
                     justifyContent: 'center',
-                    border: '2px solid #E8D28C',
+                    border: '1px solid #E8D28C',
                     boxShadow: '0 0 8px rgba(232, 210, 140, 0.5)'
                   }}>
                     <span style={{ color: '#E8D28C', fontSize: '12px', fontWeight: '400' }}>+1</span>

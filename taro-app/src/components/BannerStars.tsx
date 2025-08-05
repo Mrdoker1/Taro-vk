@@ -147,36 +147,37 @@ export const BannerStars: FC<BannerStarsProps> = ({ onLearnMore }) => {
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <div style={{ 
-                  width: '24px', 
-                  height: '24px', 
+                  width: '32px', 
+                  height: '32px', 
                   borderRadius: '50%', 
                   backgroundColor: 'transparent',
                   display: 'flex', 
                   alignItems: 'center', 
                   justifyContent: 'center',
-                  border: '2px solid #E8D28C',
+                  border: '1px solid #E8D28C',
                   flexShrink: 0
                 }}>
-                  <span style={{ color: '#E8D28C', fontSize: '10px', fontWeight: 'bold' }}>+1</span>
+                  <span style={{ color: '#E8D28C', fontSize: '12px', fontWeight: '400' }}>+1</span>
                 </div>
                 <span>Проводи расклад дня +1 звезда</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <div style={{ 
-                  width: '24px', 
-                  height: '24px', 
+                  width: '32px', 
+                  height: '32px', 
                   borderRadius: '50%', 
                   backgroundColor: 'transparent',
                   display: 'flex', 
                   alignItems: 'center', 
                   justifyContent: 'center',
-                  border: '2px solid #E8D28C',
+                  border: '1px solid #E8D28C',
                   flexShrink: 0
                 }}>
-                  <span style={{ color: '#E8D28C', fontSize: '10px', fontWeight: 'bold' }}>+1</span>
+                  <span style={{ color: '#E8D28C', fontSize: '12px', fontWeight: '400' }}>+1</span>
                 </div>
                 <span>Напиши в дневник +1 звезда</span>
               </div>
+              <span>И другое...</span>
             </div>
           </div>
         </div>
