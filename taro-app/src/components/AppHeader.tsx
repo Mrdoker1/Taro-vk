@@ -55,23 +55,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({ left, center, right }) => 
         </div>
       </Div>
       
-      {/* Меню под аватаром (только в мобильной версии) */}
-      {isMobile && center && (
-        <Div style={{ 
-          padding: '0 16px 12px 16px',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.1)'
-        }}>
-          <div style={{ 
-            display: 'flex', 
-            alignItems: 'center',
-            width: '100%',
-            justifyContent: 'space-between',
-            flexWrap: 'wrap'
-          }}>
-            {center}
-          </div>
-        </Div>
-      )}
+      {/* Мобильное меню больше не отображается здесь - оно теперь внизу */}
     </div>
   );
 }; 

@@ -31,7 +31,8 @@ export const Footer: FC<FooterProps> = ({ onAboutApp, onLegalInfo }) => {
         justifyContent: isMobile ? 'center' : 'space-between',
         padding: isMobile ? '12px 16px' : '12px 16px',
         height: isMobile ? 'auto' : '44px',
-        gap: isMobile ? '12px' : '0'
+        gap: isMobile ? '12px' : '0',
+        marginBottom: isMobile ? '20px' : '0' // Дополнительный отступ снизу для мобильного меню
       }}
     >
       {/* Кнопки - в мобильной версии сверху */}

@@ -9,6 +9,7 @@ import { DEFAULT_VIEW_PANELS } from './routes';
 import bridge from './bridge';
 import { store } from './store';
 import { loadUserQuestion } from './store/slices/appSlice';
+import { AppWrapper } from './components/AppWrapper';
 
 export const App = () => {
   const { panel: activePanel = DEFAULT_VIEW_PANELS.HOME } = useActiveVkuiLocation();
@@ -41,29 +42,31 @@ export const App = () => {
 
   return (
     <Provider store={store}>
-      <SplitLayout>
-        <SplitCol>
-          <View activePanel={activePanel}>
-            <Home id={DEFAULT_VIEW_PANELS.HOME} fetchedUser={fetchedUser} />
-            <Persik id={DEFAULT_VIEW_PANELS.PERSIK} />
-            <NewPage id={DEFAULT_VIEW_PANELS.NEW_PAGE} />
-            <Settings id={DEFAULT_VIEW_PANELS.SETTINGS} />
-            <DeckDetails id={DEFAULT_VIEW_PANELS.DECK_DETAILS} />
-            <CardDetails id={DEFAULT_VIEW_PANELS.CARD_DETAILS} />
-            <TaroSpreads id={DEFAULT_VIEW_PANELS.TARO_SPREADS} />
-            <TaroReadingPanel 
-              id={DEFAULT_VIEW_PANELS.TARO_READING} 
-              spreadId={spreadId} 
-              deckId={deckId} 
-            />
-            <DailyAffirmationPanel id={DEFAULT_VIEW_PANELS.DAILY_AFFIRMATION} />
-            <CalendarPanel id={DEFAULT_VIEW_PANELS.CALENDAR} />
-            <AboutApp id={DEFAULT_VIEW_PANELS.ABOUT_APP} />
-            <LegalInfo id={DEFAULT_VIEW_PANELS.LEGAL_INFO} />
-          </View>
-        </SplitCol>
-        {popout}
-      </SplitLayout>
+      <AppWrapper>
+        <SplitLayout>
+          <SplitCol>
+            <View activePanel={activePanel}>
+              <Home id={DEFAULT_VIEW_PANELS.HOME} fetchedUser={fetchedUser} />
+              <Persik id={DEFAULT_VIEW_PANELS.PERSIK} />
+              <NewPage id={DEFAULT_VIEW_PANELS.NEW_PAGE} />
+              <Settings id={DEFAULT_VIEW_PANELS.SETTINGS} />
+              <DeckDetails id={DEFAULT_VIEW_PANELS.DECK_DETAILS} />
+              <CardDetails id={DEFAULT_VIEW_PANELS.CARD_DETAILS} />
+              <TaroSpreads id={DEFAULT_VIEW_PANELS.TARO_SPREADS} />
+              <TaroReadingPanel 
+                id={DEFAULT_VIEW_PANELS.TARO_READING} 
+                spreadId={spreadId} 
+                deckId={deckId} 
+              />
+              <DailyAffirmationPanel id={DEFAULT_VIEW_PANELS.DAILY_AFFIRMATION} />
+              <CalendarPanel id={DEFAULT_VIEW_PANELS.CALENDAR} />
+              <AboutApp id={DEFAULT_VIEW_PANELS.ABOUT_APP} />
+              <LegalInfo id={DEFAULT_VIEW_PANELS.LEGAL_INFO} />
+            </View>
+          </SplitCol>
+          {popout}
+        </SplitLayout>
+      </AppWrapper>
     </Provider>
   );
 };
