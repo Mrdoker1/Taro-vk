@@ -349,11 +349,9 @@ export const StarsPurchase: FC<StarsPurchaseProps> = ({ id }) => {
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                       {[
                         'Уникальные расклады Таро',
-                        'Премиум колоды карт',
                         'Персональные аффирмации',
                         'Детальные интерпретации',
                         'Коллекционные пины',
-                        'Магические артефакты'
                       ].map((item, index) => (
                         <div key={index} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                           <div style={{
