@@ -286,8 +286,7 @@ export const StarsPurchase: FC<StarsPurchaseProps> = ({ id }) => {
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          border: '2px solid #E8D28C',
-                          boxShadow: '0 0 8px rgba(232, 210, 140, 0.5)'
+                          border: '2px solid #E8D28C'
                         }}>
                           <Text style={{ color: '#E8D28C', fontSize: '12px', fontWeight: '400' }}>+1</Text>
                         </div>
@@ -311,7 +310,6 @@ export const StarsPurchase: FC<StarsPurchaseProps> = ({ id }) => {
                           alignItems: 'center',
                           justifyContent: 'center',
                           border: '2px solid #E8D28C',
-                          boxShadow: '0 0 8px rgba(232, 210, 140, 0.5)'
                         }}>
                           <Text style={{ color: '#E8D28C', fontSize: '12px', fontWeight: '400' }}>+1</Text>
                         </div>
@@ -389,14 +387,19 @@ export const StarsPurchase: FC<StarsPurchaseProps> = ({ id }) => {
                       key={pkg.id}
                       style={{
                         position: 'relative',
-                        background: 'rgba(0, 0, 0, 0.3)',
+                        background: pkg.popular 
+                          ? 'linear-gradient(135deg, rgba(232, 210, 140, 0.15), rgba(180, 163, 86, 0.1))' 
+                          : 'linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02))',
                         padding: '16px',
-                        border: pkg.popular ? '2px solid #E8D28C' : 'none',
-                        boxShadow: pkg.popular ? '0 0 20px rgba(232, 210, 140, 0.3)' : 'none',
+                        border: pkg.popular ? '2px solid #E8D28C' : '1px solid rgba(255, 255, 255, 0.1)',
+                        borderRadius: '4px',
+                        boxShadow: pkg.popular 
+                          ? '0 8px 32px rgba(232, 210, 140, 0.25)' 
+                          : '0 4px 16px rgba(0, 0, 0, 0.3)',
                         cursor: 'pointer',
                         transform: 'translateY(20px)',
                         opacity: 0,
-                        animation: `slideInUp 0.6s ease-out ${index * 0.1}s forwards, ${pkg.popular ? 'pulse 2s ease-in-out infinite' : 'none'}`,
+                        animation: `slideInUp 0.6s ease-out ${index * 0.1}s forwards`,
                         transition: 'transform 0.2s ease, box-shadow 0.2s ease',
                         display: 'flex',
                         alignItems: 'center',
@@ -405,14 +408,14 @@ export const StarsPurchase: FC<StarsPurchaseProps> = ({ id }) => {
                       onMouseEnter={(e) => {
                         e.currentTarget.style.transform = 'translateY(-2px)';
                         e.currentTarget.style.boxShadow = pkg.popular 
-                          ? '0 4px 25px rgba(232, 210, 140, 0.4)' 
-                          : '0 4px 15px rgba(255, 255, 255, 0.1)';
+                          ? '0 12px 40px rgba(232, 210, 140, 0.35)' 
+                          : '0 8px 24px rgba(255, 255, 255, 0.15)';
                       }}
                       onMouseLeave={(e) => {
                         e.currentTarget.style.transform = 'translateY(0px)';
                         e.currentTarget.style.boxShadow = pkg.popular 
-                          ? '0 0 20px rgba(232, 210, 140, 0.3)' 
-                          : 'none';
+                          ? '0 8px 32px rgba(232, 210, 140, 0.25)' 
+                          : '0 4px 16px rgba(0, 0, 0, 0.3)';
                       }}
                     >
                       {/* Популярный пакет */}
@@ -424,7 +427,7 @@ export const StarsPurchase: FC<StarsPurchaseProps> = ({ id }) => {
                           background: 'linear-gradient(90deg, #B8A356, #D4C075)',
                           color: '#ffffff',
                           padding: '3px 8px',
-                          borderRadius: '8px',
+                          borderRadius: '2px',
                           fontSize: '10px',
                           fontWeight: 'bold',
                           fontFamily: 'Jost'
@@ -528,9 +531,13 @@ export const StarsPurchase: FC<StarsPurchaseProps> = ({ id }) => {
                           size="s"
                           disabled={purchasingId !== null}
                           onClick={() => handlePurchase(pkg)}
-                          style={{ minWidth: '80px' }}
+                          style={{
+                            minWidth: '80px',
+                            fontFamily: 'Jost',
+                            fontWeight: '600'
+                          }}
                         >
-                          {purchasingId === pkg.id ? 'Покупка...' : 'Купить'}
+                          {purchasingId === pkg.id ? '...' : 'Купить'}
                         </CustomButton>
                       </div>
                     </div>

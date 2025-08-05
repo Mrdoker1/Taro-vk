@@ -155,7 +155,6 @@ export const BannerStars: FC<BannerStarsProps> = ({ onLearnMore }) => {
                   alignItems: 'center', 
                   justifyContent: 'center',
                   border: '2px solid #E8D28C',
-                  boxShadow: '0 0 6px rgba(232, 210, 140, 0.5)',
                   flexShrink: 0
                 }}>
                   <span style={{ color: '#E8D28C', fontSize: '10px', fontWeight: 'bold' }}>+1</span>
@@ -172,7 +171,6 @@ export const BannerStars: FC<BannerStarsProps> = ({ onLearnMore }) => {
                   alignItems: 'center', 
                   justifyContent: 'center',
                   border: '2px solid #E8D28C',
-                  boxShadow: '0 0 6px rgba(232, 210, 140, 0.5)',
                   flexShrink: 0
                 }}>
                   <span style={{ color: '#E8D28C', fontSize: '10px', fontWeight: 'bold' }}>+1</span>

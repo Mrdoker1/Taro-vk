@@ -564,32 +564,49 @@ export const Calendar: React.FC<CalendarProps> = () => {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: isMobile ? '6px' : '8px', marginBottom: isMobile ? '12px' : '16px' }}>
                   {selectedDateData!.activities.map((activity) => (
                     <div key={activity.id} style={{
-                      background: 'rgba(255, 255, 255, 0.05)',
-                      borderRadius: '6px',
-                      padding: isMobile ? '8px' : '12px',
+                      background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02))',
+                      borderRadius: '4px',
+                      padding: isMobile ? '12px' : '16px',
                       display: 'flex',
                       justifyContent: 'space-between',
-                      alignItems: 'flex-start'
-                    }}>
-                      <div style={{ display: 'flex', alignItems: 'flex-start', gap: isMobile ? '6px' : '8px', flex: 1 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '32px', height: '32px', flexShrink: 0 }}>
+                      alignItems: 'flex-start',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                      boxShadow: '0 4px 16px rgba(0, 0, 0, 0.3)',
+                      transition: 'all 0.2s ease',
+                      cursor: 'pointer'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = 'linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.06))';
+                      e.currentTarget.style.transform = 'translateY(-1px)';
+                      e.currentTarget.style.boxShadow = '0 6px 20px rgba(255, 255, 255, 0.1)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = 'linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02))';
+                      e.currentTarget.style.transform = 'translateY(0px)';
+                      e.currentTarget.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.3)';
+                    }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'flex-start', gap: isMobile ? '8px' : '12px', flex: 1 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '36px', height: '36px', flexShrink: 0 }}>
                           {getActivityIcon(activity.type, 'small')}
                         </div>
                         <div style={{ flex: 1, minWidth: 0 }}>
                           <Text style={{ 
-                            fontSize: isMobile ? '11px' : '12px', 
+                            fontSize: isMobile ? '12px' : '13px', 
                             color: '#ffffff', 
                             fontWeight: '500',
                             textTransform: 'uppercase',
                             letterSpacing: '0.5px',
-                            marginBottom: '4px'
+                            marginBottom: '4px',
+                            fontFamily: 'Jost'
                           }}>
                             {activity.title}
                           </Text>
                           <Text style={{ 
                             fontSize: '11px', 
                             color: '#E8D28C',
-                            marginBottom: '4px'
+                            marginBottom: '4px',
+                            fontFamily: 'Jost'
                           }}>
                             {formatActivityTime(activity.timestamp)}
                           </Text>
@@ -597,7 +614,8 @@ export const Calendar: React.FC<CalendarProps> = () => {
                             fontSize: '12px', 
                             color: 'rgba(232, 210, 140, 0.8)',
                             lineHeight: '1.3',
-                            wordBreak: 'break-word'
+                            wordBreak: 'break-word',
+                            fontFamily: 'Jost'
                           }}>
                             {getActivityDetails(activity)}
                           </Text>
