@@ -1,4 +1,6 @@
 import { FC, useState } from 'react';
+import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
+import { DEFAULT_VIEW_PANELS } from '../routes';
 
 interface StarButtonProps {
   size?: 's' | 'm' | 'l';
@@ -14,12 +16,14 @@ export const StarButton: FC<StarButtonProps> = ({
   // TODO: Получать реальное количество звезд из store
   const [starCount] = useState(15);
   const [isHovered, setIsHovered] = useState(false);
+  const routeNavigator = useRouteNavigator();
 
   const handleClick = () => {
-    // TODO: Реализовать функциональность добавления звезд
-    console.log('Добавить звезды');
     if (onClick) {
       onClick();
+    } else {
+      // По умолчанию переходим на страницу покупки звезд
+      routeNavigator.push(`/${DEFAULT_VIEW_PANELS.STARS_PURCHASE}`);
     }
   };
 

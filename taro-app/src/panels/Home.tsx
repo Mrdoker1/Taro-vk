@@ -157,12 +157,7 @@ export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
 
           {/* Баннер получения звезд */}
           <div style={{ marginTop: '12px' }}>
-            <BannerStars 
-              onLearnMore={() => {
-                // TODO: Реализовать страницу с подробной информацией о звездах
-                console.log('Узнать больше о звездах');
-              }}
-            />
+            <BannerStars />
           </div>
 
           {/* Секция с колодами */}

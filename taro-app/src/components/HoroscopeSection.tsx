@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback, useRef } from 'react';
 import { useAppDispatch, useAppSelector } from '../store';
 import { setType, fetchHoroscope } from '../store/slices/horoscopeSlice';
 import { Tabs, TabsItem } from '@vkontakte/vkui';
@@ -58,6 +58,10 @@ export const HoroscopeSection = () => {
   const [moonClicked, setMoonClicked] = React.useState(false);
   const [textVisible, setTextVisible] = React.useState(false);
   const [windowWidth, setWindowWidth] = React.useState(typeof window !== 'undefined' ? window.innerWidth : 1200);
+  
+  // Refs для отслеживания таймеров
+  const sunTimerRef = useRef<number | null>(null);
+  const moonTimerRef = useRef<number | null>(null);
 
   const tabs = [
     { value: 'daily', label: 'на сегодня' },
@@ -75,6 +79,18 @@ export const HoroscopeSection = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  // Очистка таймеров при размонтировании
+  useEffect(() => {
+    return () => {
+      if (sunTimerRef.current) {
+        clearTimeout(sunTimerRef.current);
+      }
+      if (moonTimerRef.current) {
+        clearTimeout(moonTimerRef.current);
+      }
+    };
+  }, []);
+
   // Загрузка данных при изменении типа, знака или языка
   useEffect(() => {
     dispatch(fetchHoroscope({ sign, type, lang }));
@@ -84,9 +100,12 @@ export const HoroscopeSection = () => {
   useEffect(() => {
     if (!loading && horoscope) {
       setTextVisible(false); // Сначала скрываем
-      setTimeout(() => {
+      const timeoutId = setTimeout(() => {
         setTextVisible(true); // Затем показываем с анимацией
       }, 100);
+      
+      // Очищаем таймер при размонтировании или смене зависимостей
+      return () => clearTimeout(timeoutId);
     } else {
       setTextVisible(false);
     }
@@ -306,15 +325,23 @@ export const HoroscopeSection = () => {
     transition: 'all 0.3s ease'
   });
 
-  const handleSunClick = () => {
+  const handleSunClick = useCallback(() => {
+    // Очищаем предыдущий таймер если он есть
+    if (sunTimerRef.current) {
+      clearTimeout(sunTimerRef.current);
+    }
     setSunClicked(true);
-    setTimeout(() => setSunClicked(false), 800); // Длительность анимации sun-bounce
-  };
+    sunTimerRef.current = setTimeout(() => setSunClicked(false), 800); // Длительность анимации sun-bounce
+  }, []);
 
-  const handleMoonClick = () => {
+  const handleMoonClick = useCallback(() => {
+    // Очищаем предыдущий таймер если он есть
+    if (moonTimerRef.current) {
+      clearTimeout(moonTimerRef.current);
+    }
     setMoonClicked(true);
-    setTimeout(() => setMoonClicked(false), 1200); // Длительность анимации moon-wiggle
-  };
+    moonTimerRef.current = setTimeout(() => setMoonClicked(false), 1200); // Длительность анимации moon-wiggle
+  }, []);
 
   const createStarStyle = (duration: number, startPosition: number = 0, twinkleDelay: number = 0): React.CSSProperties => ({
     position: 'absolute',

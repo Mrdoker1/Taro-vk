@@ -79,15 +79,39 @@ export const RewardsSection: FC<RewardsSectionProps> = ({ onLearnMore }) => {
               </Text>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '20px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span style={{ color: 'var(--vkui--color_accent_gold)', fontSize: '16px' }}>•</span>
-                  <Text style={{ color: 'var(--vkui--color_text_primary)', fontSize: '14px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div style={{ 
+                    width: '28px', 
+                    height: '28px', 
+                    borderRadius: '50%', 
+                    backgroundColor: 'transparent',
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'center',
+                    border: '2px solid #E8D28C',
+                    boxShadow: '0 0 8px rgba(232, 210, 140, 0.5)'
+                  }}>
+                    <span style={{ color: '#E8D28C', fontSize: '12px', fontWeight: '400' }}>+1</span>
+                  </div>
+                  <Text style={{ color: '#E8D28C', fontSize: '14px', fontWeight: '500' }}>
                     Проводи расклад дня +1 звезда
                   </Text>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span style={{ color: 'var(--vkui--color_accent_gold)', fontSize: '16px' }}>•</span>
-                  <Text style={{ color: 'var(--vkui--color_text_primary)', fontSize: '14px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div style={{ 
+                    width: '28px', 
+                    height: '28px', 
+                    borderRadius: '50%', 
+                    backgroundColor: 'transparent',
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'center',
+                    border: '2px solid #E8D28C',
+                    boxShadow: '0 0 8px rgba(232, 210, 140, 0.5)'
+                  }}>
+                    <span style={{ color: '#E8D28C', fontSize: '12px', fontWeight: '400' }}>+1</span>
+                  </div>
+                  <Text style={{ color: '#E8D28C', fontSize: '14px', fontWeight: '500' }}>
                     Напиши в дневник +1 звезда
                   </Text>
                 </div>

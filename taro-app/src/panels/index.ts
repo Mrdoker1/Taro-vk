@@ -10,6 +10,7 @@ export { DailyAffirmationPanel } from './DailyAffirmationPanel';
 export { CalendarPanel } from './CalendarPanel';
 export { AboutApp } from './AboutApp';
 export { LegalInfo } from './LegalInfo';
+export { StarsPurchase } from './StarsPurchase';
 
 export type { HomeProps } from './Home';
 export type { DeckDetailsProps } from './DeckDetails';
@@ -20,3 +21,4 @@ export type { DailyAffirmationPanelProps } from './DailyAffirmationPanel';
 export type { CalendarPanelProps } from './CalendarPanel';
 export type { AboutAppProps } from './AboutApp';
 export type { LegalInfoProps } from './LegalInfo';
+export type { StarsPurchaseProps } from './StarsPurchase';

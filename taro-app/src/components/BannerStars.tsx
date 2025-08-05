@@ -1,5 +1,7 @@
 import { FC, useState, useEffect } from 'react';
+import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
 import { CustomButton } from './CustomButton';
+import { DEFAULT_VIEW_PANELS } from '../routes';
 import bagImage from '../assets/bag.png';
 
 interface BannerStarsProps {
@@ -8,6 +10,7 @@ interface BannerStarsProps {
 
 export const BannerStars: FC<BannerStarsProps> = ({ onLearnMore }) => {
   const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1200);
+  const routeNavigator = useRouteNavigator();
 
   useEffect(() => {
     const handleResize = () => {
@@ -19,6 +22,15 @@ export const BannerStars: FC<BannerStarsProps> = ({ onLearnMore }) => {
   }, []);
 
   const isMobile = windowWidth < 768;
+
+  const handleLearnMore = () => {
+    if (onLearnMore) {
+      onLearnMore();
+    } else {
+      // По умолчанию переходим на страницу покупки звезд
+      routeNavigator.push(`/${DEFAULT_VIEW_PANELS.STARS_PURCHASE}`);
+    }
+  };
 
   return (
     <section 
@@ -125,14 +137,48 @@ export const BannerStars: FC<BannerStarsProps> = ({ onLearnMore }) => {
             <div 
               style={{
                 fontSize: 'clamp(13px, 3vw, 15px)', // адаптивный размер
-                color: 'rgba(255,255,255,0.75)', // 75% прозрачность
+                color: '#E8D28C', // золотой цвет текста
                 lineHeight: '1.5',
                 margin: '0',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '8px'
               }}
             >
-              Проводи расклад дня +1 звезда
-              <br />
-              Напиши в дневник +1 звезда
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div style={{ 
+                  width: '24px', 
+                  height: '24px', 
+                  borderRadius: '50%', 
+                  backgroundColor: 'transparent',
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center',
+                  border: '2px solid #E8D28C',
+                  boxShadow: '0 0 6px rgba(232, 210, 140, 0.5)',
+                  flexShrink: 0
+                }}>
+                  <span style={{ color: '#E8D28C', fontSize: '10px', fontWeight: 'bold' }}>+1</span>
+                </div>
+                <span>Проводи расклад дня +1 звезда</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div style={{ 
+                  width: '24px', 
+                  height: '24px', 
+                  borderRadius: '50%', 
+                  backgroundColor: 'transparent',
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center',
+                  border: '2px solid #E8D28C',
+                  boxShadow: '0 0 6px rgba(232, 210, 140, 0.5)',
+                  flexShrink: 0
+                }}>
+                  <span style={{ color: '#E8D28C', fontSize: '10px', fontWeight: 'bold' }}>+1</span>
+                </div>
+                <span>Напиши в дневник +1 звезда</span>
+              </div>
             </div>
           </div>
         </div>
@@ -142,7 +188,7 @@ export const BannerStars: FC<BannerStarsProps> = ({ onLearnMore }) => {
           variant="primary"
           size="m"
           mobileSize="xs"
-          onClick={onLearnMore}
+          onClick={handleLearnMore}
           style={{
             minWidth: 'auto',
             flexShrink: 0,

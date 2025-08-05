@@ -1,0 +1,575 @@
+import { FC, useState, useEffect, useCallback } from 'react';
+import {
+  Panel,
+  Div,
+  NavIdProps,
+  ConfigProvider,
+  Button,
+  Text,
+  Title,
+} from '@vkontakte/vkui';
+import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
+import { AppHeader } from '../components/AppHeader';
+import { Footer } from '../components/Footer';
+import { StarButton } from '../components/StarButton';
+import { CustomButton } from '../components/CustomButton';
+import { useResponsive } from '../hooks/useResponsive';
+import { DEFAULT_VIEW_PANELS } from '../routes';
+import bridge from '../bridge';
+
+export interface StarsPurchaseProps extends NavIdProps {}
+
+interface StarPackage {
+  id: string;
+  stars: number;
+  votes: number;
+  bonus?: number;
+  popular?: boolean;
+}
+
+const starPackages: StarPackage[] = [
+  {
+    id: 'small',
+    stars: 100,
+    votes: 50,
+  },
+  {
+    id: 'medium',
+    stars: 250,
+    votes: 100,
+    bonus: 25,
+  },
+  {
+    id: 'large',
+    stars: 500,
+    votes: 180,
+    bonus: 70,
+    popular: true,
+  },
+  {
+    id: 'mega',
+    stars: 1000,
+    votes: 300,
+    bonus: 200,
+  },
+];
+
+export const StarsPurchase: FC<StarsPurchaseProps> = ({ id }) => {
+  const routeNavigator = useRouteNavigator();
+  const isMobile = useResponsive();
+  const [purchasingId, setPurchasingId] = useState<string | null>(null);
+
+  // Добавляем CSS анимации только один раз при монтировании
+  useEffect(() => {
+    const animationStyles = `
+      @keyframes slideInUp {
+        from {
+          transform: translateY(20px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      @keyframes pulse {
+        0%, 100% {
+          box-shadow: 0 0 20px rgba(232, 210, 140, 0.3);
+        }
+        50% {
+          box-shadow: 0 0 30px rgba(232, 210, 140, 0.6);
+        }
+      }
+    `;
+
+    // Вставляем стили в DOM только если их еще нет
+    if (typeof document !== 'undefined') {
+      const existingStyle = document.getElementById('stars-purchase-animations');
+      if (!existingStyle) {
+        const styleElement = document.createElement('style');
+        styleElement.id = 'stars-purchase-animations';
+        styleElement.textContent = animationStyles;
+        document.head.appendChild(styleElement);
+      }
+    }
+
+    // Cleanup function для удаления стилей при размонтировании
+    return () => {
+      const styleElement = document.getElementById('stars-purchase-animations');
+      if (styleElement) {
+        styleElement.remove();
+      }
+    };
+  }, []);
+
+  const handleBackClick = useCallback(() => {
+    routeNavigator.back();
+  }, [routeNavigator]);
+
+  const handleAboutApp = useCallback(() => {
+    routeNavigator.push(`/${DEFAULT_VIEW_PANELS.ABOUT_APP}`);
+  }, [routeNavigator]);
+
+  const handleLegalInfo = useCallback(() => {
+    routeNavigator.push(`/${DEFAULT_VIEW_PANELS.LEGAL_INFO}`);
+  }, [routeNavigator]);
+
+  const handlePurchase = useCallback(async (packageData: StarPackage) => {
+    setPurchasingId(packageData.id);
+    
+    try {
+      // Вызываем VK Bridge для покупки за голоса
+      const result = await bridge.send('VKWebAppShowOrderBox', {
+        type: 'item',
+        item: `stars_${packageData.id}`,
+      });
+
+      console.log('Покупка успешна:', result);
+      // TODO: Отправить запрос на сервер для начисления звезд
+    } catch (error) {
+      console.error('Ошибка при покупке:', error);
+      // TODO: Показать уведомление об ошибке
+    } finally {
+      setPurchasingId(null);
+    }
+  }, []);
+
+  return (
+    <ConfigProvider hasCustomPanelHeaderAfter={false}>
+      <Panel id={id}>
+        <AppHeader
+          left={
+            <Button mode="tertiary" onClick={handleBackClick}>
+              Назад
+            </Button>
+          }
+          right={<StarButton size="s" />}
+        />
+
+        <Div style={{ 
+          padding: '20px 12px',
+          display: 'flex',
+          justifyContent: 'flex-start'
+        }}>
+          <div style={{
+            width: '100%',
+            background: 'url(https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/3b830249f16752184ecb361cce592c7795bcf9ad) center/cover',
+            borderRadius: '12px',
+            overflow: 'hidden',
+            position: 'relative',
+            padding: isMobile ? '16px' : '32px'
+          }}>
+            {/* Заголовок секции */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '16px',
+              marginBottom: '24px',
+              justifyContent: 'flex-start',
+              textAlign: 'left'
+            }}>
+              <img
+                src="https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/05fdce831d108d4f8d653ab20d8db93848f86a31?placeholderIfAbsent=true"
+                alt="Star icon"
+                style={{
+                  width: '32px',
+                  height: '32px',
+                  objectFit: 'contain',
+                  marginRight: '8px'
+                }}
+              />
+              <div>
+                <Title level="1" style={{
+                  color: '#ffffff',
+                  fontSize: isMobile ? '24px' : '28px',
+                  fontWeight: '600',
+                  margin: 0,
+                  fontFamily: 'Jost',
+                  lineHeight: 1.2
+                }}>
+                  Покупка звезд
+                </Title>
+                <Text style={{
+                  color: '#E8D28C',
+                  fontSize: '14px',
+                  fontWeight: '300',
+                  margin: 0,
+                  fontFamily: 'Jost',
+                  marginTop: '4px'
+                }}>
+                  Обменивайте голоса ВКонтакте на звезды приложения
+                </Text>
+              </div>
+            </div>
+
+            {/* Декоративный элемент */}
+            <div style={{
+              display: 'flex',
+              justifyContent: 'center',
+              marginBottom: '16px'
+            }}>
+              <img
+                src="https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/a73aa4a82442cd6022e0ae5e650a0c240ffa4f01"
+                alt="Decorative element"
+                style={{
+                  width: '90px',
+                  height: 'auto',
+                  objectFit: 'contain'
+                }}
+              />
+            </div>
+
+            {/* Разделитель */}
+            <div style={{
+              width: '100%',
+              height: '2px',
+              background: 'url(https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/bf65c29bb76ac59b655e89bb29946e4f00f49a6d) center/cover',
+              marginBottom: '24px'
+            }} />
+
+            {/* Основной контент в две колонки */}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: isMobile ? '1fr' : '1fr 1.2fr',
+              gap: isMobile ? '24px' : '32px',
+              marginBottom: '24px'
+            }}>
+              
+              {/* Левая колонка - Информация о звездах */}
+              <div>
+                <div style={{
+                  background: 'rgba(0, 0, 0, 0.3)',
+                  padding: '24px',
+                  height: 'fit-content'
+                }}>
+                  <Title level="2" style={{
+                    color: '#E8D28C',
+                    fontSize: '24px',
+                    fontWeight: '600',
+                    margin: '0 0 16px 0',
+                    fontFamily: 'Jost'
+                  }}>
+                    Получай звезды
+                  </Title>
+                  
+                  <Text style={{
+                    color: 'rgba(255, 255, 255, 0.9)',
+                    fontSize: '16px',
+                    lineHeight: '1.5',
+                    margin: '0 0 20px 0',
+                    fontFamily: 'Jost',
+                    display: 'block'
+                  }}>
+                    Зарабатывай звезды за активность и трать их на уникальные расклады, коллекционные пины и магические артефакты.
+                  </Text>
+
+                  {/* Способы заработка */}
+                  <div style={{ marginBottom: '24px' }}>
+                    <Title level="3" style={{
+                      color: '#ffffff',
+                      fontSize: '18px',
+                      fontWeight: '500',
+                      margin: '0 0 12px 0',
+                      fontFamily: 'Jost'
+                    }}>
+                      Зарабатывай за активность:
+                    </Title>
+                    
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <div style={{
+                          width: '28px',
+                          height: '28px',
+                          backgroundColor: 'transparent',
+                          borderRadius: '50%',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          border: '2px solid #E8D28C',
+                          boxShadow: '0 0 8px rgba(232, 210, 140, 0.5)'
+                        }}>
+                          <Text style={{ color: '#E8D28C', fontSize: '12px', fontWeight: '400' }}>+1</Text>
+                        </div>
+                        <Text style={{
+                          color: '#E8D28C',
+                          fontSize: '14px',
+                          fontFamily: 'Jost',
+                          fontWeight: '500'
+                        }}>
+                          Проводи расклад дня
+                        </Text>
+                      </div>
+                      
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <div style={{
+                          width: '28px',
+                          height: '28px',
+                          backgroundColor: 'transparent',
+                          borderRadius: '50%',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          border: '2px solid #E8D28C',
+                          boxShadow: '0 0 8px rgba(232, 210, 140, 0.5)'
+                        }}>
+                          <Text style={{ color: '#E8D28C', fontSize: '12px', fontWeight: '400' }}>+1</Text>
+                        </div>
+                        <Text style={{
+                          color: '#E8D28C',
+                          fontSize: '14px',
+                          fontFamily: 'Jost',
+                          fontWeight: '500'
+                        }}>
+                          Напиши в дневник
+                        </Text>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Дивайдер */}
+                  <div style={{
+                    width: '100%',
+                    height: '1px',
+                    background: 'linear-gradient(90deg, transparent, rgba(232, 210, 140, 0.3), transparent)',
+                    margin: '20px 0'
+                  }} />
+
+                  {/* Возможности */}
+                  <div>
+                    <Title level="3" style={{
+                      color: '#ffffff',
+                      fontSize: '18px',
+                      fontWeight: '500',
+                      margin: '0 0 12px 0',
+                      fontFamily: 'Jost'
+                    }}>
+                      Трать на возможности:
+                    </Title>
+                    
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                      {[
+                        'Уникальные расклады Таро',
+                        'Премиум колоды карт',
+                        'Персональные аффирмации',
+                        'Детальные интерпретации',
+                        'Коллекционные пины',
+                        'Магические артефакты'
+                      ].map((item, index) => (
+                        <div key={index} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <div style={{
+                            width: '6px',
+                            height: '6px',
+                            background: '#E8D28C',
+                            borderRadius: '50%'
+                          }} />
+                          <Text style={{
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            fontSize: '14px',
+                            fontFamily: 'Jost'
+                          }}>
+                            {item}
+                          </Text>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Правая колонка - Пакеты звезд */}
+              <div>
+                <div style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '12px'
+                }}>
+                  {starPackages.map((pkg, index) => (
+                    <div
+                      key={pkg.id}
+                      style={{
+                        position: 'relative',
+                        background: 'rgba(0, 0, 0, 0.3)',
+                        padding: '16px',
+                        border: pkg.popular ? '2px solid #E8D28C' : 'none',
+                        boxShadow: pkg.popular ? '0 0 20px rgba(232, 210, 140, 0.3)' : 'none',
+                        cursor: 'pointer',
+                        transform: 'translateY(20px)',
+                        opacity: 0,
+                        animation: `slideInUp 0.6s ease-out ${index * 0.1}s forwards, ${pkg.popular ? 'pulse 2s ease-in-out infinite' : 'none'}`,
+                        transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '16px'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.transform = 'translateY(-2px)';
+                        e.currentTarget.style.boxShadow = pkg.popular 
+                          ? '0 4px 25px rgba(232, 210, 140, 0.4)' 
+                          : '0 4px 15px rgba(255, 255, 255, 0.1)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.transform = 'translateY(0px)';
+                        e.currentTarget.style.boxShadow = pkg.popular 
+                          ? '0 0 20px rgba(232, 210, 140, 0.3)' 
+                          : 'none';
+                      }}
+                    >
+                      {/* Популярный пакет */}
+                      {pkg.popular && (
+                        <div style={{
+                          position: 'absolute',
+                          top: '-8px',
+                          left: '16px',
+                          background: 'linear-gradient(90deg, #B8A356, #D4C075)',
+                          color: '#ffffff',
+                          padding: '3px 8px',
+                          borderRadius: '8px',
+                          fontSize: '10px',
+                          fontWeight: 'bold',
+                          fontFamily: 'Jost'
+                        }}>
+                          ПОПУЛЯРНО
+                        </div>
+                      )}
+
+                      {/* Левая часть - Иконка и количество звезд */}
+                      <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '12px',
+                        flex: '1'
+                      }}>
+                        <img
+                          src="https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/05fdce831d108d4f8d653ab20d8db93848f86a31?placeholderIfAbsent=true"
+                          alt="Star icon"
+                          style={{
+                            width: '32px',
+                            height: '32px',
+                            objectFit: 'contain'
+                          }}
+                        />
+                        
+                        <div>
+                          <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px' }}>
+                            <Text style={{
+                              color: '#ffffff',
+                              fontSize: '24px',
+                              fontWeight: 'bold',
+                              margin: 0,
+                              fontFamily: 'Jost',
+                              lineHeight: 1
+                            }}>
+                              {pkg.stars.toLocaleString()}
+                            </Text>
+                            <Text style={{
+                              color: '#E8D28C',
+                              fontSize: '12px',
+                              fontWeight: '400',
+                              margin: 0,
+                              fontFamily: 'Jost'
+                            }}>
+                              звезд
+                            </Text>
+                          </div>
+                          
+                          {pkg.bonus && (
+                            <Text style={{
+                              color: '#F4E6A1',
+                              fontSize: '12px',
+                              fontWeight: '600',
+                              margin: 0,
+                              fontFamily: 'Jost',
+                              marginTop: '2px'
+                            }}>
+                              + {pkg.bonus} бонус
+                            </Text>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Центральная часть - Дивайдер */}
+                      <div style={{
+                        width: '1px',
+                        height: '40px',
+                        background: 'linear-gradient(180deg, transparent, rgba(232, 210, 140, 0.3), transparent)'
+                      }} />
+
+                      {/* Правая часть - Цена и кнопка */}
+                      <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '12px'
+                      }}>
+                        <div style={{ textAlign: 'center' }}>
+                          <Text style={{
+                            color: '#E8D28C',
+                            fontSize: '18px',
+                            fontWeight: '600',
+                            margin: 0,
+                            fontFamily: 'Jost',
+                            lineHeight: 1
+                          }}>
+                            {pkg.votes}
+                          </Text>
+                          <Text style={{
+                            color: 'rgba(255, 255, 255, 0.7)',
+                            fontSize: '11px',
+                            fontWeight: '400',
+                            margin: 0,
+                            fontFamily: 'Jost'
+                          }}>
+                            голосов
+                          </Text>
+                        </div>
+
+                        <CustomButton
+                          variant={pkg.popular ? "primary" : "secondary"}
+                          size="s"
+                          disabled={purchasingId !== null}
+                          onClick={() => handlePurchase(pkg)}
+                          style={{ minWidth: '80px' }}
+                        >
+                          {purchasingId === pkg.id ? 'Покупка...' : 'Купить'}
+                        </CustomButton>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Нижний разделитель */}
+            <div style={{
+              width: '100%',
+              height: '2px',
+              background: 'url(https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/bf65c29bb76ac59b655e89bb29946e4f00f49a6d) center/cover',
+              marginBottom: '16px'
+            }} />
+
+            {/* Закрывающий декоративный элемент */}
+            <div style={{
+              display: 'flex',
+              justifyContent: 'center'
+            }}>
+              <img
+                src="https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/154f96a15bcd974fd38495f6f7aeec22f8b9613a"
+                alt="Decorative element"
+                style={{
+                  width: '90px',
+                  height: 'auto',
+                  objectFit: 'contain'
+                }}
+              />
+            </div>
+          </div>
+        </Div>
+
+        <Footer 
+          onAboutApp={handleAboutApp}
+          onLegalInfo={handleLegalInfo}
+        />
+      </Panel>
+    </ConfigProvider>
+  );
+};
