@@ -6,7 +6,6 @@ import {
   Avatar,
   Button,
   ConfigProvider,
-  Cell,
 } from '@vkontakte/vkui';
 import { 
   Icon28Cards2Outline,
@@ -92,11 +91,15 @@ export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
       <Panel id={id}>
         <AppHeader
           left={
-            <Cell
-              before={<Avatar size={36} src={photo_200} />}
-            >
-              {first_name}
-            </Cell>
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '12px',
+              padding: 0 
+            }}>
+              <Avatar size={36} src={photo_200} />
+              <span style={{ color: 'white', fontWeight: 500 }}>{first_name}</span>
+            </div>
           }
           center={
             <>
