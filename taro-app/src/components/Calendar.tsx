@@ -352,7 +352,8 @@ export const Calendar: React.FC<CalendarProps> = () => {
         flex: isMobile ? 'none' : '1',
         background: 'rgba(0, 0, 0, 0.5)',
         padding: isMobile ? '12px' : '16px',
-        borderRadius: '8px'
+        borderRadius: '8px',
+        height: 'fit-content'
       }}>
         {/* Calendar Header */}
         <div style={{ 
