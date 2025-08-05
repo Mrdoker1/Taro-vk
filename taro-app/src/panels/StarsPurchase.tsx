@@ -16,6 +16,7 @@ import { CustomButton } from '../components/CustomButton';
 import { useResponsive } from '../hooks/useResponsive';
 import { DEFAULT_VIEW_PANELS } from '../routes';
 import bridge from '../bridge';
+import starbuyIcon from '../assets/starbuy.svg';
 
 export interface StarsPurchaseProps extends NavIdProps {}
 
@@ -170,7 +171,7 @@ export const StarsPurchase: FC<StarsPurchaseProps> = ({ id }) => {
               textAlign: 'left'
             }}>
               <img
-                src="/src/assets/starbuy.svg"
+                src={starbuyIcon}
                 alt="Star icon"
                 style={{
                   width: '60px',

@@ -1,6 +1,7 @@
 import { FC, useState } from 'react';
 import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
 import { DEFAULT_VIEW_PANELS } from '../routes';
+import starIcon from '../assets/star.svg';
 
 interface StarButtonProps {
   size?: 's' | 'm' | 'l';
@@ -81,7 +82,7 @@ export const StarButton: FC<StarButtonProps> = ({
         }}
       >
         <img
-          src="/src/assets/star.svg"
+          src={starIcon}
           alt="Star icon"
           style={{
             width: currentSize.iconSize,

@@ -69,16 +69,22 @@ export const Calendar: React.FC<CalendarProps> = () => {
   const handleSaveNote = async () => {
     if (!selectedDate) return;
 
-    if (noteText.trim()) {
-      await dispatch(updateCalendarNote(selectedDate, {
-        id: `note_${selectedDate}_${Date.now()}`,
-        content: noteText.trim(),
-        timestamp: Date.now(),
-      }));
-    } else {
-      await dispatch(deleteCalendarNote(selectedDate));
+    try {
+      if (noteText.trim()) {
+        await dispatch(updateCalendarNote(selectedDate, {
+          id: `note_${selectedDate}_${Date.now()}`,
+          content: noteText.trim(),
+          timestamp: Date.now(),
+        }));
+      } else {
+        await dispatch(deleteCalendarNote(selectedDate));
+      }
+    } catch (error) {
+      console.error('Ошибка при сохранении заметки:', error);
+    } finally {
+      // Закрываем редактирование в любом случае
+      setIsEditingNote(false);
     }
-    setIsEditingNote(false);
   };
 
   const handleCancelEdit = () => {
