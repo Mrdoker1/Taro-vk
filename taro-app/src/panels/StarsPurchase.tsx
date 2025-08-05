@@ -173,8 +173,8 @@ export const StarsPurchase: FC<StarsPurchaseProps> = ({ id }) => {
                 src="https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/05fdce831d108d4f8d653ab20d8db93848f86a31?placeholderIfAbsent=true"
                 alt="Star icon"
                 style={{
-                  width: '32px',
-                  height: '32px',
+                  width: '48px',
+                  height: '48px',
                   objectFit: 'contain',
                   marginRight: '8px'
                 }}
@@ -503,7 +503,10 @@ export const StarsPurchase: FC<StarsPurchaseProps> = ({ id }) => {
                         alignItems: 'center',
                         gap: '12px'
                       }}>
-                        <div style={{ textAlign: 'center' }}>
+                        <div style={{ 
+                          textAlign: 'center',
+                          marginRight: '12px'
+                        }}>
                           <Text style={{
                             color: '#E8D28C',
                             fontSize: '18px',
@@ -531,7 +534,7 @@ export const StarsPurchase: FC<StarsPurchaseProps> = ({ id }) => {
                           disabled={purchasingId !== null}
                           onClick={() => handlePurchase(pkg)}
                           style={{
-                            minWidth: '80px',
+                            minWidth: '120px',
                             fontFamily: 'Jost',
                             fontWeight: '600'
                           }}
