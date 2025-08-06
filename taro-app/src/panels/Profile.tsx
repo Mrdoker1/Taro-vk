@@ -18,7 +18,6 @@ import { CustomButton } from '../components/CustomButton';
 import { useResponsive } from '../hooks/useResponsive';
 import { useAppSelector } from '../store';
 import { DEFAULT_VIEW_PANELS } from '../routes';
-import pinIcon from '../assets/pin.svg';
 
 export interface ProfileProps extends NavIdProps {
   fetchedUser?: UserInfo;
@@ -146,48 +145,220 @@ export const Profile: FC<ProfileProps> = ({ id, fetchedUser }) => {
               gap: isMobile ? '16px' : '20px',
               marginBottom: '24px'
             }}>
-              {/* Общая статистика */}
+              {/* Общая статистика с графиками */}
               <div style={{
                 background: 'rgba(0, 0, 0, 0.15)',
                 padding: '20px',
-                borderTop: '1px solid rgb(227, 199, 122)',
+                borderTop: '1px solid rgb(227, 199, 122)'
               }}>
                 <Title level="3" style={{
                   color: '#E8D28C',
                   fontSize: '24px',
                   fontWeight: '500',
-                  margin: '0 0 16px 0',
+                  margin: '0 0 20px 0',
                   fontFamily: 'Jost'
                 }}>
                   Общая статистика
                 </Title>
                 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <Text style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px', fontFamily: 'Jost' }}>
-                      Всего записей:
-                    </Text>
-                    <Text style={{ color: '#ffffff', fontSize: '14px', fontWeight: '500', fontFamily: 'Jost' }}>
-                      {calendarActivitiesCount}
-                    </Text>
+                {/* Круговая диаграмма активностей */}
+                <div style={{ 
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 1fr',
+                  gap: '16px',
+                  marginBottom: '20px'
+                }}>
+                  {/* Левая часть - круговая диаграмма и легенда */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    {/* Круговая диаграмма */}
+                    <div style={{ 
+                      display: 'flex',
+                      justifyContent: 'flex-start'
+                    }}>
+                      <div style={{ 
+                        position: 'relative',
+                        width: '70px',
+                        height: '70px',
+                        flexShrink: 0
+                      }}>
+                        <svg width="70" height="70" style={{ transform: 'rotate(-90deg)' }}>
+                          {/* Фон круга */}
+                          <circle
+                            cx="35"
+                            cy="35"
+                            r="30"
+                            fill="none"
+                            stroke="rgba(255, 255, 255, 0.1)"
+                            strokeWidth="6"
+                          />
+                          {/* Аффирмации */}
+                          {affirmationsCount > 0 && (
+                            <circle
+                              cx="35"
+                              cy="35"
+                              r="30"
+                              fill="none"
+                              stroke="#E8D28C"
+                              strokeWidth="6"
+                              strokeDasharray={`${(affirmationsCount / calendarActivitiesCount) * 188.5} 188.5`}
+                              strokeLinecap="round"
+                            />
+                          )}
+                          {/* Таро */}
+                          {tarotReadingsCount > 0 && (
+                            <circle
+                              cx="35"
+                              cy="35"
+                              r="30"
+                              fill="none"
+                              stroke="#B4A356"
+                              strokeWidth="6"
+                              strokeDasharray={`${(tarotReadingsCount / calendarActivitiesCount) * 188.5} 188.5`}
+                              strokeDashoffset={`-${(affirmationsCount / calendarActivitiesCount) * 188.5}`}
+                              strokeLinecap="round"
+                            />
+                          )}
+                        </svg>
+                        <div style={{
+                          position: 'absolute',
+                          top: '50%',
+                          left: '50%',
+                          transform: 'translate(-50%, -50%)',
+                          textAlign: 'center'
+                        }}>
+                          <Text style={{
+                            color: '#E8D28C',
+                            fontSize: '16px',
+                            fontWeight: '600',
+                            fontFamily: 'Jost',
+                            lineHeight: 1
+                          }}>
+                            {calendarActivitiesCount}
+                          </Text>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Легенда под кругом */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <div style={{
+                          width: '8px',
+                          height: '8px',
+                          borderRadius: '50%',
+                          backgroundColor: '#E8D28C'
+                        }} />
+                        <Text style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '11px', fontFamily: 'Jost' }}>
+                          Аффирмации: {affirmationsCount}
+                        </Text>
+                      </div>
+                      
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <div style={{
+                          width: '8px',
+                          height: '8px',
+                          borderRadius: '50%',
+                          backgroundColor: '#B4A356'
+                        }} />
+                        <Text style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '11px', fontFamily: 'Jost' }}>
+                          Расклады Таро: {tarotReadingsCount}
+                        </Text>
+                      </div>
+                    </div>
+                    {/* Разделитель */}
+                    <div style={{
+                        width: '100%',
+                        height: '1px',
+                        background: 'linear-gradient(90deg, transparent, rgba(232, 210, 140, 0.3), transparent)',
+                    }} />
+                    {/* Дополнительные метрики */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <Text style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px', fontFamily: 'Jost' }}>
+                        Среднее в день:
+                        </Text>
+                        <Text style={{ color: '#E8D28C', fontSize: '14px', fontWeight: '400', fontFamily: 'Jost' }}>
+                        {calendarActivitiesCount > 0 ? (calendarActivitiesCount / Object.keys(daysData).length).toFixed(1) : '0'}
+                        </Text>
+                        <Text style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px', fontFamily: 'Jost' }}>
+                        активности
+                        </Text>
+                    </div>
                   </div>
-                  
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <Text style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px', fontFamily: 'Jost' }}>
-                      Аффирмации:
+
+                  {/* Правая часть - активность по дням */}
+                  <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <Text style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontSize: '14px',
+                      fontFamily: 'Jost',
+                      marginBottom: '8px'
+                    }}>
+                      Активность по дням:
                     </Text>
-                    <Text style={{ color: '#ffffff', fontSize: '14px', fontWeight: '500', fontFamily: 'Jost' }}>
-                      {affirmationsCount}
-                    </Text>
-                  </div>
-                  
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <Text style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px', fontFamily: 'Jost' }}>
-                      Расклады Таро:
-                    </Text>
-                    <Text style={{ color: '#ffffff', fontSize: '14px', fontWeight: '500', fontFamily: 'Jost' }}>
-                      {tarotReadingsCount}
-                    </Text>
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                      {['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'].map((day, index) => {
+                        const dayActivities = Object.values(daysData).filter(dayData => {
+                          const date = new Date(dayData.date);
+                          const dayOfWeek = (date.getDay() + 6) % 7;
+                          return dayOfWeek === index;
+                        }).reduce((sum, dayData) => sum + dayData.activities.length, 0);
+
+                        const maxActivities = Math.max(1, ...Array.from({ length: 7 }, (_, i) => 
+                          Object.values(daysData).filter(dayData => {
+                            const date = new Date(dayData.date);
+                            const dayOfWeek = (date.getDay() + 6) % 7;
+                            return dayOfWeek === i;
+                          }).reduce((sum, dayData) => sum + dayData.activities.length, 0)
+                        ));
+
+                        const intensity = dayActivities / maxActivities;
+
+                        return (
+                          <div key={day} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <Text style={{
+                              color: 'rgba(255, 255, 255, 0.7)',
+                              fontSize: '10px',
+                              fontFamily: 'Jost',
+                              width: '16px',
+                              textAlign: 'center'
+                            }}>
+                              {day}
+                            </Text>
+                            
+                            <div style={{
+                              flex: 1,
+                              height: '10px',
+                              background: 'rgba(255, 255, 255, 0.1)',
+                              borderRadius: '5px',
+                              overflow: 'hidden'
+                            }}>
+                              <div style={{
+                                width: `${intensity * 100}%`,
+                                height: '100%',
+                                background: `linear-gradient(90deg, 
+                                  rgba(232, 210, 140, ${0.4 + intensity * 0.6}), 
+                                  rgba(180, 163, 86, ${0.4 + intensity * 0.6})
+                                )`,
+                                borderRadius: '5px',
+                                transition: 'width 0.3s ease'
+                              }} />
+                            </div>
+
+                            <Text style={{
+                              color: '#E8D28C',
+                              fontSize: '10px',
+                              fontFamily: 'Jost',
+                              fontWeight: '600',
+                              width: '12px',
+                              textAlign: 'center'
+                            }}>
+                              {dayActivities}
+                            </Text>
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -196,66 +367,198 @@ export const Profile: FC<ProfileProps> = ({ id, fetchedUser }) => {
               <div style={{
                 background: 'rgba(232, 210, 140, 0.1)',
                 padding: '20px',
-                borderRadius: '8px',
-                border: '1px solid rgba(232, 210, 140, 0.3)'
+                borderRadius: '3px',
+                border: '1px solid rgba(232, 210, 140, 0.3)',
+                position: 'relative',
+                overflow: 'hidden'
               }}>
+                {/* Декоративный фон */}
+                <div style={{
+                  position: 'absolute',
+                  top: 0,
+                  right: 0,
+                  width: '100px',
+                  height: '100px',
+                  background: 'radial-gradient(circle, rgba(232, 210, 140, 0.1) 0%, transparent 70%)',
+                  borderRadius: '50%',
+                  transform: 'translate(30%, -30%)'
+                }} />
+
                 <Title level="3" style={{
                   color: '#E8D28C',
                   fontSize: '24px',
                   fontWeight: '500',
-                  margin: '0 0 16px 0',
-                  fontFamily: 'Jost'
+                  margin: '0 0 20px 0',
+                  fontFamily: 'Jost',
+                  position: 'relative',
+                  zIndex: 1
                 }}>
                   Коллекция достижений
                 </Title>
                 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <Text style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px', fontFamily: 'Jost' }}>
-                      Собрано пинов:
-                    </Text>
-                    <Text style={{ color: '#E8D28C', fontSize: '16px', fontWeight: '600', fontFamily: 'Jost' }}>
-                      {unlockedPinsCount}/{totalPinsCount}
-                    </Text>
-                  </div>
-                  
-                  {/* Прогресс-бар */}
-                  <div>
-                    <div style={{
-                      width: '100%',
-                      height: '8px',
-                      background: 'rgba(255, 255, 255, 0.1)',
-                      borderRadius: '4px',
-                      overflow: 'hidden',
-                      marginBottom: '8px'
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', position: 'relative', zIndex: 1 }}>
+                  {/* Круговой прогресс */}
+                  <div style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '16px'
+                  }}>
+                    <div style={{ 
+                      position: 'relative',
+                      width: '70px',
+                      height: '70px',
+                      flexShrink: 0
                     }}>
+                      <svg width="70" height="70" style={{ transform: 'rotate(-90deg)' }}>
+                        {/* Фон круга */}
+                        <circle
+                          cx="35"
+                          cy="35"
+                          r="30"
+                          fill="none"
+                          stroke="rgba(255, 255, 255, 0.1)"
+                          strokeWidth="6"
+                        />
+                        {/* Прогресс */}
+                        <circle
+                          cx="35"
+                          cy="35"
+                          r="30"
+                          fill="none"
+                          stroke="url(#progressGradient)"
+                          strokeWidth="6"
+                          strokeDasharray={`${(unlockedPinsCount / totalPinsCount) * 188.5} 188.5`}
+                          strokeLinecap="round"
+                          style={{ transition: 'stroke-dasharray 0.5s ease' }}
+                        />
+                        <defs>
+                          <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stopColor="#E8D28C" />
+                            <stop offset="100%" stopColor="#B4A356" />
+                          </linearGradient>
+                        </defs>
+                      </svg>
                       <div style={{
-                        width: `${(unlockedPinsCount / totalPinsCount) * 100}%`,
-                        height: '100%',
-                        background: 'linear-gradient(90deg, #E8D28C, #B4A356)',
-                        transition: 'width 0.3s ease'
-                      }} />
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        textAlign: 'center'
+                      }}>
+                        <Text style={{
+                          color: '#E8D28C',
+                          fontSize: '14px',
+                          fontWeight: '600',
+                          fontFamily: 'Jost',
+                          lineHeight: 1
+                        }}>
+                          {Math.round((unlockedPinsCount / totalPinsCount) * 100)}%
+                        </Text>
+                      </div>
                     </div>
-                    
-                    <Text style={{
-                      color: 'rgba(255, 255, 255, 0.8)',
-                      fontSize: '12px',
-                      fontFamily: 'Jost'
+
+                    <div style={{ flex: 1 }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                        <Text style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px', fontFamily: 'Jost' }}>
+                          Собрано пинов:
+                        </Text>
+                        <Text style={{ color: '#E8D28C', fontSize: '18px', fontWeight: '600', fontFamily: 'Jost' }}>
+                          {unlockedPinsCount}/{totalPinsCount}
+                        </Text>
+                      </div>
+                      
+                      {/* Линейный прогресс-бар */}
+                      <div style={{
+                        width: '100%',
+                        height: '6px',
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        borderRadius: '3px',
+                        overflow: 'hidden',
+                        marginBottom: '6px'
+                      }}>
+                        <div style={{
+                          width: `${(unlockedPinsCount / totalPinsCount) * 100}%`,
+                          height: '100%',
+                          background: 'linear-gradient(90deg, #E8D28C, #B4A356)',
+                          borderRadius: '3px',
+                          transition: 'width 0.5s ease',
+                          boxShadow: '0 0 8px rgba(232, 210, 140, 0.3)'
+                        }} />
+                      </div>
+                      
+                      <Text style={{
+                        color: 'rgba(255, 255, 255, 0.6)',
+                        fontSize: '11px',
+                        fontFamily: 'Jost'
+                      }}>
+                        {unlockedPinsCount === totalPinsCount ? 'Коллекция завершена!' : `Осталось: ${totalPinsCount - unlockedPinsCount} пинов`}
+                      </Text>
+                    </div>
+                  </div>
+
+                  {/* Последние достижения */}
+                  <div style={{
+                    borderRadius: '6px',
+                    marginBottom: '8px'
+                  }}>
+                    <Text style={{ 
+                      color: 'rgba(255, 255, 255, 0.8)', 
+                      fontSize: '14px', 
+                      fontFamily: 'Jost',
+                      marginBottom: '8px',
+                      display: 'block'
                     }}>
-                      {Math.round((unlockedPinsCount / totalPinsCount) * 100)}% завершено
+                      Последние достижения:
                     </Text>
+                    
+                    <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                      {pins
+                        .filter(pin => pin.isUnlocked)
+                        .slice(-3)
+                        .map((pin) => (
+                          <div key={pin.id} style={{
+                            background: 'rgba(232, 210, 140, 0.2)',
+                            padding: '4px 8px',
+                            borderRadius: '50px',
+                            border: '1px solid rgba(232, 210, 140, 0.3)'
+                          }}>
+                            <Text style={{
+                              color: '#E8D28C',
+                              fontSize: '12px',
+                              fontFamily: 'Jost',
+                              fontWeight: '500'
+                            }}>
+                              {pin.name}
+                            </Text>
+                          </div>
+                        ))
+                      }
+                      {pins.filter(pin => pin.isUnlocked).length === 0 && (
+                        <Text style={{
+                          color: 'rgba(255, 255, 255, 0.5)',
+                          fontSize: '10px',
+                          fontFamily: 'Jost',
+                          fontStyle: 'italic'
+                        }}>
+                          Пока нет достижений
+                        </Text>
+                      )}
+                    </div>
                   </div>
                   
                   <CustomButton 
                     variant="secondary"
                     size="m"
                     onClick={handleGoToCollection}
-                    icon={pinIcon}
                     style={{
-                      width: '100%'
+                      width: '100%',
+                      background: unlockedPinsCount === totalPinsCount 
+                        ? 'linear-gradient(90deg, #E8D28C, #B4A356)' 
+                        : undefined,
+                      color: unlockedPinsCount === totalPinsCount ? '#000' : undefined
                     }}
                   >
-                    Моя коллекция
+                    {unlockedPinsCount === totalPinsCount ? 'Посмотреть коллекцию' : 'Моя коллекция'}
                   </CustomButton>
                 </div>
               </div>
