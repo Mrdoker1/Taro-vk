@@ -59,6 +59,9 @@ export const HoroscopeSection = () => {
   const [textVisible, setTextVisible] = React.useState(false);
   const [windowWidth, setWindowWidth] = React.useState(typeof window !== 'undefined' ? window.innerWidth : 1200);
   
+  // Простая мемоизация для гороскопов
+  const lastFetchKey = useRef<string>('');
+  
   // Refs для отслеживания таймеров
   const sunTimerRef = useRef<number | null>(null);
   const moonTimerRef = useRef<number | null>(null);
@@ -93,8 +96,17 @@ export const HoroscopeSection = () => {
 
   // Загрузка данных при изменении типа, знака или языка
   useEffect(() => {
-    dispatch(fetchHoroscope({ sign, type, lang }));
-  }, [dispatch, type, sign, lang]);
+    // Создаем ключ из текущих параметров
+    const currentKey = `${sign}-${type}-${lang}`;
+    
+    // Запрашиваем данные только если:
+    // 1. Еще не загружается
+    // 2. Ключ изменился (новая комбинация параметров)
+    if (!loading && lastFetchKey.current !== currentKey) {
+      dispatch(fetchHoroscope({ sign, type, lang }));
+      lastFetchKey.current = currentKey;
+    }
+  }, [dispatch, type, sign, lang, loading]);
 
   // Анимация появления текста при смене данных
   useEffect(() => {
@@ -139,7 +151,6 @@ export const HoroscopeSection = () => {
     position: 'relative',
     minHeight: isMobile ? (isVerySmallMobile ? '350px' : '400px') : '300px',
     width: '100%',
-    overflow: 'hidden',
     padding: isVerySmallMobile ? '12px' : isMobile ? '16px' : '24px',
     maxWidth: '100%',
     margin: '0 auto',
@@ -152,7 +163,9 @@ export const HoroscopeSection = () => {
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundImage: "url('https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/c669e25c80c1a50102dfd4a5f6008acc24c4d2ca?placeholderIfAbsent=true')",
+    // backgroundImage: "url('https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/c669e25c80c1a50102dfd4a5f6008acc24c4d2ca?placeholderIfAbsent=true')",
+    borderRadius: isMobile ? '12px' : '16px',
+    border: '1px solid rgba(232, 210, 140, 0.15)',
     backgroundSize: 'cover',
     backgroundPosition: 'center',
     backgroundRepeat: 'no-repeat'
@@ -163,7 +176,7 @@ export const HoroscopeSection = () => {
     display: 'flex',
     width: '100%',
     alignItems: 'center',
-    gap: '12px',
+    gap: '6px',
     fontSize: '18px',
     color: 'white',
     fontWeight: 400,
@@ -185,7 +198,10 @@ export const HoroscopeSection = () => {
     fontWeight: 400,
     fontSize: isVerySmallMobile ? '18px' : isMobile ? '20px' : '24px',
     lineHeight: 1.2,
-    margin: 0
+    margin: 0,
+    display: 'flex',
+    alignItems: 'center',
+    gap: '6px'
   };
 
   const contentWrapperStyle: React.CSSProperties = {

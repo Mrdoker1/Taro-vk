@@ -36,7 +36,7 @@ export const BannerStars: FC<BannerStarsProps> = ({ onLearnMore }) => {
     <section 
       style={{
         borderRadius: '8px',
-        border: '1px solid rgba(227,199,122,0.3)',
+        border: '1px solid rgba(227,199,122,0.15)',
         display: 'flex',
         position: 'relative',
         width: '100%',
@@ -51,7 +51,7 @@ export const BannerStars: FC<BannerStarsProps> = ({ onLearnMore }) => {
     >
       {/* Внутренняя обводка */}
       <div style={{
-        border: '1px solid rgba(227,199,122,0.3)',
+        // border: '1px solid rgba(227,199,122,0.3)',
         display: 'flex',
         width: '100%',
         alignItems: 'center',
@@ -147,8 +147,8 @@ export const BannerStars: FC<BannerStarsProps> = ({ onLearnMore }) => {
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <div style={{ 
-                  width: '32px', 
-                  height: '32px', 
+                  width: '24px', 
+                  height: '24px', 
                   borderRadius: '50%', 
                   backgroundColor: 'transparent',
                   display: 'flex', 
@@ -163,8 +163,8 @@ export const BannerStars: FC<BannerStarsProps> = ({ onLearnMore }) => {
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <div style={{ 
-                  width: '32px', 
-                  height: '32px', 
+                  width: '24px', 
+                  height: '24px', 
                   borderRadius: '50%', 
                   backgroundColor: 'transparent',
                   display: 'flex', 

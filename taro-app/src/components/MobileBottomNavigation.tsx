@@ -48,18 +48,12 @@ export const MobileBottomNavigation: React.FC = () => {
       right: 0,
       zIndex: 1000,
       backgroundColor: 'var(--vkui--color_background)',
-      borderTop: '1px solid var(--vkui--color_separator_primary)',
-      color: 'var(--vkui--color_text_primary)'
+      borderTop: '1px solid var(--vkui--color_separator_primary)'
     }}>
       <TabbarItem
         onClick={() => handleNavigation('/')}
         selected={getActiveTab() === 'home'}
         data-story="home"
-        style={{
-          color: getActiveTab() === 'home' 
-            ? 'var(--vkui--color_accent)' 
-            : 'var(--vkui--color_text_secondary)'
-        }}
       >
         <div style={{ 
           display: 'flex', 
@@ -67,8 +61,7 @@ export const MobileBottomNavigation: React.FC = () => {
           alignItems: 'center', 
           gap: '1px',
           fontSize: '9px',
-          lineHeight: '10px',
-          color: 'inherit'
+          lineHeight: '10px'
         }}>
           <Icon20HomeOutline />
           <span>Главная</span>
@@ -79,11 +72,6 @@ export const MobileBottomNavigation: React.FC = () => {
         onClick={() => handleNavigation('/spreads')}
         selected={getActiveTab() === 'spreads'}
         data-story="spreads"
-        style={{
-          color: getActiveTab() === 'spreads' 
-            ? 'var(--vkui--color_accent)' 
-            : 'var(--vkui--color_text_secondary)'
-        }}
       >
         <div style={{ 
           display: 'flex', 
@@ -91,8 +79,7 @@ export const MobileBottomNavigation: React.FC = () => {
           alignItems: 'center', 
           gap: '1px',
           fontSize: '9px',
-          lineHeight: '10px',
-          color: 'inherit'
+          lineHeight: '10px'
         }}>
           <Icon20Cards2Outline />
           <span>Расклады</span>
@@ -103,11 +90,6 @@ export const MobileBottomNavigation: React.FC = () => {
         onClick={() => handleNavigation('/affirmation')}
         selected={getActiveTab() === 'affirmations'}
         data-story="affirmations"
-        style={{
-          color: getActiveTab() === 'affirmations' 
-            ? 'var(--vkui--color_accent)' 
-            : 'var(--vkui--color_text_secondary)'
-        }}
       >
         <div style={{ 
           display: 'flex', 
@@ -115,8 +97,7 @@ export const MobileBottomNavigation: React.FC = () => {
           alignItems: 'center', 
           gap: '1px',
           fontSize: '9px',
-          lineHeight: '10px',
-          color: 'inherit'
+          lineHeight: '10px'
         }}>
           <Icon20MessageOutline />
           <span>Аффирмации</span>
@@ -127,11 +108,6 @@ export const MobileBottomNavigation: React.FC = () => {
         onClick={() => handleNavigation('/calendar')}
         selected={getActiveTab() === 'calendar'}
         data-story="calendar"
-        style={{
-          color: getActiveTab() === 'calendar' 
-            ? 'var(--vkui--color_accent)' 
-            : 'var(--vkui--color_text_secondary)'
-        }}
       >
         <div style={{ 
           display: 'flex', 
@@ -139,8 +115,7 @@ export const MobileBottomNavigation: React.FC = () => {
           alignItems: 'center', 
           gap: '1px',
           fontSize: '9px',
-          lineHeight: '10px',
-          color: 'inherit'
+          lineHeight: '10px'
         }}>
           <Icon20CalendarOutline />
           <span>Календарь</span>
@@ -151,11 +126,6 @@ export const MobileBottomNavigation: React.FC = () => {
         onClick={() => handleNavigation(`/${DEFAULT_VIEW_PANELS.SETTINGS}`)}
         selected={getActiveTab() === 'settings'}
         data-story="settings"
-        style={{
-          color: getActiveTab() === 'settings' 
-            ? 'var(--vkui--color_accent)' 
-            : 'var(--vkui--color_text_secondary)'
-        }}
       >
         <div style={{ 
           display: 'flex', 
@@ -163,8 +133,7 @@ export const MobileBottomNavigation: React.FC = () => {
           alignItems: 'center', 
           gap: '1px',
           fontSize: '9px',
-          lineHeight: '10px',
-          color: 'inherit'
+          lineHeight: '10px'
         }}>
           <Icon20GearOutline />
           <span>Настройки</span>
