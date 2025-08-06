@@ -3,20 +3,22 @@ import {
   Panel,
   NavIdProps,
   Div,
-  Group,
   Text,
   Title,
-  Button
+  Button,
+  ConfigProvider
 } from '@vkontakte/vkui';
 import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
 import { Footer } from '../components/Footer';
 import { StarButton } from '../components/StarButton';
 import { AppHeader } from '../components/AppHeader';
+import { useResponsive } from '../hooks/useResponsive';
 
 export interface AboutAppProps extends NavIdProps {}
 
 export const AboutApp: FC<AboutAppProps> = ({ id }) => {
   const routeNavigator = useRouteNavigator();
+  const isMobile = useResponsive();
 
   const handleBackClick = () => {
     routeNavigator.back();
@@ -31,44 +33,174 @@ export const AboutApp: FC<AboutAppProps> = ({ id }) => {
   };
 
   return (
-    <Panel id={id}>
-      <AppHeader
-        left={
-          <Button
-            mode="tertiary"
-            onClick={handleBackClick}
-          >
-            Назад
-          </Button>
-        }
-        right={<StarButton size="s" />}
-      />
-      
-      <Div style={{ padding: '0 12px' }}>
-        <Group>
-          <Div style={{ padding: '16px' }}>
-            <Title level="2" style={{ marginBottom: '16px' }}>
-              Seluna - расклады и советы Таро
-            </Title>
-            <Text style={{ marginBottom: '16px' }}>
-              Приложение для гадания на картах Таро, получения ежедневных аффирмаций 
-              и ведения духовного дневника.
-            </Text>
-            <Text style={{ marginBottom: '16px' }}>
-              Версия: 1.0.0
-            </Text>
-            <Text>
-              Откройте для себя мир Таро и духовного развития вместе с нашим приложением.
-            </Text>
-          </Div>
-        </Group>
-      </Div>
+    <ConfigProvider hasCustomPanelHeaderAfter={false}>
+      <Panel id={id}>
+        <AppHeader
+          left={
+            <Button
+              mode="tertiary"
+              onClick={handleBackClick}
+            >
+              Назад
+            </Button>
+          }
+          right={<StarButton size="s" />}
+        />
+        
+        <Div style={{ 
+          padding: '20px 12px',
+          display: 'flex',
+          justifyContent: 'center'
+        }}>
+          <div style={{
+            width: '100%',
+            background: 'url(https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/3b830249f16752184ecb361cce592c7795bcf9ad) center/cover',
+            borderRadius: '12px',
+            overflow: 'hidden',
+            position: 'relative',
+            padding: isMobile ? '16px' : '32px'
+          }}>
+            {/* Заголовок секции */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              marginBottom: '32px'
+            }}>
+              <img
+                src="https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/a454a9aefa63c89b1f3f6882a43da00885c70554?placeholderIfAbsent=true"
+                alt="About app icon"
+                style={{
+                  width: '44px',
+                  height: '44px',
+                  objectFit: 'contain'
+                }}
+              />
+              <h1 style={{
+                color: '#ffffff',
+                fontSize: '24px',
+                fontWeight: '400',
+                margin: 0,
+                fontFamily: 'Jost',
+                lineHeight: 1.2,
+                flex: 1,
+                minWidth: 0
+              }}>
+                О приложении
+              </h1>
+            </div>
 
-      <Footer 
-        onAboutApp={handleAboutApp}
-        onLegalInfo={handleLegalInfo}
-      />
-    </Panel>
+            {/* Декоративный элемент */}
+            <div style={{
+              display: 'flex',
+              justifyContent: 'center',
+              marginBottom: '16px'
+            }}>
+              <img
+                src="https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/a73aa4a82442cd6022e0ae5e650a0c240ffa4f01"
+                alt="Decorative element"
+                style={{
+                  width: '90px',
+                  height: 'auto',
+                  objectFit: 'contain'
+                }}
+              />
+            </div>
+
+            {/* Разделитель */}
+            <div style={{
+              width: '100%',
+              height: '1px',
+              background: 'rgba(232, 210, 140, 0.15)',
+              marginBottom: '32px'
+            }} />
+
+            {/* Основной контент */}
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '20px',
+              maxWidth: '400px',
+              margin: '0 auto',
+              textAlign: 'center'
+            }}>
+              <Title level="2" style={{ 
+                marginBottom: '16px',
+                color: '#E8D28C',
+                fontSize: '20px',
+                fontWeight: '500',
+                fontFamily: 'Jost'
+              }}>
+                Seluna - расклады и советы Таро
+              </Title>
+              
+              <Text style={{ 
+                marginBottom: '16px',
+                color: 'rgba(255, 255, 255, 0.8)',
+                fontSize: '14px',
+                fontFamily: 'Jost',
+                lineHeight: 1.4
+              }}>
+                Приложение для гадания на картах Таро, получения ежедневных аффирмаций 
+                и ведения духовного дневника.
+              </Text>
+              
+              <Text style={{ 
+                marginBottom: '16px',
+                color: '#E8D28C',
+                fontSize: '14px',
+                fontWeight: '500',
+                fontFamily: 'Jost'
+              }}>
+                Версия: 1.0.0
+              </Text>
+              
+              <Text style={{
+                color: 'rgba(255, 255, 255, 0.9)',
+                fontSize: '14px',
+                fontFamily: 'Jost',
+                fontStyle: 'italic',
+                lineHeight: 1.4
+              }}>
+                Откройте для себя мир Таро и духовного развития вместе с нашим приложением.
+                Каждая карта несет в себе мудрость веков, а аффирмации помогают обрести 
+                внутреннюю гармонию.
+              </Text>
+            </div>
+
+            {/* Нижний разделитель */}
+            <div style={{
+              width: '100%',
+              height: '1px',
+              background: 'rgba(232, 210, 140, 0.15)',
+              marginTop: '32px',
+              marginBottom: '16px'
+            }} />
+
+            {/* Нижний декоративный элемент */}
+            <div style={{
+              display: 'flex',
+              justifyContent: 'center'
+            }}>
+              <img
+                src="https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/154f96a15bcd974fd38495f6f7aeec22f8b9613a"
+                alt="Decorative element"
+                style={{
+                  width: '90px',
+                  height: 'auto',
+                  objectFit: 'contain'
+                }}
+              />
+            </div>
+          </div>
+        </Div>
+
+        <Footer 
+          onAboutApp={handleAboutApp}
+          onLegalInfo={handleLegalInfo}
+        />
+      </Panel>
+    </ConfigProvider>
   );
 };
 
