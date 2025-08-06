@@ -12,6 +12,7 @@ export { AboutApp } from './AboutApp';
 export { LegalInfo } from './LegalInfo';
 export { StarsPurchase } from './StarsPurchase';
 export { CollectionPins } from './CollectionPins';
+export { Profile } from './Profile';
 
 export type { HomeProps } from './Home';
 export type { DeckDetailsProps } from './DeckDetails';

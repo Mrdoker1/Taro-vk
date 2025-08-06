@@ -25,6 +25,7 @@ export const DEFAULT_VIEW_PANELS = {
   LEGAL_INFO: 'legal-info',
   STARS_PURCHASE: 'stars-purchase',
   COLLECTION_PINS: 'collection-pins',
+  PROFILE: 'profile',
 } as const;
 
 export const routes = RoutesConfig.create([
@@ -44,6 +45,7 @@ export const routes = RoutesConfig.create([
       createPanel(DEFAULT_VIEW_PANELS.LEGAL_INFO, '/legal-info', []),
       createPanel(DEFAULT_VIEW_PANELS.STARS_PURCHASE, '/stars-purchase', []),
       createPanel(DEFAULT_VIEW_PANELS.COLLECTION_PINS, '/collection-pins', []),
+      createPanel(DEFAULT_VIEW_PANELS.PROFILE, '/profile', []),
     ]),
   ]),
 ]);

@@ -78,6 +78,10 @@ export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
     routeNavigator.push(`/${DEFAULT_VIEW_PANELS.SETTINGS}`);
   };
 
+  const handleOpenProfile = () => {
+    routeNavigator.push(`/${DEFAULT_VIEW_PANELS.PROFILE}`);
+  };
+
   const handleAboutApp = () => {
     routeNavigator.push(`/${DEFAULT_VIEW_PANELS.ABOUT_APP}`);
   };
@@ -95,8 +99,11 @@ export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
               display: 'flex', 
               alignItems: 'center', 
               gap: '12px',
-              padding: 0 
-            }}>
+              padding: 0,
+              cursor: 'pointer'
+            }}
+            onClick={handleOpenProfile}
+            >
               <Avatar size={36} src={photo_200} />
               <span style={{ color: 'white', fontWeight: 500 }}>{first_name}</span>
             </div>
