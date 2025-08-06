@@ -135,7 +135,7 @@ export const Profile: FC<ProfileProps> = ({ id, fetchedUser }) => {
             {/* Разделитель */}
             <div style={{
               width: '100%',
-              borderBottom: '0.5px solid rgba(201, 8, 8, 0.1)',
+              borderTop: '1px solid rgba(232, 210, 140, 0.15)',
               marginBottom: '24px'
             }} />
 
@@ -264,7 +264,7 @@ export const Profile: FC<ProfileProps> = ({ id, fetchedUser }) => {
             {/* Нижний разделитель */}
             <div style={{
               width: '100%',
-              borderTop: '0.5px solid rgba(255, 255, 255, 0.1)',
+              borderTop: '1px solid rgba(232, 210, 140, 0.15)',
               margin: '24px 0 16px 0'
             }} />
 
