@@ -492,7 +492,7 @@ export const Profile: FC<ProfileProps> = ({ id, fetchedUser }) => {
                         <Text style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px', fontFamily: 'Jost' }}>
                           Собрано пинов:
                         </Text>
-                        <Text style={{ color: '#E8D28C', fontSize: '18px', fontWeight: '600', fontFamily: 'Jost' }}>
+                        <Text style={{ color: '#E8D28C', fontSize: '18px', fontWeight: '400', fontFamily: 'Jost' }}>
                           {unlockedPinsCount}/{totalPinsCount}
                         </Text>
                       </div>
