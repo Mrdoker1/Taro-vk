@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useState, useRef } from 'react';
 import {
   Panel,
   Div,
@@ -39,7 +39,11 @@ export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
   const routeNavigator = useRouteNavigator();
   const dispatch = useAppDispatch();
   const { lang } = useAppSelector((state) => state.horoscope);
+  const { decks, decksLoading } = useAppSelector((state) => state.taroDecks);
   const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1200);
+  
+  // Простая мемоизация - запоминаем последний язык для которого загружали данные
+  const lastFetchedLang = useRef<string | null>(null);
 
   useEffect(() => {
     const handleResize = () => {
@@ -51,8 +55,14 @@ export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
   }, []);
 
   useEffect(() => {
-    dispatch(fetchDecks({ lang }));
-  }, [dispatch, lang]);
+    // Улучшенная мемоизация с проверкой:
+    // 1. Еще не загружается
+    // 2. Язык изменился ИЛИ колод еще нет в состоянии
+    if (!decksLoading && (lastFetchedLang.current !== lang || decks.length === 0)) {
+      dispatch(fetchDecks({ lang }));
+      lastFetchedLang.current = lang;
+    }
+  }, [dispatch, lang, decksLoading, decks.length]);
 
   const isMobile = windowWidth < 768;
 
