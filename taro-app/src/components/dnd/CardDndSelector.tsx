@@ -9,6 +9,7 @@ import { CustomButton } from '../CustomButton';
 import { CustomToggle } from '../CustomToggle';
 import { InstructionsPanel } from '../InstructionsPanel';
 import shuffleIcon from '../../assets/shuffle.svg';
+import noImage from '../../assets/no-image.png'; 
 
 interface CardDndSelectorProps {
   spreadName: string;
@@ -68,23 +69,8 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
   // Функция для определения иконки расклада
   const getSpreadIcon = (spread?: { name: string; imageURL?: string }): string => {
     // Используем imageURL из данных бэкенда, если доступно
-    if (spread?.imageURL) {
-      return spread.imageURL;
-    }
-    
-    // Fallback к захардкоженным изображениям для обратной совместимости
-    const name = spread?.name?.toLowerCase() || '';
-    
-    if (name.includes('одна карта') || name.includes('one card') || name.includes('карта дня')) {
-      return 'https://i.ibb.co/fz2F7zv7/one-card.png';
-    } else if (name.includes('три карты') || name.includes('three card') || name.includes('прошлое настоящее будущее')) {
-      return 'https://i.ibb.co/Q7GphGLZ/three-card.png';
-    } else if (name.includes('ло шу') || name.includes('loshu') || name.includes('lo shu')) {
-      return 'https://i.ibb.co/KxnrVrd6/loshu.png';
-    }
-    
-    // Иконка по умолчанию
-    return 'https://i.ibb.co/fz2F7zv7/one-card.png';
+    // Иначе используем локальную иконку как fallback
+    return spread?.imageURL || noImage;
   };
   
   // Определяем, является ли устройство мобильным и отслеживаем размер окна

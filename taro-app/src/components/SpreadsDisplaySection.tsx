@@ -3,6 +3,7 @@ import { CustomButton } from './CustomButton';
 import { MagicLoader } from './MagicLoader';
 import { useAppSelector } from '../store';
 import { TaroSpread } from '../store/slices/taroSpreadsSlice';
+import noImage from '../assets/no-image.png';
 
 // Кастомный хук для адаптивности
 const useResponsive = () => {
@@ -37,33 +38,9 @@ const SpreadCard: React.FC<SpreadCardProps> = ({ spread, onSelectSpread }) => {
 
   // Функция для получения изображения расклада
   const getSpreadImage = (spread: TaroSpread) => {
-    // Логирование для отладки
-    console.log('=== ОТЛАДКА getSpreadImage ===');
-    console.log('Расклад:', spread.name);
-    console.log('imageURL из бэкенда:', spread.imageURL);
-    console.log('Есть imageURL:', !!spread.imageURL);
-    
     // Используем imageURL из данных бэкенда, если доступно
-    if (spread.imageURL) {
-      console.log('Используем imageURL с бэкенда:', spread.imageURL);
-      return spread.imageURL;
-    }
-    
-    // Fallback к захардкоженным изображениям для обратной совместимости
-    let fallbackImage = '';
-    switch (spread.name.toLowerCase()) {
-      case 'три карты':
-        fallbackImage = 'https://i.ibb.co/twLp8jP5/Image-2.png';
-        break;
-      case 'ло шу':
-        fallbackImage = 'https://i.ibb.co/prbNMpfq/Image.png';
-        break;
-      default:
-        fallbackImage = 'https://i.ibb.co/sJNzV60L/Image.png';
-    }
-    
-    console.log('Используем fallback изображение:', fallbackImage);
-    return fallbackImage;
+    // Иначе используем локальную иконку как fallback
+    return spread.imageURL || noImage;
   };
 
   // Объединенные базовые стили
@@ -202,18 +179,6 @@ interface SpreadsDisplaySectionProps {
 export const SpreadsDisplaySection: React.FC<SpreadsDisplaySectionProps> = ({ onSelectSpread }) => {
   const { spreads, spreadsLoading, spreadsError } = useAppSelector((state) => state.taroSpreads);
   const { isMobile, isVerySmallMobile } = useResponsive();
-
-  // Логирование данных из Redux store
-  console.log('=== ОТЛАДКА SpreadsDisplaySection ===');
-  console.log('Количество раскладов из store:', spreads.length);
-  console.log('Загрузка раскладов:', spreadsLoading);
-  console.log('Ошибка раскладов:', spreadsError);
-  console.log('Все расклады с imageURL:', spreads.map(spread => ({
-    id: spread.id,
-    name: spread.name,
-    imageURL: spread.imageURL,
-    hasImageURL: !!spread.imageURL
-  })));
 
   // Стили секции
   const sectionStyle: React.CSSProperties = {
