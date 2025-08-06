@@ -5,6 +5,7 @@ import { Text } from '@vkontakte/vkui';
 interface DroppablePositionProps {
   id: string;
   label: string;
+  position?: number; // Добавляем номер позиции
   children?: React.ReactNode;
   isOccupied?: boolean;
 }
@@ -12,6 +13,7 @@ interface DroppablePositionProps {
 export const DroppablePosition: React.FC<DroppablePositionProps> = ({ 
   id, 
   label, 
+  position,
   children, 
   isOccupied = false 
 }) => {
@@ -57,16 +59,20 @@ export const DroppablePosition: React.FC<DroppablePositionProps> = ({
         }}
       >
         {!children && (
-          <Text style={{ 
+          <Text style={{
             color: isOver ? '#FFD700' : 'var(--vkui--color_text_secondary)', 
             textAlign: 'center',
             position: 'absolute',
-            fontSize: '14px',
+            fontSize: '11px',
             padding: '0 4px',
             fontWeight: isOver ? 'bold' : 'normal',
-            zIndex: 5
+            zIndex: 5,
+            margin: 0,
+            lineHeight: 1.2,
+            maxWidth: '70px',
+            wordWrap: 'break-word'
           }}>
-            {isOccupied ? 'Позиция занята' : label}
+            {isOccupied ? 'Занята' : (position ? `${position}. ${label}` : label)}
           </Text>
         )}
         <div style={{ 

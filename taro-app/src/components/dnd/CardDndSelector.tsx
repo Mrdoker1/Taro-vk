@@ -329,6 +329,7 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
         <DroppablePosition
           id={`position-${position}`}
           label={label}
+          position={position}
           isOccupied={isOccupied}
         >
           {selectedCard && (
