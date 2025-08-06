@@ -402,18 +402,6 @@ export const Profile: FC<ProfileProps> = ({ id, fetchedUser }) => {
                 position: 'relative',
                 overflow: 'hidden'
               }}>
-                {/* Декоративный фон */}
-                <div style={{
-                  position: 'absolute',
-                  top: 0,
-                  right: 0,
-                  width: '100px',
-                  height: '100px',
-                  background: 'radial-gradient(circle, rgba(232, 210, 140, 0.1) 0%, transparent 70%)',
-                  borderRadius: '50%',
-                  transform: 'translate(30%, -30%)'
-                }} />
-
                 <Title level="3" style={{
                   color: '#E8D28C',
                   fontSize: '24px',
