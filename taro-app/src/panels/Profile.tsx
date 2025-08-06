@@ -57,6 +57,12 @@ export const Profile: FC<ProfileProps> = ({ id, fetchedUser }) => {
   const calendarActivitiesCount = allActivities.length;
   const affirmationsCount = allActivities.filter(activity => activity.type === 'affirmation').length;
   const tarotReadingsCount = allActivities.filter(activity => activity.type === 'tarot_reading').length;
+  
+  // Подсчитываем заметки
+  const notesCount = Object.values(daysData).filter(day => day.note).length;
+  
+  // Общий счетчик активностей включая заметки
+  const totalActivitiesCount = calendarActivitiesCount + notesCount;
 
   return (
     <ConfigProvider hasCustomPanelHeaderAfter={false}>
@@ -192,29 +198,43 @@ export const Profile: FC<ProfileProps> = ({ id, fetchedUser }) => {
                             strokeWidth="6"
                           />
                           {/* Аффирмации */}
-                          {affirmationsCount > 0 && (
+                          {affirmationsCount > 0 && totalActivitiesCount > 0 && (
                             <circle
                               cx="35"
                               cy="35"
                               r="30"
                               fill="none"
-                              stroke="#E8D28C"
+                              stroke="#ff9800"
                               strokeWidth="6"
-                              strokeDasharray={`${(affirmationsCount / calendarActivitiesCount) * 188.5} 188.5`}
+                              strokeDasharray={`${(affirmationsCount / totalActivitiesCount) * 188.5} 188.5`}
                               strokeLinecap="round"
                             />
                           )}
                           {/* Таро */}
-                          {tarotReadingsCount > 0 && (
+                          {tarotReadingsCount > 0 && totalActivitiesCount > 0 && (
                             <circle
                               cx="35"
                               cy="35"
                               r="30"
                               fill="none"
-                              stroke="#B4A356"
+                              stroke="#9c27b0"
                               strokeWidth="6"
-                              strokeDasharray={`${(tarotReadingsCount / calendarActivitiesCount) * 188.5} 188.5`}
-                              strokeDashoffset={`-${(affirmationsCount / calendarActivitiesCount) * 188.5}`}
+                              strokeDasharray={`${(tarotReadingsCount / totalActivitiesCount) * 188.5} 188.5`}
+                              strokeDashoffset={`-${(affirmationsCount / totalActivitiesCount) * 188.5}`}
+                              strokeLinecap="round"
+                            />
+                          )}
+                          {/* Заметки */}
+                          {notesCount > 0 && totalActivitiesCount > 0 && (
+                            <circle
+                              cx="35"
+                              cy="35"
+                              r="30"
+                              fill="none"
+                              stroke="#4caf50"
+                              strokeWidth="6"
+                              strokeDasharray={`${(notesCount / totalActivitiesCount) * 188.5} 188.5`}
+                              strokeDashoffset={`-${((affirmationsCount + tarotReadingsCount) / totalActivitiesCount) * 188.5}`}
                               strokeLinecap="round"
                             />
                           )}
@@ -233,7 +253,7 @@ export const Profile: FC<ProfileProps> = ({ id, fetchedUser }) => {
                             fontFamily: 'Jost',
                             lineHeight: 1
                           }}>
-                            {calendarActivitiesCount}
+                            {totalActivitiesCount}
                           </Text>
                         </div>
                       </div>
@@ -245,8 +265,7 @@ export const Profile: FC<ProfileProps> = ({ id, fetchedUser }) => {
                         <div style={{
                           width: '8px',
                           height: '8px',
-                          borderRadius: '50%',
-                          backgroundColor: '#E8D28C'
+                          backgroundColor: '#ff9800'
                         }} />
                         <Text style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '11px', fontFamily: 'Jost' }}>
                           Аффирмации: {affirmationsCount}
@@ -257,11 +276,21 @@ export const Profile: FC<ProfileProps> = ({ id, fetchedUser }) => {
                         <div style={{
                           width: '8px',
                           height: '8px',
-                          borderRadius: '50%',
-                          backgroundColor: '#B4A356'
+                          backgroundColor: '#9c27b0'
                         }} />
                         <Text style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '11px', fontFamily: 'Jost' }}>
                           Расклады Таро: {tarotReadingsCount}
+                        </Text>
+                      </div>
+                      
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <div style={{
+                          width: '8px',
+                          height: '8px',
+                          backgroundColor: '#4caf50'
+                        }} />
+                        <Text style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '11px', fontFamily: 'Jost' }}>
+                          Заметки: {notesCount}
                         </Text>
                       </div>
                     </div>
@@ -277,10 +306,10 @@ export const Profile: FC<ProfileProps> = ({ id, fetchedUser }) => {
                         Среднее в день:
                         </Text>
                         <Text style={{ color: '#E8D28C', fontSize: '14px', fontWeight: '400', fontFamily: 'Jost' }}>
-                        {calendarActivitiesCount > 0 ? (calendarActivitiesCount / Object.keys(daysData).length).toFixed(1) : '0'}
+                        {totalActivitiesCount > 0 ? (totalActivitiesCount / Object.keys(daysData).length).toFixed(1) : '0'}
                         </Text>
                         <Text style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px', fontFamily: 'Jost' }}>
-                        активности
+                        записей
                         </Text>
                     </div>
                   </div>
@@ -302,14 +331,14 @@ export const Profile: FC<ProfileProps> = ({ id, fetchedUser }) => {
                           const date = new Date(dayData.date);
                           const dayOfWeek = (date.getDay() + 6) % 7;
                           return dayOfWeek === index;
-                        }).reduce((sum, dayData) => sum + dayData.activities.length, 0);
+                        }).reduce((sum, dayData) => sum + dayData.activities.length + (dayData.note ? 1 : 0), 0);
 
                         const maxActivities = Math.max(1, ...Array.from({ length: 7 }, (_, i) => 
                           Object.values(daysData).filter(dayData => {
                             const date = new Date(dayData.date);
                             const dayOfWeek = (date.getDay() + 6) % 7;
                             return dayOfWeek === i;
-                          }).reduce((sum, dayData) => sum + dayData.activities.length, 0)
+                          }).reduce((sum, dayData) => sum + dayData.activities.length + (dayData.note ? 1 : 0), 0)
                         ));
 
                         const intensity = dayActivities / maxActivities;
@@ -337,8 +366,9 @@ export const Profile: FC<ProfileProps> = ({ id, fetchedUser }) => {
                                 width: `${intensity * 100}%`,
                                 height: '100%',
                                 background: `linear-gradient(90deg, 
-                                  rgba(232, 210, 140, ${0.4 + intensity * 0.6}), 
-                                  rgba(180, 163, 86, ${0.4 + intensity * 0.6})
+                                  rgba(255, 152, 0, ${0.4 + intensity * 0.6}), 
+                                  rgba(156, 39, 176, ${0.3 + intensity * 0.5}),
+                                  rgba(76, 175, 80, ${0.3 + intensity * 0.4})
                                 )`,
                                 borderRadius: '5px',
                                 transition: 'width 0.3s ease'
@@ -517,8 +547,7 @@ export const Profile: FC<ProfileProps> = ({ id, fetchedUser }) => {
                         .slice(-3)
                         .map((pin) => (
                           <div key={pin.id} style={{
-                            background: 'rgba(232, 210, 140, 0.2)',
-                            padding: '4px 8px',
+                            padding: '4px 12px',
                             borderRadius: '50px',
                             border: '1px solid rgba(232, 210, 140, 0.3)'
                           }}>
