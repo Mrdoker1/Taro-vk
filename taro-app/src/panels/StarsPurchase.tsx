@@ -189,7 +189,7 @@ export const StarsPurchase: FC<StarsPurchaseProps> = ({ id }) => {
                   fontFamily: 'Jost',
                   lineHeight: 1.2
                 }}>
-                  Покупка звезд
+                  Добавить звезды
                 </Title>
                 <Text style={{
                   color: '#E8D28C',
@@ -543,7 +543,7 @@ export const StarsPurchase: FC<StarsPurchaseProps> = ({ id }) => {
                             fontWeight: '600'
                           }}
                         >
-                          {purchasingId === pkg.id ? '...' : 'Купить'}
+                          {purchasingId === pkg.id ? '...' : 'Обменять'}
                         </CustomButton>
                       </div>
                     </div>
