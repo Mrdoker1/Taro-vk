@@ -2,8 +2,13 @@
 
 /* Кастомная цветовая схема */
 :root {
-  --vkui--color_background: #0E0B1D !important;
-  --vkui--color_background_content: #0E0B1D !important;
+  /* Основные цвета приложения */
+  --app-background-color: #0E0B1D;
+  --section-background-color: #1D1830;
+  
+  /* VK UI переменные */
+  --vkui--color_background: var(--app-background-color) !important;
+  --vkui--color_background_content: var(--app-background-color) !important;
   --vkui--color_text_primary: #ffffff !important;
   --vkui--color_text_secondary: rgba(255, 255, 255, 0.7) !important;
   --vkui--color_accent: #3f8ae0 !important;
@@ -39,14 +44,14 @@
 body {
   font-family: 'Jost', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   color: #ffffff !important;
-  background-color: #0E0B1D !important;
+  background-color: var(--app-background-color) !important;
 }
 
 /* Переопределение для VK UI компонентов */
 .vkui__root {
   font-family: 'Jost', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   color: #ffffff !important;
-  background-color: #0E0B1D !important;
+  background-color: var(--app-background-color) !important;
 }
 
 /* Заголовки */
@@ -73,7 +78,7 @@ p, span, div, a {
 
 /* Переопределение фона панелей VK UI */
 .vkuiPanel__in {
-  background-color: #0E0B1D !important;
+  background-color: var(--app-background-color) !important;
 }
 
 /* Фиксы для кнопок меню */
