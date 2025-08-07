@@ -4,7 +4,7 @@ import { Icon24Dismiss } from '@vkontakte/icons';
 import { CalendarActivity } from '../store/slices/calendarSlice';
 import calendarSpreadIcon from '../assets/calendar-spread.svg';
 import calendarAffirmIcon from '../assets/calendar-affirm.svg';
-import backgroundImage from '../assets/background.png';
+import { BACKGROUND_BASE } from '../constants/styles';
 
 interface DeleteActivityPopupProps {
   activity: CalendarActivity | null;
@@ -83,8 +83,7 @@ export const DeleteActivityPopup: React.FC<DeleteActivityPopupProps> = ({
         style={{
           width: '100%',
           maxWidth: '400px',
-          backgroundImage: `url(${backgroundImage})`,
-          backgroundColor: '#1D1830',
+          ...BACKGROUND_BASE,
           borderRadius: '12px',
           overflow: 'hidden',
           position: 'relative',

@@ -18,7 +18,7 @@ import { CustomSelect } from '../components/CustomSelect';
 import { CustomToggle } from '../components/CustomToggle';
 import { DEFAULT_VIEW_PANELS } from '../routes';
 import { AppLanguage, getLanguageDisplayName } from '../utils/languageUtils';
-import backgroundImage from '../assets/background.png';
+import { BACKGROUND_BASE } from '../constants/styles';
 
 type ZodiacSign = 'Aries' | 'Taurus' | 'Gemini' | 'Cancer' | 'Leo' | 'Virgo' | 'Libra' | 'Scorpio' | 'Sagittarius' | 'Capricorn' | 'Aquarius' | 'Pisces';
 
@@ -98,8 +98,7 @@ export const Settings: FC<SettingsProps> = ({ id }) => {
         }}>
           <div style={{
             width: '100%',
-            backgroundImage: `url(${backgroundImage})`,
-            backgroundColor: '#1D1830',
+            ...BACKGROUND_BASE,
             borderRadius: '12px',
             overflow: 'hidden',
             position: 'relative',

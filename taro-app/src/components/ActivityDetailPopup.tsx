@@ -4,9 +4,9 @@ import { Icon24Download, Icon24Share, Icon24Dismiss } from '@vkontakte/icons';
 import { CalendarActivity } from '../store/slices/calendarSlice';
 import { getAffirmationIcon } from '../constants/affirmation';
 import { downloadActivity, shareActivityToVK } from '../utils/shareUtils';
+import { BACKGROUND_BASE } from '../constants/styles';
 import calendarSpreadIcon from '../assets/calendar-spread.svg';
 import calendarAffirmIcon from '../assets/calendar-affirm.svg';
-import backgroundImage from '../assets/background.png';
 
 interface CardData {
   position: number;
@@ -404,8 +404,7 @@ export const ActivityDetailPopup: React.FC<ActivityDetailPopupProps> = ({
           width: '100%',
           maxWidth: '500px',
           maxHeight: '90vh',
-          backgroundImage: `url(${backgroundImage})`,
-          backgroundColor: '#1D1830',
+          ...BACKGROUND_BASE,
           borderRadius: '12px',
           overflow: 'hidden',
           position: 'relative',

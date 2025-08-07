@@ -10,7 +10,7 @@ import { CustomToggle } from '../CustomToggle';
 import { InstructionsPanel } from '../InstructionsPanel';
 import shuffleIcon from '../../assets/shuffle.svg';
 import noImage from '../../assets/no-image.png'; 
-import backgroundImage from '../../assets/background.png'; 
+import { BACKGROUND_BASE } from '../../constants/styles'; // Импортируем стили фона
 
 interface CardDndSelectorProps {
   spreadName: string;
@@ -475,8 +475,7 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
     }}>
       <div style={{
         width: '100%',
-        backgroundImage: `url(${backgroundImage})`,
-        backgroundColor: '#1D1830',
+        ...BACKGROUND_BASE,
         borderRadius: '12px',
         // overflow: 'hidden',
         position: 'relative',

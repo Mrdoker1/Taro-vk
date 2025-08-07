@@ -9,7 +9,7 @@ import { CustomButton } from './CustomButton';
 import { CustomToggle } from './CustomToggle';
 import { useResponsive } from '../hooks/useResponsive';
 import tshirtIcon from '../assets/tshirt.svg';
-import backgroundImage from '../assets/background.png';
+import { BACKGROUND_BASE } from '../constants/styles';
 
 interface CardSelectorProps {
   spreadId: string;
@@ -148,8 +148,7 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
       }}>
         <div style={{
           width: '100%',
-          backgroundImage: `url(${backgroundImage})`,
-          backgroundColor: '#1D1830',
+          ...BACKGROUND_BASE,
           borderRadius: '12px',
           overflow: 'hidden',
           position: 'relative',
@@ -174,8 +173,7 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
       }}>
         <div style={{
           width: '100%',
-          backgroundImage: `url(${backgroundImage})`,
-          backgroundColor: '#1D1830',
+          ...BACKGROUND_BASE,
           borderRadius: '12px',
           overflow: 'hidden',
           position: 'relative',
@@ -207,8 +205,7 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
       }}>
         <div style={{
           width: '100%',
-          backgroundImage: `url(${backgroundImage})`,
-          backgroundColor: '#1D1830',
+          ...BACKGROUND_BASE,
           borderRadius: '12px',
           overflow: 'hidden',
           position: 'relative',
@@ -262,8 +259,7 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
     }}>
       <div style={{
         width: '100%',
-        backgroundImage: `url(${backgroundImage})`,
-        backgroundColor: '#1D1830',
+        ...BACKGROUND_BASE,
         borderRadius: '12px',
         overflow: 'hidden',
         position: 'relative',

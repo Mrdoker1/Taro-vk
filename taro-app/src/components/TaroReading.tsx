@@ -11,7 +11,7 @@ import { MagicLoader } from './MagicLoader';
 import { CustomTooltip } from './CustomTooltip';
 import { fetchDeckDetails } from '../store/slices/taroDecksSlice';
 import { saveTarotReadingToCalendar } from '../utils/calendarUtils';
-import backgroundImage from '../assets/background.png';
+import { BACKGROUND_BASE } from '../constants/styles';
 
 interface TaroReadingProps {
   spreadId: string;
@@ -445,8 +445,7 @@ ${systemPromptText}`;
     }}>
       <div style={{
         width: '100%',
-        backgroundImage: `url(${backgroundImage})`,
-        backgroundColor: '#1D1830',
+        ...BACKGROUND_BASE,
         borderRadius: '12px',
         position: 'relative',
         // minHeight: isMobile ? '400px' : '600px',

@@ -4,6 +4,7 @@ import { CustomTooltip } from './CustomTooltip';
 import { MagicLoader } from './MagicLoader';
 import { useAppSelector } from '../store';
 import { TaroDeck } from '../store/slices/taroDecksSlice';
+import { BACKGROUND_BASE } from '../constants/styles';
 
 // Кастомный хук для адаптивности
 const useResponsive = () => {
@@ -210,7 +211,7 @@ export const DecksDisplaySection: React.FC<DecksDisplaySectionProps> = ({ onView
     padding: isSmallMobile ? '12px' : isMobile ? '16px' : '32px',
     marginTop: '12px',
     boxSizing: 'border-box',
-    backgroundImage: "url('https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/143e319d3d795adf065abf890d5e9e28d667be7a?placeholderIfAbsent=true')",
+    ...BACKGROUND_BASE,
     backgroundSize: 'cover',
     backgroundPosition: 'center',
     backgroundRepeat: 'no-repeat'

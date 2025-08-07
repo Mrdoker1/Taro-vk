@@ -21,7 +21,7 @@ import pinCalendar from '../assets/pin-calendar.png';
 import pinSpreads from '../assets/pin-spreads.png';
 import pinStar from '../assets/pin-star.png';
 import pinIcon from '../assets/pin.svg';
-import backgroundImage from '../assets/background.png';
+import { BACKGROUND_BASE } from '../constants/styles';
 
 export interface CollectionPinsProps extends NavIdProps {}
 
@@ -80,8 +80,7 @@ export const CollectionPins: FC<CollectionPinsProps> = ({ id }) => {
         }}>
           <div style={{
             width: '100%',
-            backgroundImage: `url(${backgroundImage})`,
-            backgroundColor: '#1D1830',
+            ...BACKGROUND_BASE,
             borderRadius: '12px',
             overflow: 'hidden',
             position: 'relative',

@@ -13,7 +13,7 @@ import { Footer } from '../components/Footer';
 import { StarButton } from '../components/StarButton';
 import { AppHeader } from '../components/AppHeader';
 import { useResponsive } from '../hooks/useResponsive';
-import backgroundImage from '../assets/background.png';
+import { BACKGROUND_BASE } from '../constants/styles';
 
 export interface LegalInfoProps extends NavIdProps {}
 
@@ -55,8 +55,7 @@ export const LegalInfo: FC<LegalInfoProps> = ({ id }) => {
         }}>
           <div style={{
             width: '100%',
-            backgroundImage: `url(${backgroundImage})`,
-            backgroundColor: '#1D1830',
+            ...BACKGROUND_BASE,
             borderRadius: '12px',
             overflow: 'hidden',
             position: 'relative',

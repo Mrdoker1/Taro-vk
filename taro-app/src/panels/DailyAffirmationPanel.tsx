@@ -14,7 +14,7 @@ import { AppHeader } from '../components/AppHeader';
 import { useResponsive } from '../hooks/useResponsive';
 import { DEFAULT_VIEW_PANELS } from '../routes';
 import affirmationIcon from '../assets/afirmation.svg';
-import backgroundImage from '../assets/background.png';
+import { BACKGROUND_BASE } from '../constants/styles';
 
 export interface DailyAffirmationPanelProps extends NavIdProps {}
 
@@ -41,8 +41,7 @@ export const DailyAffirmationPanel: FC<DailyAffirmationPanelProps> = ({ id }) =>
         }}>
           <div style={{
             width: '100%',
-            backgroundImage: `url(${backgroundImage})`,
-            backgroundColor: '#1D1830',
+            ...BACKGROUND_BASE,
             borderRadius: '12px',
             overflow: 'hidden',
             position: 'relative',

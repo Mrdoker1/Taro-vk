@@ -10,7 +10,7 @@ import { CustomTextarea } from './CustomTextarea';
 import { CustomButton } from './CustomButton';
 import { MagicLoader } from './MagicLoader';
 import { useResponsive } from '../hooks/useResponsive';
-import backgroundImage from '../assets/background.png';
+import { BACKGROUND_BASE } from '../constants/styles';
 
 interface TaroSpreadDetailsProps {
   spreadId: string;
@@ -126,8 +126,7 @@ export const TaroSpreadDetails: React.FC<TaroSpreadDetailsProps> = ({
     return (
       <div style={{
         width: '100%',
-        backgroundImage: `url(${backgroundImage})`,
-        backgroundColor: '#1D1830',
+        ...BACKGROUND_BASE,
         borderRadius: '12px',
         overflow: 'hidden',
         position: 'relative',
@@ -153,8 +152,7 @@ export const TaroSpreadDetails: React.FC<TaroSpreadDetailsProps> = ({
     return (
       <div style={{
         width: '100%',
-        backgroundImage: `url(${backgroundImage})`,
-        backgroundColor: '#1D1830',
+        ...BACKGROUND_BASE,
         borderRadius: '12px',
         overflow: 'hidden',
         position: 'relative',
@@ -185,8 +183,7 @@ export const TaroSpreadDetails: React.FC<TaroSpreadDetailsProps> = ({
   return (
     <div style={{
       width: '100%',
-      backgroundImage: `url(${backgroundImage})`,
-      backgroundColor: '#1D1830',
+      ...BACKGROUND_BASE,
       borderRadius: '12px',
       overflow: 'hidden',
       position: 'relative',

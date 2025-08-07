@@ -4,7 +4,7 @@ import { CustomButton } from './CustomButton';
 import exploreAImage from '../assets/expore-a.png';
 import exploreBImage from '../assets/explore-b.png';
 import exploreCImage from '../assets/explore-c.png';
-import backgroundImage from '../assets/background.png';
+import { BACKGROUND_BASE } from '../constants/styles';
 
 interface ExploreSectionProps {
   onOpenSpreads: () => void;
@@ -207,7 +207,7 @@ export const ExploreSection: React.FC<ExploreSectionProps> = ({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundImage: "url('https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/09daade4c7f3187726b9c9353ab3805f617b6cbd?placeholderIfAbsent=true')",
+    ...BACKGROUND_BASE,
     backgroundSize: 'cover',
     backgroundPosition: 'center',
     backgroundRepeat: 'no-repeat'

@@ -14,7 +14,7 @@ import { StarButton } from '../components/StarButton';
 import { AppHeader } from '../components/AppHeader';
 import { useResponsive } from '../hooks/useResponsive';
 import thumbnail from '../assets/thumbnail.png';
-import backgroundImage from '../assets/background.png';
+import { BACKGROUND_BASE } from '../constants/styles';
 
 export interface AboutAppProps extends NavIdProps {}
 
@@ -56,8 +56,7 @@ export const AboutApp: FC<AboutAppProps> = ({ id }) => {
         }}>
           <div style={{
             width: '100%',
-            backgroundImage: `url(${backgroundImage})`,
-            backgroundColor: '#1D1830',
+            ...BACKGROUND_BASE,
             borderRadius: '12px',
             overflow: 'hidden',
             position: 'relative',

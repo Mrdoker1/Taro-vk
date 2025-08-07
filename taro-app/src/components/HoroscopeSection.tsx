@@ -13,7 +13,7 @@ import moonImage from '../assets/moon.png';
 import bigStarImage from '../assets/big-star.png';
 import starImage from '../assets/star.png';
 import star2Image from '../assets/star-2.png';
-import backgroundImage from '../assets/background.png';
+import { BACKGROUND_IMAGE_URL } from '../constants/styles';
 
 // Функция для парсинга цвета в новом формате "название#hex"
 const parseColor = (colorString: string): { name: string; hex: string } => {
@@ -164,8 +164,7 @@ export const HoroscopeSection = () => {
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundImage: `url(${backgroundImage})`,
-    // backgroundColor: '#1D1830',
+    backgroundImage: BACKGROUND_IMAGE_URL,
     borderRadius: isMobile ? '12px' : '16px',
     // border: '1px solid rgba(232, 210, 140, 0.15)',
     backgroundSize: 'cover',

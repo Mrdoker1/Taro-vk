@@ -18,7 +18,7 @@ import { CustomButton } from '../components/CustomButton';
 import { useResponsive } from '../hooks/useResponsive';
 import { useAppSelector } from '../store';
 import { DEFAULT_VIEW_PANELS } from '../routes';
-import backgroundImage from '../assets/background.png';
+import { BACKGROUND_BASE } from '../constants/styles';
 
 export interface ProfileProps extends NavIdProps {
   fetchedUser?: UserInfo;
@@ -84,8 +84,7 @@ export const Profile: FC<ProfileProps> = ({ id, fetchedUser }) => {
         }}>
           <div style={{
             width: '100%',
-            backgroundImage: `url(${backgroundImage})`,
-            backgroundColor: '#1D1830',
+            ...BACKGROUND_BASE,
             borderRadius: '12px',
             overflow: 'hidden',
             position: 'relative',

@@ -4,6 +4,7 @@ import { MagicLoader } from './MagicLoader';
 import { useAppSelector } from '../store';
 import { TaroSpread } from '../store/slices/taroSpreadsSlice';
 import noImage from '../assets/no-image.png';
+import { BACKGROUND_BASE } from '../constants/styles';
 
 // Кастомный хук для адаптивности
 const useResponsive = () => {
@@ -196,7 +197,7 @@ export const SpreadsDisplaySection: React.FC<SpreadsDisplaySectionProps> = ({ on
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundImage: "url('https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/4474e821ca04dad4095886f421bf03283092dfc5')",
+   ...BACKGROUND_BASE,
     backgroundSize: 'cover',
     backgroundPosition: 'center',
     backgroundRepeat: 'no-repeat',

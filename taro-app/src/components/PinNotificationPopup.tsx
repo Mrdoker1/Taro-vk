@@ -9,7 +9,7 @@ import pinAffirmation from '../assets/pin-affirmation.png';
 import pinCalendar from '../assets/pin-calendar.png';
 import pinSpreads from '../assets/pin-spreads.png';
 import pinStar from '../assets/pin-star.png';
-import backgroundImage from '../assets/background.png';
+import { BACKGROUND_BASE } from '../constants/styles';
 
 const pinImages: Record<string, string> = {
   affirmation: pinAffirmation,
@@ -70,8 +70,7 @@ export const PinNotificationPopup: React.FC = () => {
       <div
         onClick={(e) => e.stopPropagation()}
         style={{
-          backgroundImage: `url(${backgroundImage})`,
-          backgroundColor: '#1D1830',
+          ...BACKGROUND_BASE,
           borderRadius: '12px',
           padding: '24px',
           maxWidth: '340px',

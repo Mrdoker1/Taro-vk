@@ -18,7 +18,7 @@ import { DEFAULT_VIEW_PANELS } from '../routes';
 import { useAppDispatch, useAppSelector } from '../store';
 import { fetchDeckDetails, clearCurrentDeck } from '../store/slices/taroDecksSlice';
 import '../styles/deck-details.css';
-import backgroundImage from '../assets/background.png';
+import { BACKGROUND_BASE } from '../constants/styles';
 
 export interface DeckDetailsProps extends NavIdProps {}
 
@@ -61,8 +61,7 @@ export const DeckDetails: FC<DeckDetailsProps> = ({ id }) => {
     }}>
       <div style={{
         width: '100%',
-        backgroundImage: `url(${backgroundImage})`,
-        backgroundColor: '#1D1830',
+        ...BACKGROUND_BASE,
         borderRadius: '12px',
         overflow: 'hidden',
         position: 'relative',
@@ -180,8 +179,7 @@ export const DeckDetails: FC<DeckDetailsProps> = ({ id }) => {
         }}>
           <div className="deck-details" style={{
             width: '100%',
-            backgroundImage: `url(${backgroundImage})`,
-            backgroundColor: '#1D1830',
+            ...BACKGROUND_BASE,
             borderRadius: '12px',
             overflow: 'hidden',
             position: 'relative',
