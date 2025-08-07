@@ -1,7 +1,7 @@
 import React from 'react';
 import { CustomTooltip } from './CustomTooltip';
 import { CustomButton } from './CustomButton';
-import exploreAImage from '../assets/expore-a.png';
+import exploreAImage from '../assets/explore-a.png';
 import exploreBImage from '../assets/explore-b.png';
 import exploreCImage from '../assets/explore-c.png';
 import { BACKGROUND_BASE } from '../constants/styles';

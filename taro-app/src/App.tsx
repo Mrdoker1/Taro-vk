@@ -9,6 +9,7 @@ import { DEFAULT_VIEW_PANELS } from './routes';
 import bridge from './bridge';
 import { store } from './store';
 import { loadUserQuestion } from './store/slices/appSlice';
+import { applyTheme } from './constants/styles';
 import { AppWrapper } from './components/AppWrapper';
 import { PinNotificationPopup } from './components/PinNotificationPopup';
 
@@ -31,6 +32,10 @@ export const App = () => {
         // Загружаем сохраненный вопрос пользователя
         console.log('Загружаем сохраненный вопрос пользователя...');
         store.dispatch(loadUserQuestion());
+        
+        // Применяем сохраненную тему
+        const currentTheme = store.getState().app.theme;
+        applyTheme(currentTheme);
         
         setPopout(null);
       } catch (error) {

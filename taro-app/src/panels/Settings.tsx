@@ -9,7 +9,7 @@ import {
 import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
 import { useAppDispatch, useAppSelector } from '../store';
 import { setSign, setLanguage } from '../store/slices/horoscopeSlice';
-import { setUseManualCardSelection } from '../store/slices/appSlice';
+import { setUseManualCardSelection, setTheme } from '../store/slices/appSlice';
 import { clearCurrentTemplate } from '../store/slices/promptSlice';
 import { AppHeader } from '../components/AppHeader';
 import { Footer } from '../components/Footer';
@@ -18,7 +18,7 @@ import { CustomSelect } from '../components/CustomSelect';
 import { CustomToggle } from '../components/CustomToggle';
 import { DEFAULT_VIEW_PANELS } from '../routes';
 import { AppLanguage, getLanguageDisplayName } from '../utils/languageUtils';
-import { BACKGROUND_BASE } from '../constants/styles';
+import { BACKGROUND_BASE, THEMES } from '../constants/styles';
 
 type ZodiacSign = 'Aries' | 'Taurus' | 'Gemini' | 'Cancer' | 'Leo' | 'Virgo' | 'Libra' | 'Scorpio' | 'Sagittarius' | 'Capricorn' | 'Aquarius' | 'Pisces';
 
@@ -46,13 +46,20 @@ const languages = availableLanguages.map(lang => ({
   label: getLanguageDisplayName(lang)
 }));
 
+// Создаем список тем для дропдауна
+const themes = [
+  { value: 'default' as const, label: 'По умолчанию' },
+  { value: 'green' as const, label: 'Зелёная' },
+  { value: 'orange' as const, label: 'Оранжевая' },
+];
+
 export interface SettingsProps extends NavIdProps {}
 
 export const Settings: FC<SettingsProps> = ({ id }) => {
   const routeNavigator = useRouteNavigator();
   const dispatch = useAppDispatch();
   const { sign, lang } = useAppSelector((state) => state.horoscope);
-  const { useManualCardSelection } = useAppSelector((state) => state.app);
+  const { useManualCardSelection, theme } = useAppSelector((state) => state.app);
 
   const handleZodiacChange = (value: string) => {
     dispatch(setSign(value as ZodiacSign));
@@ -66,6 +73,10 @@ export const Settings: FC<SettingsProps> = ({ id }) => {
 
   const handleManualCardSelectionChange = (checked: boolean) => {
     dispatch(setUseManualCardSelection(checked));
+  };
+
+  const handleThemeChange = (value: string) => {
+    dispatch(setTheme(value as keyof typeof THEMES));
   };
 
   const handleAboutApp = () => {
@@ -182,6 +193,14 @@ export const Settings: FC<SettingsProps> = ({ id }) => {
                 label="Язык запросов"
                 placeholder="Выберите язык"
                 onChange={handleLanguageChange}
+              />
+
+              <CustomSelect
+                value={theme}
+                options={themes}
+                label="Тема оформления"
+                placeholder="Выберите тему"
+                onChange={handleThemeChange}
               />
 
               <CustomToggle

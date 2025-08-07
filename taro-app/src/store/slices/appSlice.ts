@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import bridge from '../../bridge';
+import { THEMES, applyTheme } from '../../constants/styles';
 
 // Асинхронный action для загрузки вопроса из VK Storage
 export const loadUserQuestion = createAsyncThunk(
@@ -34,6 +35,25 @@ export const loadUserQuestion = createAsyncThunk(
     }
   }
 );
+
+// Функция для получения темы из localStorage
+const getThemeFromStorage = (): keyof typeof THEMES => {
+  try {
+    const savedTheme = localStorage.getItem('userTheme') as keyof typeof THEMES;
+    return savedTheme && savedTheme in THEMES ? savedTheme : 'default';
+  } catch {
+    return 'default';
+  }
+};
+
+// Функция для сохранения темы в localStorage
+const saveThemeToStorage = (theme: keyof typeof THEMES): void => {
+  try {
+    localStorage.setItem('userTheme', theme);
+  } catch {
+    // Игнорируем ошибки
+  }
+};
 
 // Функция для получения вопроса из VK Storage
 const getUserQuestionFromStorage = (): string => {
@@ -98,6 +118,7 @@ interface AppState {
   error: string | null;
   useManualCardSelection: boolean;
   userQuestion: string;
+  theme: keyof typeof THEMES;
 }
 
 const initialState: AppState = {
@@ -105,6 +126,7 @@ const initialState: AppState = {
   error: null,
   useManualCardSelection: false,
   userQuestion: getUserQuestionFromStorage(),
+  theme: getThemeFromStorage(),
 };
 
 const appSlice = createSlice({
@@ -128,6 +150,11 @@ const appSlice = createSlice({
       state.userQuestion = '';
       saveUserQuestionToStorage('');
     },
+    setTheme: (state, action: PayloadAction<keyof typeof THEMES>) => {
+      state.theme = action.payload;
+      applyTheme(action.payload);
+      saveThemeToStorage(action.payload);
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -141,5 +168,5 @@ const appSlice = createSlice({
   },
 });
 
-export const { setLoading, setError, setUseManualCardSelection, setUserQuestion, clearUserQuestion } = appSlice.actions;
+export const { setLoading, setError, setUseManualCardSelection, setUserQuestion, clearUserQuestion, setTheme } = appSlice.actions;
 export default appSlice.reducer; 
