@@ -14,6 +14,8 @@ import { Footer } from '../components/Footer';
 import { StarButton } from '../components/StarButton';
 import { CustomButton } from '../components/CustomButton';
 import { useResponsive } from '../hooks/useResponsive';
+import { useAppDispatch } from '../store';
+import { unlockPin } from '../store/slices/pinsSlice';
 import { DEFAULT_VIEW_PANELS } from '../routes';
 import bridge from '../bridge';
 import starbuyIcon from '../assets/starbuy.svg';
@@ -58,6 +60,7 @@ const starPackages: StarPackage[] = [
 export const StarsPurchase: FC<StarsPurchaseProps> = ({ id }) => {
   const routeNavigator = useRouteNavigator();
   const isMobile = useResponsive();
+  const dispatch = useAppDispatch();
   const [purchasingId, setPurchasingId] = useState<string | null>(null);
 
   // Добавляем CSS анимации только один раз при монтировании
@@ -127,6 +130,10 @@ export const StarsPurchase: FC<StarsPurchaseProps> = ({ id }) => {
       });
 
       console.log('Покупка успешна:', result);
+      
+      // Разблокируем пин "Коллекционер Звезд" при любой успешной покупке
+      dispatch(unlockPin('star'));
+      
       // TODO: Отправить запрос на сервер для начисления звезд
     } catch (error) {
       console.error('Ошибка при покупке:', error);
@@ -134,7 +141,7 @@ export const StarsPurchase: FC<StarsPurchaseProps> = ({ id }) => {
     } finally {
       setPurchasingId(null);
     }
-  }, []);
+  }, [dispatch]);
 
   return (
     <ConfigProvider hasCustomPanelHeaderAfter={false}>

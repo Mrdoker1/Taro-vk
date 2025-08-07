@@ -13,6 +13,7 @@ import { Footer } from '../components/Footer';
 import { StarButton } from '../components/StarButton';
 import { AppHeader } from '../components/AppHeader';
 import { useResponsive } from '../hooks/useResponsive';
+import thumbnail from '../assets/thumbnail.png';
 
 export interface AboutAppProps extends NavIdProps {}
 
@@ -115,6 +116,27 @@ export const AboutApp: FC<AboutAppProps> = ({ id }) => {
               marginBottom: '32px'
             }} />
 
+            {/* Thumbnail изображение */}
+              <div style={{
+                display: 'flex',
+                justifyContent: 'center',
+                marginBottom: '20px'
+              }}>
+                <img
+                  src={thumbnail}
+                  alt="Seluna App"
+                  style={{
+                    maxWidth: '200px',
+                    width: '100%',
+                    height: 'auto',
+                    objectFit: 'contain',
+                    overflow: 'hidden',
+                    // boxShadow: '0 4px 16px rgba(0, 0, 0, 0.3)',
+                    // border: '1px solid rgba(232, 210, 140, 0.2)'
+                  }}
+                />
+              </div>
+
             {/* Основной контент */}
             <div style={{
               display: 'flex',
@@ -125,7 +147,6 @@ export const AboutApp: FC<AboutAppProps> = ({ id }) => {
               textAlign: 'center'
             }}>
               <Title level="2" style={{ 
-                marginBottom: '16px',
                 color: '#E8D28C',
                 fontSize: '20px',
                 fontWeight: '500',
@@ -133,6 +154,15 @@ export const AboutApp: FC<AboutAppProps> = ({ id }) => {
               }}>
                 Seluna - расклады и советы Таро
               </Title>
+
+              {/* <Text style={{ 
+                color: '#E8D28C',
+                fontSize: '14px',
+                fontWeight: '500',
+                fontFamily: 'Jost'
+              }}>
+                Версия: 1.0.0
+              </Text> */}
               
               <Text style={{ 
                 marginBottom: '16px',
@@ -143,16 +173,6 @@ export const AboutApp: FC<AboutAppProps> = ({ id }) => {
               }}>
                 Приложение для гадания на картах Таро, получения ежедневных аффирмаций 
                 и ведения духовного дневника.
-              </Text>
-              
-              <Text style={{ 
-                marginBottom: '16px',
-                color: '#E8D28C',
-                fontSize: '14px',
-                fontWeight: '500',
-                fontFamily: 'Jost'
-              }}>
-                Версия: 1.0.0
               </Text>
               
               <Text style={{

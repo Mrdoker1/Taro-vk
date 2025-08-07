@@ -181,7 +181,7 @@ const DeckCard: React.FC<DeckCardProps> = ({ deck, onViewDetails }) => {
                 maxWidth: isMobile ? '160px' : '217px'
               }}
             >
-              подробнее
+              Подробнее
             </CustomButton>
           </div>
         </div>

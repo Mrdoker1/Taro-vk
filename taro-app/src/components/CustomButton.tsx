@@ -84,9 +84,10 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
 
     const baseStyles: React.CSSProperties = {
       minHeight: getMobileMinHeight(),
-      textTransform: 'uppercase',
+      // textTransform: 'uppercase',
+      // letterSpacing: '1px',
       fontSize: getMobileFontSize(),
-      fontWeight: '500',
+      fontWeight: '100',
       borderRadius: '3px',
       position: 'relative',
       overflow: 'hidden',
@@ -102,7 +103,7 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
     if (variant === 'primary') {
       return {
         ...baseStyles,
-        border: isMobile ? '2px solid #978041' : '3px solid #978041',
+        border: isMobile ? '1px solid #978041' : '1px solid #978041',
         background: shouldShowHoverEffects 
           ? 'linear-gradient(90deg, #CFAE1D 0%, #714F0D 100%)'
           : 'linear-gradient(90deg, #CFAE1D 0%, #714F0D 100%)',
@@ -138,7 +139,7 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
     // Secondary style с магическими эффектами
     return {
       ...baseStyles,
-      border: isMobile ? '2px solid rgba(151, 128, 65, 1)' : '3px solid rgba(151, 128, 65, 1)',
+      border: isMobile ? '1px solid rgba(151, 128, 65, 1)' : '1px solid rgba(151, 128, 65, 1)',
       backgroundColor: shouldShowHoverEffects ? 'rgba(151, 128, 65, 0.15)' : 'transparent',
       color: 'white',
       boxShadow: shouldShowHoverEffects 

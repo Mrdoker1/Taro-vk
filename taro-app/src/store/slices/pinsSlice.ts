@@ -45,6 +45,14 @@ const initialPins: Pin[] = [
     image: '', // будет заполнено в компоненте
     isUnlocked: false,
   },
+  {
+    id: 'star',
+    name: 'Коллекционер Звезд',
+    description: 'Мастерство накопления и обмена энергии',
+    requirement: 'Обменяйте голоса на звезды',
+    image: '', // будет заполнено в компоненте
+    isUnlocked: false,
+  },
 ];
 
 // Загрузка сохраненных пинов из localStorage
@@ -54,10 +62,17 @@ const loadPinsFromStorage = (): Pin[] => {
     if (savedPins) {
       const parsedPins = JSON.parse(savedPins) as Pin[];
       // Объединяем сохраненные данные с базовой структурой
-      return initialPins.map(initialPin => {
+      const mergedPins = initialPins.map(initialPin => {
         const savedPin = parsedPins.find(p => p.id === initialPin.id);
         return savedPin ? { ...initialPin, ...savedPin } : initialPin;
       });
+      
+      // Добавляем новые пины, которых нет в сохраненных данных
+      const newPins = initialPins.filter(initialPin => 
+        !parsedPins.some(savedPin => savedPin.id === initialPin.id)
+      );
+      
+      return [...mergedPins.filter(pin => parsedPins.some(saved => saved.id === pin.id)), ...newPins];
     }
   } catch (error) {
     console.error('Ошибка загрузки пинов из localStorage:', error);

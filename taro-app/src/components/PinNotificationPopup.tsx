@@ -8,11 +8,13 @@ import { DEFAULT_VIEW_PANELS } from '../routes';
 import pinAffirmation from '../assets/pin-affirmation.png';
 import pinCalendar from '../assets/pin-calendar.png';
 import pinSpreads from '../assets/pin-spreads.png';
+import pinStar from '../assets/pin-star.png';
 
 const pinImages: Record<string, string> = {
   affirmation: pinAffirmation,
   calendar: pinCalendar,
   spreads: pinSpreads,
+  star: pinStar,
 };
 
 export const PinNotificationPopup: React.FC = () => {

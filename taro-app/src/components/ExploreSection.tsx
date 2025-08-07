@@ -4,6 +4,7 @@ import { CustomButton } from './CustomButton';
 import exploreAImage from '../assets/expore-a.png';
 import exploreBImage from '../assets/explore-b.png';
 import exploreCImage from '../assets/explore-c.png';
+import backgroundImage from '../assets/background.png';
 
 interface ExploreSectionProps {
   onOpenSpreads: () => void;

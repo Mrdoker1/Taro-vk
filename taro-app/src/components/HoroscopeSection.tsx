@@ -13,6 +13,7 @@ import moonImage from '../assets/moon.png';
 import bigStarImage from '../assets/big-star.png';
 import starImage from '../assets/star.png';
 import star2Image from '../assets/star-2.png';
+import backgroundImage from '../assets/background.png';
 
 // Функция для парсинга цвета в новом формате "название#hex"
 const parseColor = (colorString: string): { name: string; hex: string } => {
@@ -156,16 +157,16 @@ export const HoroscopeSection = () => {
     margin: '0 auto',
     boxSizing: 'border-box'
   };
-
+  // Фон секции
   const backgroundStyle: React.CSSProperties = {
     position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    // backgroundImage: "url('https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/c669e25c80c1a50102dfd4a5f6008acc24c4d2ca?placeholderIfAbsent=true')",
+    backgroundImage: `url(${backgroundImage})`,
     borderRadius: isMobile ? '12px' : '16px',
-    border: '1px solid rgba(232, 210, 140, 0.15)',
+    // border: '1px solid rgba(232, 210, 140, 0.15)',
     backgroundSize: 'cover',
     backgroundPosition: 'center',
     backgroundRepeat: 'no-repeat'
@@ -216,7 +217,7 @@ export const HoroscopeSection = () => {
     width: '100%',
     alignItems: 'flex-start',
     gap: '16px',
-    borderRadius: '8px'
+    borderRadius: '8px',
   };
 
   const imageContainerStyle: React.CSSProperties = {
@@ -428,12 +429,12 @@ export const HoroscopeSection = () => {
   };
 
   const valueContainerStyle: React.CSSProperties = {
-    backgroundColor: 'rgba(0, 0, 0, 0.2)',
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    borderRadius: '100px',
     display: 'flex',
     alignItems: 'center',
     gap: isVerySmallMobile ? '4px' : isMobile ? '6px' : '8px',
     padding: isVerySmallMobile ? '3px 6px' : isMobile ? '4px 8px' : '6px 10px',
-    borderRadius: '6px'
   };
 
   const moodValueStyle: React.CSSProperties = {
