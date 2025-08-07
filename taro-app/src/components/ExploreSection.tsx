@@ -43,15 +43,14 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
   return (
     <div style={{
       border: '1px solid rgba(227, 199, 122, 0.15)',
-      borderRadius: isMobile ? '8px' : '500px 500px 4px 4px',
-      padding: '8px',
+      borderRadius: isMobile ? '6px' : '500px 500px 4px 4px',
+      padding: isMobile ? '6px' : '8px',
       flex: isMobile ? 'none' : '1',
       minWidth: isMobile ? 'auto' : '240px',
       maxWidth: isMobile ? 'calc(100% - 8px)' : '320px',
       width: isMobile ? 'auto' : 'auto',
       height: isMobile ? 'auto' : 'fit-content',
       backgroundColor: 'transparent',
-      margin: isMobile ? '0 4px' : '0'
     }}>
       <div style={{
         border: '1px solid rgba(227, 199, 122, 0.15)',

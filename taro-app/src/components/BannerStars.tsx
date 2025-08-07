@@ -154,12 +154,12 @@ export const BannerStars: FC<BannerStarsProps> = ({ onLearnMore }) => {
                   display: 'flex', 
                   alignItems: 'center', 
                   justifyContent: 'center',
-                  border: '1px solid #E8D28C',
+                  border: '1px solid rgba(232, 211, 140, 0.5)',
                   flexShrink: 0
                 }}>
                   <span style={{ color: '#E8D28C', fontSize: '12px', fontWeight: '400' }}>+1</span>
                 </div>
-                <span>Проводи расклад дня +1 звезда</span>
+                <span>Проводи расклад дня</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <div style={{ 
@@ -170,14 +170,13 @@ export const BannerStars: FC<BannerStarsProps> = ({ onLearnMore }) => {
                   display: 'flex', 
                   alignItems: 'center', 
                   justifyContent: 'center',
-                  border: '1px solid #E8D28C',
+                  border: '1px solid rgba(232, 211, 140, 0.5)',
                   flexShrink: 0
                 }}>
                   <span style={{ color: '#E8D28C', fontSize: '12px', fontWeight: '400' }}>+1</span>
                 </div>
-                <span>Напиши в дневник +1 звезда</span>
+                <span>Напиши в дневник</span>
               </div>
-              <span>И другое...</span>
             </div>
           </div>
         </div>

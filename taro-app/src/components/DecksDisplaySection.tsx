@@ -45,7 +45,7 @@ const DeckCard: React.FC<DeckCardProps> = ({ deck, onViewDetails }) => {
     alignItems: 'center',
     gap: isMobile ? '8px' : '16px',
     marginTop: '16px',
-    padding: isMobile ? '6px' : '9px',
+    padding: isMobile ? '6px' : '8px',
     backgroundColor: 'transparent',
     boxSizing: 'border-box'
   };
@@ -153,11 +153,12 @@ const DeckCard: React.FC<DeckCardProps> = ({ deck, onViewDetails }) => {
             </p>
             <div style={{
               margin: 0,
-              fontSize: isSmallMobile ? '14px' : isMobile ? '15px' : '16px',
+              fontWeight: 200,
+              fontSize: isSmallMobile ? '12px' : isMobile ? '13px' : '14px',
               color: 'rgba(255, 255, 255, 0.8)',
               fontFamily: FONT_FAMILY
             }}>
-              Карт: {deck.cardsCount}
+              Карт в колоде: {deck.cardsCount}
             </div>
           </div>
           

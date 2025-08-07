@@ -295,7 +295,7 @@ export const StarsPurchase: FC<StarsPurchaseProps> = ({ id }) => {
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          border: '1px solid #E8D28C'
+                          border: '1px solid rgba(232, 211, 140, 0.5)',
                         }}>
                           <Text style={{ color: '#E8D28C', fontSize: '12px', fontWeight: '400' }}>+1</Text>
                         </div>
@@ -318,7 +318,7 @@ export const StarsPurchase: FC<StarsPurchaseProps> = ({ id }) => {
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          border: '1px solid #E8D28C',
+                          border: '1px solid rgba(232, 211, 140, 0.5)',
                         }}>
                           <Text style={{ color: '#E8D28C', fontSize: '12px', fontWeight: '400' }}>+1</Text>
                         </div>
