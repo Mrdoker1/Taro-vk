@@ -18,6 +18,7 @@ import { DEFAULT_VIEW_PANELS } from '../routes';
 import { useAppDispatch, useAppSelector } from '../store';
 import { fetchCardDetails, clearCurrentCard } from '../store/slices/taroDecksSlice';
 import '../styles/card-details.css';
+import backgroundImage from '../assets/background.png';
 
 export interface CardDetailsProps extends NavIdProps {}
 
@@ -48,7 +49,8 @@ export const CardDetails: FC<CardDetailsProps> = ({ id }) => {
     }}>
       <div className="card-details" style={{
         width: '100%',
-        background: 'url(https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/3b830249f16752184ecb361cce592c7795bcf9ad) center/cover',
+        backgroundImage: `url(${backgroundImage})`,
+        backgroundColor: '#1D1830',
         borderRadius: '12px',
         overflow: 'hidden',
         position: 'relative',
@@ -166,7 +168,8 @@ export const CardDetails: FC<CardDetailsProps> = ({ id }) => {
           }}>
             <div className="card-details" style={{
               width: '100%',
-              background: 'url(https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/3b830249f16752184ecb361cce592c7795bcf9ad) center/cover',
+              backgroundImage: `url(${backgroundImage})`,
+              backgroundColor: '#1D1830',
               borderRadius: '12px',
               overflow: 'hidden',
               position: 'relative',

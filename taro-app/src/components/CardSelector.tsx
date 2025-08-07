@@ -9,6 +9,7 @@ import { CustomButton } from './CustomButton';
 import { CustomToggle } from './CustomToggle';
 import { useResponsive } from '../hooks/useResponsive';
 import tshirtIcon from '../assets/tshirt.svg';
+import backgroundImage from '../assets/background.png';
 
 interface CardSelectorProps {
   spreadId: string;
@@ -147,7 +148,8 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
       }}>
         <div style={{
           width: '100%',
-          background: 'url(https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/3b830249f16752184ecb361cce592c7795bcf9ad) center/cover',
+          backgroundImage: `url(${backgroundImage})`,
+          backgroundColor: '#1D1830',
           borderRadius: '12px',
           overflow: 'hidden',
           position: 'relative',
@@ -172,7 +174,8 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
       }}>
         <div style={{
           width: '100%',
-          background: 'url(https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/3b830249f16752184ecb361cce592c7795bcf9ad) center/cover',
+          backgroundImage: `url(${backgroundImage})`,
+          backgroundColor: '#1D1830',
           borderRadius: '12px',
           overflow: 'hidden',
           position: 'relative',
@@ -204,7 +207,8 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
       }}>
         <div style={{
           width: '100%',
-          background: 'url(https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/3b830249f16752184ecb361cce592c7795bcf9ad) center/cover',
+          backgroundImage: `url(${backgroundImage})`,
+          backgroundColor: '#1D1830',
           borderRadius: '12px',
           overflow: 'hidden',
           position: 'relative',
@@ -258,7 +262,8 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
     }}>
       <div style={{
         width: '100%',
-        background: 'url(https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/3b830249f16752184ecb361cce592c7795bcf9ad) center/cover',
+        backgroundImage: `url(${backgroundImage})`,
+        backgroundColor: '#1D1830',
         borderRadius: '12px',
         overflow: 'hidden',
         position: 'relative',

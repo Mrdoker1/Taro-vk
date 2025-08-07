@@ -19,6 +19,7 @@ import { unlockPin } from '../store/slices/pinsSlice';
 import { DEFAULT_VIEW_PANELS } from '../routes';
 import bridge from '../bridge';
 import starbuyIcon from '../assets/starbuy.svg';
+import backgroundImage from '../assets/background.png';
 
 export interface StarsPurchaseProps extends NavIdProps {}
 
@@ -162,7 +163,8 @@ export const StarsPurchase: FC<StarsPurchaseProps> = ({ id }) => {
         }}>
           <div style={{
             width: '100%',
-            background: 'url(https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/3b830249f16752184ecb361cce592c7795bcf9ad) center/cover',
+            backgroundImage: `url(${backgroundImage})`,
+            backgroundColor: '#1D1830',
             borderRadius: '12px',
             overflow: 'hidden',
             position: 'relative',

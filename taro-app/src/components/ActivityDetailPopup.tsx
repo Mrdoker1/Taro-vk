@@ -6,6 +6,7 @@ import { getAffirmationIcon } from '../constants/affirmation';
 import { downloadActivity, shareActivityToVK } from '../utils/shareUtils';
 import calendarSpreadIcon from '../assets/calendar-spread.svg';
 import calendarAffirmIcon from '../assets/calendar-affirm.svg';
+import backgroundImage from '../assets/background.png';
 
 interface CardData {
   position: number;
@@ -403,7 +404,8 @@ export const ActivityDetailPopup: React.FC<ActivityDetailPopupProps> = ({
           width: '100%',
           maxWidth: '500px',
           maxHeight: '90vh',
-          background: 'url(https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/3b830249f16752184ecb361cce592c7795bcf9ad) center/cover',
+          backgroundImage: `url(${backgroundImage})`,
+          backgroundColor: '#1D1830',
           borderRadius: '12px',
           overflow: 'hidden',
           position: 'relative',
