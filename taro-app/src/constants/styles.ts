@@ -1,9 +1,15 @@
 import backgroundImage from '../assets/background.png';
+import { THEME_CONFIGS, ThemeKey, DEFAULT_THEME, getThemeColors } from './themes';
 
-// Основные цвета приложения
-export const APP_BACKGROUND_COLOR = '#0E0B1D';
-export const SECTION_BACKGROUND_COLOR = '#1D1830';
-export const CUSTOM_ELEMENT_COLOR = 'rgba(51, 41, 85, 1)';
+// Экспортируем типы для удобства
+export type { ThemeKey, ThemeColors, ThemeInfo } from './themes';
+export { getThemeOptions, isValidTheme, DEFAULT_THEME } from './themes';
+
+// Основные цвета приложения (из дефолтной темы)
+const defaultTheme = getThemeColors(DEFAULT_THEME);
+export const APP_BACKGROUND_COLOR = defaultTheme.app;
+export const SECTION_BACKGROUND_COLOR = defaultTheme.section;
+export const CUSTOM_ELEMENT_COLOR = defaultTheme.customElement;
 
 // Для случаев когда нужен только цвет фона без изображения
 export const BACKGROUND_COLOR = SECTION_BACKGROUND_COLOR;
@@ -80,29 +86,15 @@ export const resetColors = () => {
   setCustomElementColor(CUSTOM_ELEMENT_COLOR);
 };
 
-// Предустановленные темы
-export const THEMES = {
-  default: {
-    app: '#0E0B1D',
-    section: '#1D1830',
-    customElement: 'rgba(51, 41, 85, 1)'
-  },
-  green: {
-    app: '#0C150D',
-    section: '#141C11',
-    customElement: 'rgba(30, 50, 35, 1)'
-  },
-  orange: {
-    app: '#171611',
-    section: '#261B17',
-    customElement: 'rgba(85, 51, 41, 1)'
-  }
-} as const;
+// Предустановленные темы (экспортируем для совместимости)
+export const THEMES = Object.fromEntries(
+  Object.entries(THEME_CONFIGS).map(([key, config]) => [key, config.colors])
+) as Record<ThemeKey, typeof THEME_CONFIGS[ThemeKey]['colors']>;
 
 // Применение темы
-export const applyTheme = (themeName: keyof typeof THEMES) => {
-  const theme = THEMES[themeName];
-  setAppBackgroundColor(theme.app);
-  setSectionBackgroundColor(theme.section);
-  setCustomElementColor(theme.customElement);
+export const applyTheme = (themeName: ThemeKey) => {
+  const themeColors = getThemeColors(themeName);
+  setAppBackgroundColor(themeColors.app);
+  setSectionBackgroundColor(themeColors.section);
+  setCustomElementColor(themeColors.customElement);
 };

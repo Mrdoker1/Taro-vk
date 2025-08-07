@@ -18,7 +18,8 @@ import { CustomSelect } from '../components/CustomSelect';
 import { CustomToggle } from '../components/CustomToggle';
 import { DEFAULT_VIEW_PANELS } from '../routes';
 import { AppLanguage, getLanguageDisplayName } from '../utils/languageUtils';
-import { BACKGROUND_BASE, THEMES } from '../constants/styles';
+import { BACKGROUND_BASE } from '../constants/styles';
+import { getThemeOptions, ThemeKey } from '../constants/themes';
 
 type ZodiacSign = 'Aries' | 'Taurus' | 'Gemini' | 'Cancer' | 'Leo' | 'Virgo' | 'Libra' | 'Scorpio' | 'Sagittarius' | 'Capricorn' | 'Aquarius' | 'Pisces';
 
@@ -47,11 +48,7 @@ const languages = availableLanguages.map(lang => ({
 }));
 
 // Создаем список тем для дропдауна
-const themes = [
-  { value: 'default' as const, label: 'По умолчанию' },
-  { value: 'green' as const, label: 'Зелёная' },
-  { value: 'orange' as const, label: 'Оранжевая' },
-];
+const themes = getThemeOptions();
 
 export interface SettingsProps extends NavIdProps {}
 
@@ -76,7 +73,7 @@ export const Settings: FC<SettingsProps> = ({ id }) => {
   };
 
   const handleThemeChange = (value: string) => {
-    dispatch(setTheme(value as keyof typeof THEMES));
+    dispatch(setTheme(value as ThemeKey));
   };
 
   const handleAboutApp = () => {

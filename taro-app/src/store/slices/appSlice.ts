@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import bridge from '../../bridge';
-import { THEMES, applyTheme } from '../../constants/styles';
+import { applyTheme } from '../../constants/styles';
+import { ThemeKey, DEFAULT_THEME, isValidTheme } from '../../constants/themes';
 
 // Асинхронный action для загрузки вопроса из VK Storage
 export const loadUserQuestion = createAsyncThunk(
@@ -37,17 +38,17 @@ export const loadUserQuestion = createAsyncThunk(
 );
 
 // Функция для получения темы из localStorage
-const getThemeFromStorage = (): keyof typeof THEMES => {
+const getThemeFromStorage = (): ThemeKey => {
   try {
-    const savedTheme = localStorage.getItem('userTheme') as keyof typeof THEMES;
-    return savedTheme && savedTheme in THEMES ? savedTheme : 'default';
+    const savedTheme = localStorage.getItem('userTheme');
+    return savedTheme && isValidTheme(savedTheme) ? savedTheme : DEFAULT_THEME;
   } catch {
-    return 'default';
+    return DEFAULT_THEME;
   }
 };
 
 // Функция для сохранения темы в localStorage
-const saveThemeToStorage = (theme: keyof typeof THEMES): void => {
+const saveThemeToStorage = (theme: ThemeKey): void => {
   try {
     localStorage.setItem('userTheme', theme);
   } catch {
@@ -118,7 +119,7 @@ interface AppState {
   error: string | null;
   useManualCardSelection: boolean;
   userQuestion: string;
-  theme: keyof typeof THEMES;
+  theme: ThemeKey;
 }
 
 const initialState: AppState = {
@@ -150,7 +151,7 @@ const appSlice = createSlice({
       state.userQuestion = '';
       saveUserQuestionToStorage('');
     },
-    setTheme: (state, action: PayloadAction<keyof typeof THEMES>) => {
+    setTheme: (state, action: PayloadAction<ThemeKey>) => {
       state.theme = action.payload;
       applyTheme(action.payload);
       saveThemeToStorage(action.payload);

@@ -5,7 +5,7 @@
   /* Основные цвета приложения */
   --app-background-color: #0E0B1D;
   --section-background-color: #1D1830;
-  --custom-element-color: rgba(51, 41, 85, 1);
+  --custom-element-color: #332955ff;
   
   /* VK UI переменные */
   --vkui--color_background: var(--app-background-color) !important;
