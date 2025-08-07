@@ -100,7 +100,7 @@ export const CustomSelect: FC<CustomSelectProps> = ({
             left: 0,
             right: 0,
             zIndex: 1000,
-            backgroundColor: 'rgba(51, 41, 85, 1)',
+            backgroundColor: 'var(--custom-element-color)',
             border: '2px solid rgba(227, 199, 122, 1)',
             borderTop: 'none',
             borderRadius: '0 0 3px 3px',

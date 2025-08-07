@@ -166,7 +166,7 @@ export const HoroscopeSection = () => {
     bottom: 0,
     backgroundImage: BACKGROUND_IMAGE_URL,
     borderRadius: isMobile ? '12px' : '16px',
-    // border: '1px solid rgba(232, 210, 140, 0.15)',
+    border: '1px solid rgba(232, 210, 140, 0.15)',
     backgroundSize: 'cover',
     backgroundPosition: 'center',
     backgroundRepeat: 'no-repeat'

@@ -61,7 +61,7 @@ export const StarButton: FC<StarButtonProps> = ({
         display: 'flex',
         alignItems: 'stretch',
         height: currentSize.height,
-        backgroundColor: 'rgba(51, 41, 85, 1)',
+        backgroundColor: 'var(--custom-element-color)',
         borderRadius: '100px',
         overflow: 'hidden',
         width: stretched ? '100%' : 'auto'
