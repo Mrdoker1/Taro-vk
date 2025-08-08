@@ -15,7 +15,7 @@ import { StarButton } from '../components/StarButton';
 import { CustomButton } from '../components/CustomButton';
 import { useResponsive } from '../hooks/useResponsive';
 import { useAppDispatch } from '../store';
-import { unlockPin } from '../store/slices/pinsSlice';
+import { checkPinConditions } from '../store/slices/pinsSlice';
 import { DEFAULT_VIEW_PANELS } from '../routes';
 import bridge from '../bridge';
 import starbuyIcon from '../assets/starbuy.svg';
@@ -133,7 +133,7 @@ export const StarsPurchase: FC<StarsPurchaseProps> = ({ id }) => {
       console.log('Покупка успешна:', result);
       
       // Разблокируем пин "Коллекционер Звезд" при любой успешной покупке
-      dispatch(unlockPin('star'));
+      dispatch(checkPinConditions({ type: 'stars_purchased', data: { packageId: packageData.id } }));
       
       // TODO: Отправить запрос на сервер для начисления звезд
     } catch (error) {

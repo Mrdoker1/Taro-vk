@@ -186,9 +186,29 @@ export const CollectionPins: FC<CollectionPinsProps> = ({ id }) => {
                     textAlign: 'center',
                     gap: '12px',
                     opacity: pin.isUnlocked ? 1 : 0.6,
-                    transition: 'all 0.3s ease'
+                    transition: 'all 0.3s ease',
+                    position: 'relative'
                   }}
                 >
+                  {/* Счетчик прогресса в правом верхнем углу */}
+                  {!pin.isUnlocked && pin.requiredCount && pin.requiredCount > 1 && (
+                    <div style={{
+                      position: 'absolute',
+                      top: '8px',
+                      right: '8px',
+                      backgroundColor: 'rgba(232, 210, 140, 0.9)',
+                      color: '#0E0B1D',
+                      fontSize: '10px',
+                      fontWeight: '600',
+                      fontFamily: 'Jost',
+                      padding: '4px 8px',
+                      borderRadius: '12px',
+                      zIndex: 1,
+                      boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)'
+                    }}>
+                      {pin.currentCount ?? 0}/{pin.requiredCount}
+                    </div>
+                  )}
                   {/* Иконка пина */}
                   <div style={{
                     width: isMobile ? '120px' : '150px',
