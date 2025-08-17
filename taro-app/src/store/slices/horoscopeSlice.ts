@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import { API } from '../../constants/api';
 import { AppLanguage, ApiType, getLanguageForApi } from '../../utils/languageUtils';
 
 type HoroscopeType = 'daily' | 'weekly' | 'monthly';
@@ -36,13 +37,6 @@ const initialState: HoroscopeState = {
   error: null,
 };
 
-// Определяем URL API в зависимости от окружения
-const isDevelopment = window.location.hostname === 'localhost' || 
-                     window.location.hostname === '127.0.0.1';
-const API_URL = isDevelopment 
-  ? 'http://localhost:3000' 
-  : 'http://109.196.100.242:3000';
-
 export const fetchHoroscope = createAsyncThunk(
   'horoscope/fetchHoroscope',
   async ({ sign, type, day = 'TODAY', lang = 'russian' as AppLanguage }: { 
@@ -61,7 +55,7 @@ export const fetchHoroscope = createAsyncThunk(
         ...(type === 'daily' && { day }),
       });
 
-      const response = await fetch(`${API_URL}/horoscope/${type}?${params}`);
+      const response = await fetch(API.horoscope(type, params.toString()));
       
       if (!response.ok) {
         if (response.status === 429) {

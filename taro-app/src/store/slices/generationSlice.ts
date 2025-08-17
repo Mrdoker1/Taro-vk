@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { API } from '../../constants/api';
 
 // Типы данных
 export interface GenerationRequest {
@@ -48,13 +49,6 @@ const initialState: GenerationState = {
   isGenerating: false,
   generationError: null,
 };
-
-// Определяем URL API в зависимости от окружения
-const isDevelopment = window.location.hostname === 'localhost' || 
-                     window.location.hostname === '127.0.0.1';
-const API_URL = isDevelopment 
-  ? 'http://localhost:3000' 
-  : 'http://109.196.100.242:3000';
 
 // Функция для подготовки промпта с данными о картах
 const prepareRequestData = (requestData: GenerationRequest) => {
@@ -177,8 +171,9 @@ export const generateText = createAsyncThunk(
       const preparedData = prepareRequestData(requestData);
       console.log('Подготовленные данные для API:', preparedData);
       
-      // Проверяем, что API_URL правильно сформирован
-      console.log('API URL для запроса:', `${API_URL}/generate`);
+      // Проверяем, что API URL правильно сформирован
+      const apiUrl = API.generate();
+      console.log('API URL для запроса:', apiUrl);
       
       // Дамп тела запроса для отладки
       const requestBody = JSON.stringify(preparedData);
@@ -207,7 +202,7 @@ export const generateText = createAsyncThunk(
       }, timeoutDuration);
       
       try {
-        const response = await fetch(`${API_URL}/generate`, {
+        const response = await fetch(apiUrl, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

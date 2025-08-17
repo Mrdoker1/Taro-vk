@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { AppLanguage, ApiType, getLanguageForApi } from '../../utils/languageUtils';
+import { API } from '../../constants/api';
 
 // Типы данных
 export interface CardMeta {
@@ -40,13 +41,6 @@ const initialState: TaroSpreadsState = {
   spreadError: null,
 };
 
-// Определяем URL API в зависимости от окружения
-const isDevelopment = window.location.hostname === 'localhost' || 
-                     window.location.hostname === '127.0.0.1';
-const API_URL = isDevelopment 
-  ? 'http://localhost:3000' 
-  : 'http://109.196.100.242:3000';
-
     //https://taro-d8jd.onrender.com
 
 // Асинхронные действия (thunks)
@@ -57,7 +51,7 @@ export const fetchSpreads = createAsyncThunk(
       // Используем утилиту для получения языка в нужном формате для API
       const apiLang = getLanguageForApi(lang, ApiType.TARO_DECKS);
       
-      const apiUrl = `${API_URL}/spreads?includeAll=true&lang=${apiLang}`;
+      const apiUrl = API.spreads(`includeAll=true&lang=${apiLang}`);
       console.log('=== ОТЛАДКА API ЗАПРОСА ===');
       console.log('URL запроса:', apiUrl);
       
@@ -97,7 +91,7 @@ export const fetchSpreadDetails = createAsyncThunk(
       // Используем утилиту для получения языка в нужном формате для API
       const apiLang = getLanguageForApi(lang, ApiType.TARO_DECKS);
       
-      const response = await fetch(`${API_URL}/spreads/${spreadId}?includeAll=true&lang=${apiLang}`);
+      const response = await fetch(API.spreadDetails(spreadId, `includeAll=true&lang=${apiLang}`));
       
       if (!response.ok) {
         const errorData = await response.json().catch(() => null);

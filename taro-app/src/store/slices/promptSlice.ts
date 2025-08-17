@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import { API } from '../../constants/api';
 import { AppLanguage, ApiType, getLanguageForApi } from '../../utils/languageUtils';
 
 // Типы данных
@@ -24,13 +25,6 @@ const initialState: PromptState = {
   templateLoading: false,
   templateError: null,
 };
-
-// Определяем URL API в зависимости от окружения
-const isDevelopment = window.location.hostname === 'localhost' || 
-                     window.location.hostname === '127.0.0.1';
-const API_URL = isDevelopment 
-  ? 'http://localhost:3000' 
-  : '  http://109.196.100.242:3000';
 
 // Дефолтный системный промпт для Таро
 const DEFAULT_TARO_SYSTEM_PROMPT = `Ты — профессиональный таролог. Отвечай ТОЛЬКО на вопросы о таро, предсказаниях и эзотерике.
@@ -82,7 +76,7 @@ export const fetchPromptTemplate = createAsyncThunk(
       
       console.log(`Загрузка шаблона промпта: ID=${promptId}, язык=${apiLang}, тип API=${apiType}`);
       
-      const response = await fetch(`${API_URL}/prompt-template/${promptId}?lang=${apiLang}`);
+      const response = await fetch(API.promptTemplate(promptId, `lang=${apiLang}`));
       
       if (!response.ok) {
         if (response.status === 404) {
