@@ -30,7 +30,7 @@ const isDevelopment = window.location.hostname === 'localhost' ||
                      window.location.hostname === '127.0.0.1';
 const API_URL = isDevelopment 
   ? 'http://localhost:3000' 
-  : 'https://taro-d8jd.onrender.com';
+  : '  http://109.196.100.242:3000';
 
 // Дефолтный системный промпт для Таро
 const DEFAULT_TARO_SYSTEM_PROMPT = `Ты — профессиональный таролог. Отвечай ТОЛЬКО на вопросы о таро, предсказаниях и эзотерике.

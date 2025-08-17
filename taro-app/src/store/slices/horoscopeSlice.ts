@@ -41,7 +41,7 @@ const isDevelopment = window.location.hostname === 'localhost' ||
                      window.location.hostname === '127.0.0.1';
 const API_URL = isDevelopment 
   ? 'http://localhost:3000' 
-  : 'https://taro-d8jd.onrender.com';
+  : 'http://109.196.100.242:3000';
 
 export const fetchHoroscope = createAsyncThunk(
   'horoscope/fetchHoroscope',
