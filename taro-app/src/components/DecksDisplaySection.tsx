@@ -5,6 +5,7 @@ import { MagicLoader } from './MagicLoader';
 import { useAppSelector } from '../store';
 import { TaroDeck } from '../store/slices/taroDecksSlice';
 import { BACKGROUND_BASE } from '../constants/styles';
+import noImagePlaceholder from '../assets/no-image.png';
 
 // Кастомный хук для адаптивности
 const useResponsive = () => {
@@ -33,7 +34,7 @@ interface DeckCardProps {
   onViewDetails: (deckId: string) => void;
 }
 
-const DeckCard: React.FC<DeckCardProps> = ({ deck, onViewDetails }) => {
+const DeckCard: React.FC<DeckCardProps> = React.memo(({ deck, onViewDetails }) => {
   const { isMobile, isSmallMobile } = useResponsive();
 
   // Объединенные базовые стили
@@ -114,7 +115,7 @@ const DeckCard: React.FC<DeckCardProps> = ({ deck, onViewDetails }) => {
           
           {/* Изображение обложки колоды */}
           <img
-            src={deck.coverImageUrl || '/placeholder-deck.png'}
+            src={deck.coverImageUrl || noImagePlaceholder}
             alt={`${deck.name} deck`}
             style={{
               width: isSmallMobile ? '130px' : '180px',
@@ -126,7 +127,8 @@ const DeckCard: React.FC<DeckCardProps> = ({ deck, onViewDetails }) => {
             }}
             onError={(e) => {
               const target = e.target as HTMLImageElement;
-              target.src = '/placeholder-deck.png';
+              console.warn('Ошибка загрузки изображения колоды:', target.src);
+              target.src = noImagePlaceholder;
             }}
           />
         </div>
@@ -190,13 +192,13 @@ const DeckCard: React.FC<DeckCardProps> = ({ deck, onViewDetails }) => {
       </div>
     </div>
   );
-};
+});
 
 interface DecksDisplaySectionProps {
   onViewDeckDetails: (deckId: string) => void;
 }
 
-export const DecksDisplaySection: React.FC<DecksDisplaySectionProps> = ({ onViewDeckDetails }) => {
+export const DecksDisplaySection: React.FC<DecksDisplaySectionProps> = React.memo(({ onViewDeckDetails }) => {
   const { decks, decksLoading, decksError } = useAppSelector((state) => state.taroDecks);
   const { isMobile, isSmallMobile } = useResponsive();
 
@@ -307,4 +309,4 @@ export const DecksDisplaySection: React.FC<DecksDisplaySectionProps> = ({ onView
       {renderContent()}
     </section>
   );
-};
+});

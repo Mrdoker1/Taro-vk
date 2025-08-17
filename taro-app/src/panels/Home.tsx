@@ -1,4 +1,4 @@
-import { FC, useEffect, useState, useRef } from 'react';
+import { FC, useEffect, useState, useRef, useCallback } from 'react';
 import {
   Panel,
   Div,
@@ -68,17 +68,17 @@ export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
 
 
 
-  const handleDeckDetails = (deckId: string) => {
+  const handleDeckDetails = useCallback((deckId: string) => {
     routeNavigator.push(`/deck/${deckId}`);
-  };
+  }, [routeNavigator]);
 
-  const handleOpenSpreads = () => {
+  const handleOpenSpreads = useCallback(() => {
     routeNavigator.push(`/spreads`);
-  };
+  }, [routeNavigator]);
 
-  const handleOpenAffirmations = () => {
+  const handleOpenAffirmations = useCallback(() => {
     routeNavigator.push(`/affirmation`);
-  };
+  }, [routeNavigator]);
 
   const handleOpenCalendar = () => {
     routeNavigator.push(`/calendar`);
