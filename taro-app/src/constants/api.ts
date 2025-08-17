@@ -5,7 +5,7 @@
 // Базовые URL для разных окружений
 const API_URLS = {
   development: 'http://localhost:3000',
-  production: 'http://109.196.100.242:3000',
+  production: 'https://taroapi.uno',
   // Альтернативный продакшн URL (закомментирован)
   // production: 'https://taro-d8jd.onrender.com',
 } as const;
