@@ -155,7 +155,8 @@ export const HoroscopeSection = () => {
     padding: isVerySmallMobile ? '12px' : isMobile ? '16px' : '24px',
     maxWidth: '100%',
     margin: '0 auto',
-    boxSizing: 'border-box'
+    boxSizing: 'border-box',
+    overflow: 'hidden',
   };
   // Фон секции
   const backgroundStyle: React.CSSProperties = {
