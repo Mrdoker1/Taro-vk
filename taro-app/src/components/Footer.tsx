@@ -1,6 +1,7 @@
 import { FC, useState, useEffect } from 'react';
 import { Div, Button } from '@vkontakte/vkui';
 import logoSvg from '../assets/logo.svg';
+import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
 
 interface FooterProps {
   onAboutApp?: () => void;
@@ -8,6 +9,7 @@ interface FooterProps {
 }
 
 export const Footer: FC<FooterProps> = ({ onAboutApp, onLegalInfo }) => {
+  const routeNavigator = useRouteNavigator();
   const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1200);
 
   // Отслеживание размера окна
@@ -67,8 +69,11 @@ export const Footer: FC<FooterProps> = ({ onAboutApp, onLegalInfo }) => {
         display: 'flex', 
         alignItems: 'center', 
         gap: '12px',
-        order: isMobile ? 2 : 1
-      }}>
+        order: isMobile ? 2 : 1,
+        cursor: 'pointer'
+      }}
+        onClick={() => routeNavigator.replace('/')}
+      >
         <img 
           src={logoSvg} 
           alt="Seluna - расклады и советы Таро" 
