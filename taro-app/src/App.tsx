@@ -10,9 +10,11 @@ import bridge from './bridge';
 import { store } from './store';
 import { loadUserQuestion } from './store/slices/appSlice';
 import { initializePins } from './store/slices/pinsSlice';
+import { initializeStars } from './store/slices/starsSlice';
 import { applyTheme } from './constants/styles';
 import { AppWrapper } from './components/AppWrapper';
 import { PinNotificationPopup } from './components/PinNotificationPopup';
+import { PurchaseStarsPopup } from './components/PurchaseStarsPopup';
 
 export const App = () => {
   const { panel: activePanel = DEFAULT_VIEW_PANELS.HOME } = useActiveVkuiLocation();
@@ -37,6 +39,10 @@ export const App = () => {
         // Инициализируем пины
         console.log('Инициализируем пины...');
         store.dispatch(initializePins());
+        
+        // Инициализируем звёзды
+        console.log('Инициализируем звёзды...');
+        store.dispatch(initializeStars());
         
         // Применяем сохраненную тему
         const currentTheme = store.getState().app.theme;
@@ -83,6 +89,12 @@ export const App = () => {
         
         {/* Глобальный попап для уведомлений о пинах */}
         <PinNotificationPopup />
+        
+        {/* Глобальный попап для покупки звёзд */}
+        <PurchaseStarsPopup 
+          activeModal={null} 
+          onClose={() => {}} 
+        />
       </AppWrapper>
     </Provider>
   );

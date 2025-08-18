@@ -8,6 +8,7 @@ import promptReducer from './slices/promptSlice';
 import generationReducer from './slices/generationSlice';
 import calendarReducer from './slices/calendarSlice';
 import pinsReducer from './slices/pinsSlice';
+import starsReducer from './slices/starsSlice';
 
 export const store = configureStore({
   reducer: {
@@ -19,6 +20,7 @@ export const store = configureStore({
     generation: generationReducer,
     calendar: calendarReducer,
     pins: pinsReducer,
+    stars: starsReducer,
   },
 });
 

@@ -1,4 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import type { AppDispatch, RootState } from '../index';
+import { showPurchasePopup, spendStar } from './starsSlice';
 import { API } from '../../constants/api';
 
 // Типы данных
@@ -163,10 +165,20 @@ const prepareRequestData = (requestData: GenerationRequest) => {
 };
 
 // Асинхронные действия (thunks)
-export const generateText = createAsyncThunk(
+export const generateText = createAsyncThunk<GenerationResponse, GenerationRequest, {
+  dispatch: AppDispatch;
+  state: RootState;
+}>(
   'generation/generateText',
-  async (requestData: GenerationRequest, { rejectWithValue }) => {
+  async (requestData: GenerationRequest, { dispatch, getState, rejectWithValue }) => {
     try {
+      // Проверяем, достаточно ли звёзд для запроса
+      const { stars } = getState();
+      if (stars.count <= 0) {
+        dispatch(showPurchasePopup());
+        return rejectWithValue('Недостаточно звёзд для выполнения запроса. Перейдите на страницу покупки звёзд.');
+      }
+      
       // Подготавливаем данные для запроса
       const preparedData = prepareRequestData(requestData);
       console.log('Подготовленные данные для API:', preparedData);
@@ -255,11 +267,15 @@ export const generateText = createAsyncThunk(
       
       if (data.text) {
         // Если есть поле text, возвращаем ответ как есть
+        // Списываем звезду за успешный запрос
+        dispatch(spendStar());
         return data;
       } else if (data.message && (data.positions || Array.isArray(data.positions))) {
         // Если есть поле message и positions, значит это формат JSON-толкования для Таро
         const jsonResult = JSON.stringify(data);
         console.log('Преобразовали объект толкования Таро в строку:', jsonResult);
+        // Списываем звезду за успешный запрос
+        dispatch(spendStar());
         return {
           text: jsonResult
         };
@@ -267,6 +283,8 @@ export const generateText = createAsyncThunk(
         // Если есть поля title и sections, это формат ответа для аффирмаций
         console.log('Получен ответ в формате аффирмаций:', data);
         // Для компонента DailyAffirmation мы возвращаем объект напрямую
+        // Списываем звезду за успешный запрос
+        dispatch(spendStar());
         return {
           text: JSON.stringify(data)
         };
@@ -282,6 +300,8 @@ export const generateText = createAsyncThunk(
         console.log('Получен ответ в неизвестном формате, пробуем преобразовать в JSON:', data);
         try {
           const jsonResult = JSON.stringify(data);
+          // Списываем звезду за успешный запрос
+          dispatch(spendStar());
           return {
             text: jsonResult
           };

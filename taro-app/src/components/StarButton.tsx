@@ -1,5 +1,6 @@
 import { FC, useState } from 'react';
 import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
+import { useAppSelector } from '../store';
 import { DEFAULT_VIEW_PANELS } from '../routes';
 import starIcon from '../assets/star.svg';
 
@@ -14,8 +15,7 @@ export const StarButton: FC<StarButtonProps> = ({
   stretched = false,
   onClick 
 }) => {
-  // TODO: Получать реальное количество звезд из store
-  const [starCount] = useState(15);
+  const starCount = useAppSelector(state => state.stars.count);
   const [isHovered, setIsHovered] = useState(false);
   const routeNavigator = useRouteNavigator();
 

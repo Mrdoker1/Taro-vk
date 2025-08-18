@@ -1,51 +1,39 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Button, Text, Title } from '@vkontakte/vkui';
 import { Icon24Dismiss } from '@vkontakte/icons';
-import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
 import { useAppSelector, useAppDispatch } from '../store';
-import { hideNotification, clearNotification } from '../store/slices/pinsSlice';
-import { DEFAULT_VIEW_PANELS } from '../routes';
-import pinAffirmation from '../assets/pin-affirmation.png';
-import pinCalendar from '../assets/pin-calendar.png';
-import pinSpreads from '../assets/pin-spreads.png';
-import pinStar from '../assets/pin-star.png';
+import { hidePurchasePopup } from '../store/slices/starsSlice';
+import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
 import { BACKGROUND_BASE } from '../constants/styles';
+import { StarButton } from './StarButton';
 
-const pinImages: Record<string, string> = {
-  affirmation: pinAffirmation,
-  calendar: pinCalendar,
-  spreads: pinSpreads,
-  star: pinStar,
-};
+interface PurchaseStarsPopupProps {
+  activeModal: string | null;
+  onClose: () => void;
+}
 
-export const PinNotificationPopup: React.FC = () => {
+export const PurchaseStarsPopup: React.FC<PurchaseStarsPopupProps> = ({ 
+  activeModal, 
+  onClose 
+}) => {
   const dispatch = useAppDispatch();
   const routeNavigator = useRouteNavigator();
-  const notification = useAppSelector(state => state.pins.notification);
-
-  // Полная очистка после анимации скрытия
-  useEffect(() => {
-    if (notification && !notification.isVisible) {
-      const timer = setTimeout(() => {
-        dispatch(clearNotification());
-      }, 300); // время анимации
-
-      return () => clearTimeout(timer);
-    }
-  }, [notification, dispatch]);
-
-  if (!notification) return null;
-
-  const { pin, isVisible } = notification;
+  const { showPurchasePopup } = useAppSelector(state => state.stars);
 
   const handleClose = () => {
-    dispatch(hideNotification());
+    dispatch(hidePurchasePopup());
+    onClose();
   };
 
-  const handleGoToCollection = () => {
-    dispatch(hideNotification());
-    routeNavigator.push(`/${DEFAULT_VIEW_PANELS.COLLECTION_PINS}`);
+  const handlePurchase = () => {
+    dispatch(hidePurchasePopup());
+    onClose();
+    routeNavigator.push('/stars-purchase');
   };
+
+  const isOpen = activeModal === 'purchase-stars' || showPurchasePopup;
+
+  if (!isOpen) return null;
 
   return (
     <div
@@ -60,9 +48,9 @@ export const PinNotificationPopup: React.FC = () => {
         alignItems: 'center',
         justifyContent: 'center',
         zIndex: 9999,
-        opacity: isVisible ? 1 : 0,
+        opacity: isOpen ? 1 : 0,
         transition: 'opacity 0.3s ease',
-        pointerEvents: isVisible ? 'auto' : 'none',
+        pointerEvents: isOpen ? 'auto' : 'none',
         padding: '20px'
       }}
       onClick={handleClose}
@@ -77,7 +65,7 @@ export const PinNotificationPopup: React.FC = () => {
           width: '100%',
           position: 'relative',
           boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-          transform: isVisible ? 'scale(1) translateY(0)' : 'scale(0.9) translateY(20px)',
+          transform: isOpen ? 'scale(1) translateY(0)' : 'scale(0.9) translateY(20px)',
           transition: 'all 0.3s ease',
         }}
       >
@@ -105,43 +93,31 @@ export const PinNotificationPopup: React.FC = () => {
           margin: '0 0 8px 0',
           paddingRight: '40px'
         }}>
-          Новое достижение!
+          Недостаточно звёзд
         </Title>
 
         {/* Разделитель */}
         <div style={{
             width: '100%',
             height: '1px',
-            background: 'linear-gradient(90deg, transparent, rgba(232, 210, 140, 0.3), transparent)'
+            background: 'linear-gradient(90deg, transparent, rgba(232, 210, 140, 0.3), transparent)',
+            marginBottom: '16px'
         }} />
 
-        {/* Изображение пина */}
+        {/* Компонент звёзд */}
         <div style={{
           display: 'flex',
           justifyContent: 'center',
-          marginBottom: '16px'
+          marginBottom: '20px',
+          marginTop: '12px'
         }}>
-          <img 
-            src={pinImages[pin.id] || pin.image} 
-            alt={pin.name}
-            style={{
-              width: '120px',
-              height: '120px',
-              objectFit: 'contain',
-            }}
-          />
+          <div style={{ 
+            pointerEvents: 'none',
+            transform: 'scale(1.2)'
+          }}>
+            <StarButton size="m" />
+          </div>
         </div>
-
-        {/* Название пина */}
-        <Title level="3" style={{
-          color: '#ffffff',
-          fontSize: '16px',
-          fontWeight: '500',
-          margin: '0 0 8px 0',
-          textAlign: 'center'
-        }}>
-          {pin.name}
-        </Title>
 
         {/* Описание */}
         <Text style={{
@@ -152,7 +128,8 @@ export const PinNotificationPopup: React.FC = () => {
           marginBottom: '16px',
           lineHeight: '20px'
         }}>
-          {pin.description}
+          Для создания гаданий и афирмаций нужны звёзды. 
+          Пополните баланс, чтобы продолжить пользоваться приложением.
         </Text>
 
         {/* Разделитель */}
@@ -164,17 +141,6 @@ export const PinNotificationPopup: React.FC = () => {
             marginTop: '16px'
         }} />
 
-        {/* Требование */}
-        <Text style={{
-          color: '#4BB34B',
-          fontSize: '14px',
-          textAlign: 'center',
-          display: 'block',
-          marginBottom: '20px'
-        }}>
-          ✓ {pin.requirement}
-        </Text>
-
         {/* Кнопки */}
         <div style={{
           display: 'flex',
@@ -183,7 +149,7 @@ export const PinNotificationPopup: React.FC = () => {
         }}>
           <Button 
             size="l" 
-            onClick={handleGoToCollection}
+            onClick={handlePurchase}
             style={{
               fontSize: '16px',
               color: '#000000',
@@ -203,7 +169,7 @@ export const PinNotificationPopup: React.FC = () => {
               e.currentTarget.style.boxShadow = 'none';
             }}
           >
-            Перейти к коллекции
+            Купить звёзды
           </Button>
           
           <Button 
@@ -214,7 +180,7 @@ export const PinNotificationPopup: React.FC = () => {
               fontSize: '16px'
             }}
           >
-            Продолжить
+            Отмена
           </Button>
         </div>
       </div>
