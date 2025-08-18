@@ -165,17 +165,22 @@ export const StarsPurchase: FC<StarsPurchaseProps> = ({ id }) => {
         />
 
         <Div style={{ 
-          padding: '20px 12px',
+          padding: isMobile ? '8px 0' : '20px 12px',
           display: 'flex',
-          justifyContent: 'flex-start'
+          justifyContent: 'center',
+          alignItems: 'center',
+          width: '100%',
+          boxSizing: 'border-box'
         }}>
           <div style={{
             width: '100%',
+            margin: isMobile ? '0 12px' : '0 auto',
             ...BACKGROUND_BASE,
             borderRadius: '12px',
             overflow: 'hidden',
             position: 'relative',
-            padding: isMobile ? '16px' : '32px'
+            padding: isMobile ? '16px' : '32px',
+            boxSizing: 'border-box'
           }}>
             {/* Заголовок секции */}
             <div style={{
@@ -247,19 +252,28 @@ export const StarsPurchase: FC<StarsPurchaseProps> = ({ id }) => {
 
             {/* Основной контент в две колонки */}
             <div style={{
-              display: 'grid',
-              gridTemplateColumns: isMobile ? '1fr' : '1fr 1.2fr',
-              gap: isMobile ? '24px' : '32px',
-              marginBottom: '24px'
+              display: isMobile ? 'flex' : 'grid',
+              gridTemplateColumns: isMobile ? undefined : '1fr 1.2fr',
+              gap: isMobile ? '16px' : '32px',
+              marginBottom: '24px',
+              width: '100%',
+              boxSizing: 'border-box',
+              minWidth: 0
             }}>
               
               {/* Левая колонка - Информация о звездах */}
-              <div>
+              <div style={{
+                width: isMobile ? '100%' : undefined,
+                boxSizing: 'border-box',
+                minWidth: 0
+              }}>
                 <div style={{
                   background: 'rgba(0, 0, 0, 0.3)',
-                  padding: '24px',
+                  padding: isMobile ? '16px' : '24px',
                   height: 'fit-content',
-                  borderTop: '1px solid rgba(227,199,122,1)'
+                  borderTop: '1px solid rgba(227,199,122,1)',
+                  boxSizing: 'border-box',
+                  width: '100%'
                 }}>
                   <Title level="2" style={{
                     color: '#E8D28C',
@@ -395,11 +409,17 @@ export const StarsPurchase: FC<StarsPurchaseProps> = ({ id }) => {
               </div>
 
               {/* Правая колонка - Пакеты звезд */}
-              <div>
+              <div style={{
+                width: isMobile ? '100%' : undefined,
+                boxSizing: 'border-box',
+                minWidth: 0
+              }}>
                 <div style={{
                   display: 'flex',
                   flexDirection: 'column',
-                  gap: '12px'
+                  gap: '12px',
+                  width: '100%',
+                  boxSizing: 'border-box'
                 }}>
                   {starPackages.map((pkg, index) => (
                     <div
@@ -422,7 +442,8 @@ export const StarsPurchase: FC<StarsPurchaseProps> = ({ id }) => {
                         transition: 'transform 0.2s ease, box-shadow 0.2s ease',
                         display: 'flex',
                         alignItems: 'center',
-                        gap: '16px'
+                        gap: '16px',
+                        flexWrap: 'wrap',
                       }}
                       onMouseEnter={(e) => {
                         e.currentTarget.style.transform = 'translateY(-2px)';
@@ -524,11 +545,6 @@ export const StarsPurchase: FC<StarsPurchaseProps> = ({ id }) => {
                       }} />
 
                       {/* Правая часть - Цена и кнопка */}
-                      <div style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '12px'
-                      }}>
                         <div style={{ 
                           textAlign: 'center',
                           marginRight: '12px'
@@ -553,7 +569,6 @@ export const StarsPurchase: FC<StarsPurchaseProps> = ({ id }) => {
                             голосов
                           </Text>
                         </div>
-
                         <CustomButton
                           variant={pkg.popular ? "primary" : "secondary"}
                           size="s"
@@ -562,12 +577,12 @@ export const StarsPurchase: FC<StarsPurchaseProps> = ({ id }) => {
                           style={{
                             minWidth: '120px',
                             fontFamily: 'Jost',
-                            fontWeight: '600'
+                            fontWeight: '600',
+                            width: isMobile ? '100%' : 'initial',
                           }}
                         >
                           {purchasingId === pkg.id ? '...' : 'Обменять'}
                         </CustomButton>
-                      </div>
                     </div>
                   ))}
                 </div>
