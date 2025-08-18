@@ -19,6 +19,10 @@ import { checkPinConditions } from '../store/slices/pinsSlice';
 import { purchaseStars } from '../store/slices/starsSlice';
 import { DEFAULT_VIEW_PANELS } from '../routes';
 import starbuyIcon from '../assets/starbuy.svg';
+import starbuy100 from '../assets/starbuy100.svg';
+import starbuy250 from '../assets/starbuy250.svg';
+import starbuy500 from '../assets/starbuy500.svg';
+import starbuy1000 from '../assets/starbuy1000.svg';
 import { BACKGROUND_BASE } from '../constants/styles';
 
 export interface StarsPurchaseProps extends NavIdProps {}
@@ -459,11 +463,17 @@ export const StarsPurchase: FC<StarsPurchaseProps> = ({ id }) => {
                         flex: '1'
                       }}>
                         <img
-                          src="https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/05fdce831d108d4f8d653ab20d8db93848f86a31?placeholderIfAbsent=true"
-                          alt="Star icon"
+                          src={
+                            pkg.stars === 100 ? starbuy100 :
+                            pkg.stars === 250 ? starbuy250 :
+                            pkg.stars === 500 ? starbuy500 :
+                            pkg.stars === 1000 ? starbuy1000 :
+                            starbuy100
+                          }
+                          alt={pkg.stars + ' звезд'}
                           style={{
-                            width: '32px',
-                            height: '32px',
+                            width: '44px',
+                            height: '44px',
                             objectFit: 'contain'
                           }}
                         />
