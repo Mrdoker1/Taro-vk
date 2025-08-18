@@ -90,7 +90,7 @@ export const StarCounter: React.FC<StarCounterProps> = ({
             size="m"
             onClick={handlePurchaseClick}
           >
-            {count === 0 ? 'Купить звёзды' : 'Пополнить'}
+            {count === 0 ? 'Добавить звёзды' : 'Пополнить'}
           </Button>
         )}
       </Div>

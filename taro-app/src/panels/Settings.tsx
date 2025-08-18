@@ -12,6 +12,7 @@ import { setSign, setLanguage } from '../store/slices/horoscopeSlice';
 import { setUseManualCardSelection, setTheme } from '../store/slices/appSlice';
 import { clearCurrentTemplate } from '../store/slices/promptSlice';
 import { AppHeader } from '../components/AppHeader';
+import settingsIcon from '../assets/settings.svg';
 import { Footer } from '../components/Footer';
 import { StarButton } from '../components/StarButton';
 import { CustomSelect } from '../components/CustomSelect';
@@ -119,15 +120,15 @@ export const Settings: FC<SettingsProps> = ({ id }) => {
               gap: '12px',
               marginBottom: '32px'
             }}>
-              <img
-                src="https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/0e61156ec1cc7e23bcb8f0b86b526b178987a127"
-                alt="Settings icon"
-                style={{
-                  width: '44px',
-                  height: '44px',
-                  objectFit: 'contain'
-                }}
-              />
+                <img
+                  src={settingsIcon}
+                  alt="Settings icon"
+                  style={{
+                    width: '44px',
+                    height: '44px',
+                    objectFit: 'contain'
+                  }}
+                />
               <h1 style={{
                 color: '#ffffff',
                 fontSize: '24px',

@@ -169,7 +169,7 @@ export const PurchaseStarsPopup: React.FC<PurchaseStarsPopupProps> = ({
               e.currentTarget.style.boxShadow = 'none';
             }}
           >
-            Купить звёзды
+            Добавить звёзды
           </Button>
           
           <Button 
