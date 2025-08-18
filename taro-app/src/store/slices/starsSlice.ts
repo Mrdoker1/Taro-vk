@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import bridge from '@vkontakte/vk-bridge';
 import type { AppDispatch, RootState } from '../index';
 
@@ -78,6 +78,59 @@ const loadFromStorage = async (): Promise<number> => {
   }
 };
 
+// Интерфейс для данных пакета звёзд
+interface StarPackageData {
+  id: string;
+  stars: number;
+  votes: number;
+  bonus?: number;
+}
+
+// Асинхронная функция для покупки звёзд через VK Mini Apps
+export const purchaseStars = createAsyncThunk<
+  { success: boolean; starsAdded: number; message: string },
+  StarPackageData,
+  { dispatch: AppDispatch; state: RootState }
+>(
+  'stars/purchase',
+  async (packageData: StarPackageData, { dispatch, rejectWithValue }) => {
+    try {
+      // Вызываем VK Bridge для покупки за голоса
+      const result = await bridge.send('VKWebAppShowOrderBox', {
+        type: 'item',
+        item: `stars_${packageData.id}`,
+      });
+
+      console.log('Результат покупки от VK:', result);
+
+      // Если покупка успешна, добавляем звёзды
+      // В VK Mini Apps API успешная покупка возвращает объект без ошибки
+      const totalStars = packageData.stars + (packageData.bonus || 0);
+      
+      // Добавляем звёзды в store
+      dispatch(addStars(totalStars));
+      
+      return {
+        success: true,
+        starsAdded: totalStars,
+        message: `Успешно добавлено ${totalStars} звёзд!`
+      };
+    } catch (error: unknown) {
+      console.error('Ошибка при покупке звёзд:', error);
+      
+      // Обрабатываем различные типы ошибок VK
+      const errorObj = error as { error_data?: { error_reason?: string }; message?: string };
+      if (errorObj?.error_data?.error_reason === 'user_denied') {
+        return rejectWithValue('Покупка была отменена пользователем');
+      } else if (errorObj?.error_data?.error_reason === 'insufficient_funds') {
+        return rejectWithValue('Недостаточно голосов для покупки');
+      } else {
+        return rejectWithValue(errorObj?.message || 'Произошла ошибка при покупке');
+      }
+    }
+  }
+);
+
 const initialState: StarsState = {
   count: 5, // Начальное количество, будет загружено асинхронно
   loading: false,
@@ -122,6 +175,22 @@ const starsSlice = createSlice({
     setError: (state, action: PayloadAction<string | null>) => {
       state.error = action.payload;
     },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(purchaseStars.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(purchaseStars.fulfilled, (state) => {
+        state.loading = false;
+        state.error = null;
+        // Звёзды уже добавлены в addStars action внутри thunk
+      })
+      .addCase(purchaseStars.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      });
   },
 });
 

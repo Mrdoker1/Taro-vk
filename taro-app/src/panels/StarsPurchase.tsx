@@ -16,8 +16,8 @@ import { CustomButton } from '../components/CustomButton';
 import { useResponsive } from '../hooks/useResponsive';
 import { useAppDispatch } from '../store';
 import { checkPinConditions } from '../store/slices/pinsSlice';
+import { purchaseStars } from '../store/slices/starsSlice';
 import { DEFAULT_VIEW_PANELS } from '../routes';
-import bridge from '../bridge';
 import starbuyIcon from '../assets/starbuy.svg';
 import { BACKGROUND_BASE } from '../constants/styles';
 
@@ -124,21 +124,25 @@ export const StarsPurchase: FC<StarsPurchaseProps> = ({ id }) => {
     setPurchasingId(packageData.id);
     
     try {
-      // Вызываем VK Bridge для покупки за голоса
-      const result = await bridge.send('VKWebAppShowOrderBox', {
-        type: 'item',
-        item: `stars_${packageData.id}`,
-      });
+      // Используем новую функцию purchaseStars из store
+      const result = await dispatch(purchaseStars({
+        id: packageData.id,
+        stars: packageData.stars,
+        votes: packageData.votes,
+        bonus: packageData.bonus
+      })).unwrap();
 
       console.log('Покупка успешна:', result);
       
       // Разблокируем пин "Коллекционер Звезд" при любой успешной покупке
       dispatch(checkPinConditions({ type: 'stars_purchased', data: { packageId: packageData.id } }));
       
-      // TODO: Отправить запрос на сервер для начисления звезд
+      // Показываем сообщение об успехе (можно добавить toast notification)
+      console.log(result.message);
+      
     } catch (error) {
       console.error('Ошибка при покупке:', error);
-      // TODO: Показать уведомление об ошибке
+      // Показываем сообщение об ошибке (можно добавить toast notification)
     } finally {
       setPurchasingId(null);
     }
