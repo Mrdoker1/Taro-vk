@@ -97,7 +97,7 @@ export const Profile: FC<ProfileProps> = ({ id, fetchedUser }) => {
               gap: '12px',
               marginBottom: '32px'
             }}>
-              <Avatar size={60} src={photo_200} style={{ flexShrink: 0 }} />
+              <Avatar size={56} src={photo_200} style={{ flexShrink: 0 }} />
               <div style={{ flex: 1, minWidth: 0 }}>
                 <h1 style={{
                   color: '#ffffff',

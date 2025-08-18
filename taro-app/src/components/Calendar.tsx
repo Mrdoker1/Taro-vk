@@ -368,7 +368,7 @@ export const Calendar: React.FC<CalendarProps> = () => {
           alignItems: 'center', 
           marginBottom: isMobile ? '12px' : '16px'
         }}>
-          <IconButton onClick={() => navigateMonth('prev')}>
+          <IconButton onClick={() => navigateMonth('prev')} aria-label="Предыдущий месяц">
             <Icon24ChevronLeft />
           </IconButton>
           <Title level="2" style={{ 
@@ -378,7 +378,7 @@ export const Calendar: React.FC<CalendarProps> = () => {
           }}>
             {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
           </Title>
-          <IconButton onClick={() => navigateMonth('next')}>
+          <IconButton onClick={() => navigateMonth('next')} aria-label="Следующий месяц">
             <Icon24ChevronRight />
           </IconButton>
         </div>

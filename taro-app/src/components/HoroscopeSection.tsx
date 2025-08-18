@@ -1084,6 +1084,8 @@ export const HoroscopeSection = () => {
                     key={tab.value}
                     selected={type === tab.value}
                     onClick={() => handleTabChange(tab.value)}
+                    aria-controls={`horoscope-content-${tab.value}`}
+                    id={`horoscope-tab-${tab.value}`}
                   >
                     {tab.label}
                   </TabsItem>

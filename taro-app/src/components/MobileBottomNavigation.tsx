@@ -54,6 +54,7 @@ export const MobileBottomNavigation: React.FC = () => {
         onClick={() => handleNavigation('/')}
         selected={getActiveTab() === 'home'}
         data-story="home"
+        aria-label="Главная"
       >
         <div style={{ 
           display: 'flex', 
@@ -72,6 +73,7 @@ export const MobileBottomNavigation: React.FC = () => {
         onClick={() => handleNavigation('/spreads')}
         selected={getActiveTab() === 'spreads'}
         data-story="spreads"
+        aria-label="Расклады"
       >
         <div style={{ 
           display: 'flex', 
@@ -90,6 +92,7 @@ export const MobileBottomNavigation: React.FC = () => {
         onClick={() => handleNavigation('/affirmation')}
         selected={getActiveTab() === 'affirmations'}
         data-story="affirmations"
+        aria-label="Аффирмации"
       >
         <div style={{ 
           display: 'flex', 
@@ -108,6 +111,7 @@ export const MobileBottomNavigation: React.FC = () => {
         onClick={() => handleNavigation('/calendar')}
         selected={getActiveTab() === 'calendar'}
         data-story="calendar"
+        aria-label="Календарь"
       >
         <div style={{ 
           display: 'flex', 
@@ -126,6 +130,7 @@ export const MobileBottomNavigation: React.FC = () => {
         onClick={() => handleNavigation(`/${DEFAULT_VIEW_PANELS.SETTINGS}`)}
         selected={getActiveTab() === 'settings'}
         data-story="settings"
+        aria-label="Настройки"
       >
         <div style={{ 
           display: 'flex', 
