@@ -258,7 +258,8 @@ export const StarsPurchase: FC<StarsPurchaseProps> = ({ id }) => {
               marginBottom: '24px',
               width: '100%',
               boxSizing: 'border-box',
-              minWidth: 0
+              minWidth: 0,
+              flexDirection: 'column',
             }}>
               
               {/* Левая колонка - Информация о звездах */}
