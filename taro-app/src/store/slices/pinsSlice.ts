@@ -57,16 +57,17 @@ const initialPins: Pin[] = [
     requiredCount: 3,
     currentCount: 0,
   },
-  {
-    id: 'star',
-    name: 'Коллекционер Звезд',
-    description: 'Мастерство накопления и обмена энергии',
-    requirement: 'Обменяйте голоса на звезды',
-    image: '', // будет заполнено в компоненте
-    isUnlocked: false,
-    requiredCount: 1,
-    currentCount: 0,
-  },
+  // Закомментировано для бесплатной версии
+  // {
+  //   id: 'star',
+  //   name: 'Коллекционер Звезд',
+  //   description: 'Мастерство накопления и обмена энергии',
+  //   requirement: 'Обменяйте голоса на звезды',
+  //   image: '', // будет заполнено в компоненте
+  //   isUnlocked: false,
+  //   requiredCount: 1,
+  //   currentCount: 0,
+  // },
 ];
 
 // Utility functions for storage
