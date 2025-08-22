@@ -303,3 +303,56 @@ input:focus,
   --vkui--color_stroke_accent: #978041 !important;
   --vkui--color_background_accent: #978041 !important;
 }
+
+/* Footer стили - принудительно темный фон */
+.vkuiDiv:has(.footer-content),
+.footer-wrapper,
+footer,
+.footer-container {
+  background: var(--app-background-color) !important;
+  color: #ffffff !important;
+}
+
+/* Принудительно белый цвет для всех кнопок в Footer */
+.footer-wrapper .vkuiButton,
+footer .vkuiButton,
+.footer-container .vkuiButton,
+[data-testid="footer"] .vkuiButton {
+  color: #ffffff !important;
+  background: transparent !important;
+}
+
+/* Hover эффекты для кнопок Footer */
+.footer-wrapper .vkuiButton:hover,
+footer .vkuiButton:hover,
+.footer-container .vkuiButton:hover,
+[data-testid="footer"] .vkuiButton:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: #ffffff !important;
+}
+
+/* MobileBottomNavigation стили - принудительно темный фон */
+.vkuiTabbar,
+.vkuiTabbar__container {
+  background-color: var(--app-background-color) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Принудительно белый цвет для элементов мобильного меню */
+.vkuiTabbarItem,
+.vkuiTabbarItem__label,
+.vkuiTabbarItem__icon {
+  color: #ffffff !important;
+}
+
+/* Активный элемент мобильного меню */
+.vkuiTabbarItem--selected,
+.vkuiTabbarItem--selected .vkuiTabbarItem__label,
+.vkuiTabbarItem--selected .vkuiTabbarItem__icon {
+  color: var(--vkui--color_accent) !important;
+}
+
+/* Hover эффекты для мобильного меню */
+.vkuiTabbarItem:hover {
+  background: rgba(255, 255, 255, 0.05) !important;
+}

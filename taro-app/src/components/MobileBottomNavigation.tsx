@@ -47,8 +47,8 @@ export const MobileBottomNavigation: React.FC = () => {
       left: 0,
       right: 0,
       zIndex: 1000,
-      backgroundColor: 'var(--vkui--color_background)',
-      borderTop: '1px solid var(--vkui--color_separator_primary)'
+      backgroundColor: 'var(--app-background-color)',
+      borderTop: '1px solid rgba(255, 255, 255, 0.1)'
     }}>
       <TabbarItem
         onClick={() => handleNavigation('/')}

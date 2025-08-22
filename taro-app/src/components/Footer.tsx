@@ -26,6 +26,8 @@ export const Footer: FC<FooterProps> = ({ onAboutApp, onLegalInfo }) => {
 
   return (
     <Div
+      data-testid="footer"
+      className="footer-wrapper"
       style={{
         display: 'flex',
         flexDirection: isMobile ? 'column' : 'row',
@@ -34,7 +36,9 @@ export const Footer: FC<FooterProps> = ({ onAboutApp, onLegalInfo }) => {
         padding: isMobile ? '12px 16px' : '12px 16px',
         height: isMobile ? 'auto' : '44px',
         gap: isMobile ? '12px' : '0',
-        marginBottom: isMobile ? '20px' : '0' // Дополнительный отступ снизу для мобильного меню
+        marginBottom: isMobile ? '20px' : '0', // Дополнительный отступ снизу для мобильного меню
+        background: 'var(--app-background-color)', // Используем наши переменные темы
+        borderTop: '1px solid rgba(255, 255, 255, 0.1)'
       }}
     >
       {/* Кнопки - в мобильной версии сверху */}
@@ -50,7 +54,16 @@ export const Footer: FC<FooterProps> = ({ onAboutApp, onLegalInfo }) => {
           mode="tertiary"
           size="s"
           onClick={onAboutApp}
-          style={{ color: '#ffffff' }}
+          style={{ 
+            color: '#ffffff',
+            transition: 'background-color 0.2s ease',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = 'transparent';
+          }}
         >
           О приложении
         </Button>
@@ -58,7 +71,16 @@ export const Footer: FC<FooterProps> = ({ onAboutApp, onLegalInfo }) => {
           mode="tertiary"
           size="s"
           onClick={onLegalInfo}
-          style={{ color: '#ffffff' }}
+          style={{ 
+            color: '#ffffff',
+            transition: 'background-color 0.2s ease',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = 'transparent';
+          }}
         >
           Правовая информация
         </Button>
