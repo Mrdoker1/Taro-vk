@@ -11,7 +11,6 @@ import {
   Icon28Cards2Outline,
   Icon28MessageOutline,
   Icon28CalendarOutline,
-  Icon28SettingsOutline,
 } from '@vkontakte/icons';
 import { UserInfo } from '@vkontakte/vk-bridge';
 import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
@@ -21,12 +20,9 @@ import { fetchDecks } from '../store/slices/taroDecksSlice';
 import { DEFAULT_VIEW_PANELS } from '../routes';
 import { AppHeader } from '../components/AppHeader';
 import { Footer } from '../components/Footer';
-import { StarButton } from '../components/StarButton';
 import { HoroscopeSection } from '../components/HoroscopeSection';
 import { ExploreSection } from '../components/ExploreSection';
 import { DecksDisplaySection } from '../components/DecksDisplaySection';
-
-import { BannerStars } from '../components/BannerStars';
 
 
 
@@ -125,7 +121,16 @@ export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
                 size="s"
                 onClick={handleOpenSpreads}
                 before={isMobile ? <Icon28Cards2Outline width={16} height={16} /> : undefined}
-                style={{ color: '#ffffff' }}
+                style={{ 
+                  color: '#ffffff',
+                  transition: 'background-color 0.2s ease',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                }}
               >
                 Расклады
               </Button>
@@ -134,7 +139,16 @@ export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
                 size="s"
                 onClick={handleOpenAffirmations}
                 before={isMobile ? <Icon28MessageOutline width={16} height={16} /> : undefined}
-                style={{ color: '#ffffff' }}
+                style={{ 
+                  color: '#ffffff',
+                  transition: 'background-color 0.2s ease',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                }}
               >
                 Аффирмации
               </Button>
@@ -143,22 +157,40 @@ export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
                 size="s"
                 onClick={handleOpenCalendar}
                 before={isMobile ? <Icon28CalendarOutline width={16} height={16} /> : undefined}
-                style={{ color: '#ffffff' }}
+                style={{ 
+                  color: '#ffffff',
+                  transition: 'background-color 0.2s ease',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                }}
               >
                 Календарь
               </Button>
-              <Button
-                mode="tertiary"
-                size="s"
-                onClick={handleOpenSettings}
-                before={isMobile ? <Icon28SettingsOutline width={16} height={16} /> : undefined}
-                style={{ color: '#ffffff' }}
-              >
-                Настройки
-              </Button>
             </>
           }
-          right={<StarButton size="s" />}
+          right={
+            <Button
+              mode="tertiary"
+              size="s"
+              onClick={handleOpenSettings}
+              style={{ 
+                color: '#ffffff',
+                transition: 'background-color 0.2s ease',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'transparent';
+              }}
+            >
+              Настройки
+            </Button>
+          }
         />
 
         <Div style={{ padding: '0 12px' }}>
@@ -172,13 +204,17 @@ export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
             />
           </div>
 
-          {/* Баннер получения звезд */}
+          {/* Баннер получения звезд - временно скрыт */}
+          {/* 
           <div style={{ marginTop: '12px' }}>
             <BannerStars />
           </div>
+          */}
 
           {/* Секция с колодами */}
-          <DecksDisplaySection onViewDeckDetails={handleDeckDetails} />
+          <div style={{ marginBottom: '20px' }}>
+            <DecksDisplaySection onViewDeckDetails={handleDeckDetails} />
+          </div>
         </Div>
         
         <Footer 

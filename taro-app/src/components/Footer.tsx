@@ -33,12 +33,10 @@ export const Footer: FC<FooterProps> = ({ onAboutApp, onLegalInfo }) => {
         flexDirection: isMobile ? 'column' : 'row',
         alignItems: 'center',
         justifyContent: isMobile ? 'center' : 'space-between',
-        padding: isMobile ? '12px 16px' : '12px 16px',
+        padding: isMobile ? '8px 16px' : '12px 16px',
         height: isMobile ? 'auto' : '44px',
-        gap: isMobile ? '12px' : '0',
-        marginBottom: isMobile ? '20px' : '0', // Дополнительный отступ снизу для мобильного меню
-        background: 'var(--app-background-color)', // Используем наши переменные темы
-        borderTop: '1px solid rgba(255, 255, 255, 0.1)'
+        gap: isMobile ? '8px' : '0',
+        background: 'var(--app-background-color)' // Используем наши переменные темы
       }}
     >
       {/* Кнопки - в мобильной версии сверху */}
