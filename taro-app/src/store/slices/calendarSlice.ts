@@ -29,6 +29,7 @@ interface CalendarState {
   selectedDate: string | null;
   loading: boolean;
   error: string | null;
+  dataLoaded: boolean;
 }
 
 const initialState: CalendarState = {
@@ -36,9 +37,15 @@ const initialState: CalendarState = {
   selectedDate: null,
   loading: false,
   error: null,
+  dataLoaded: false,
 };
 
 const STORAGE_KEY = 'calendar_data';
+
+// Кэш для данных календаря в памяти
+let memoryCache: Record<string, CalendarDayData> | null = null;
+let cacheTimestamp = 0;
+const CACHE_TTL = 5000; // 5 секунд кэш
 
 // Utility functions for storage
 const isVKEnvironment = (): boolean => {
@@ -47,6 +54,10 @@ const isVKEnvironment = (): boolean => {
 
 const saveToStorage = async (data: Record<string, CalendarDayData>): Promise<void> => {
   try {
+    // Обновляем кэш в памяти
+    memoryCache = { ...data };
+    cacheTimestamp = Date.now();
+    
     if (isVKEnvironment()) {
       // VK Storage for production с timeout
       const timeoutPromise = new Promise((_, reject) =>
@@ -77,6 +88,13 @@ const saveToStorage = async (data: Record<string, CalendarDayData>): Promise<voi
 
 const loadFromStorage = async (): Promise<Record<string, CalendarDayData>> => {
   try {
+    // Проверяем кэш в памяти
+    const now = Date.now();
+    if (memoryCache && (now - cacheTimestamp) < CACHE_TTL) {
+      console.log('Используем данные из кэша памяти');
+      return memoryCache;
+    }
+    
     if (isVKEnvironment()) {
       // VK Storage for production с timeout
       const timeoutPromise = new Promise((_, reject) =>
@@ -89,18 +107,43 @@ const loadFromStorage = async (): Promise<Record<string, CalendarDayData>> => {
       
       const result = await Promise.race([storagePromise, timeoutPromise]) as { keys: Array<{ key: string; value: string }> };
       const data = result.keys.find(item => item.key === STORAGE_KEY)?.value;
-      return data ? JSON.parse(data) : {};
+      const parsedData = data ? JSON.parse(data) : {};
+      
+      // Обновляем кэш
+      memoryCache = parsedData;
+      cacheTimestamp = now;
+      
+      return parsedData;
     } else {
       // localStorage for development
       const data = localStorage.getItem(STORAGE_KEY);
-      return data ? JSON.parse(data) : {};
+      const parsedData = data ? JSON.parse(data) : {};
+      
+      // Обновляем кэш
+      memoryCache = parsedData;
+      cacheTimestamp = now;
+      
+      return parsedData;
     }
   } catch (error) {
     console.error('Failed to load calendar data:', error);
+    
+    // Если есть кэш, используем его даже если он устарел
+    if (memoryCache) {
+      console.log('Используем устаревший кэш из-за ошибки загрузки');
+      return memoryCache;
+    }
+    
     // Fallback к localStorage даже в VK среде
     try {
       const data = localStorage.getItem(STORAGE_KEY);
-      return data ? JSON.parse(data) : {};
+      const parsedData = data ? JSON.parse(data) : {};
+      
+      // Обновляем кэш
+      memoryCache = parsedData;
+      cacheTimestamp = Date.now();
+      
+      return parsedData;
     } catch {
       return {};
     }
@@ -122,6 +165,7 @@ const calendarSlice = createSlice({
     },
     setDaysData: (state, action: PayloadAction<Record<string, CalendarDayData>>) => {
       state.daysData = action.payload;
+      state.dataLoaded = true;
     },
     addActivity: (state, action: PayloadAction<{ date: string; activity: CalendarActivity }>) => {
       const { date, activity } = action.payload;
@@ -176,7 +220,32 @@ export const {
 } = calendarSlice.actions;
 
 // Async thunks
-export const loadCalendarData = () => async (dispatch: AppDispatch) => {
+export const loadCalendarData = () => async (dispatch: AppDispatch, getState: () => RootState) => {
+  const { calendar } = getState();
+  
+  // Если данные уже загружены, не загружаем повторно
+  if (calendar.dataLoaded) {
+    return;
+  }
+  
+  dispatch(setLoading(true));
+  dispatch(setError(null));
+  
+  try {
+    const data = await loadFromStorage();
+    dispatch(setDaysData(data));
+  } catch (error) {
+    dispatch(setError('Не удалось загрузить данные календаря'));
+  } finally {
+    dispatch(setLoading(false));
+  }
+};
+
+export const forceReloadCalendarData = () => async (dispatch: AppDispatch) => {
+  // Очищаем кэш для принудительной перезагрузки
+  memoryCache = null;
+  cacheTimestamp = 0;
+  
   dispatch(setLoading(true));
   dispatch(setError(null));
   
@@ -192,7 +261,13 @@ export const loadCalendarData = () => async (dispatch: AppDispatch) => {
 
 export const saveCalendarData = (data: Record<string, CalendarDayData>) => async (dispatch: AppDispatch) => {
   try {
-    await saveToStorage(data);
+    // Используем актуальные данные из кэша или текущего состояния
+    const currentData = memoryCache || data;
+    
+    // Объединяем данные (приоритет у новых данных)
+    const mergedData = { ...currentData, ...data };
+    
+    await saveToStorage(mergedData);
   } catch (error) {
     dispatch(setError('Не удалось сохранить данные календаря'));
   }
