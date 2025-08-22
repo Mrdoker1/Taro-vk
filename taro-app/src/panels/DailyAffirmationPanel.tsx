@@ -9,7 +9,6 @@ import {
 import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
 import { DailyAffirmation } from '../components/DailyAffirmation';
 import { Footer } from '../components/Footer';
-import { StarButton } from '../components/StarButton';
 import { AppHeader } from '../components/AppHeader';
 import { useResponsive } from '../hooks/useResponsive';
 import { DEFAULT_VIEW_PANELS } from '../routes';
@@ -31,7 +30,6 @@ export const DailyAffirmationPanel: FC<DailyAffirmationPanelProps> = ({ id }) =>
       <Panel id={id}>
         <AppHeader
           left={<Button mode="tertiary" onClick={handleBackClick}>Назад</Button>}
-          right={<StarButton size="s" />}
         />
 
         <Div style={{ 

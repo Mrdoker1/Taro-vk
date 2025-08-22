@@ -11,7 +11,6 @@ import {
 import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
 import { AppHeader } from '../components/AppHeader';
 import { Footer } from '../components/Footer';
-import { StarButton } from '../components/StarButton';
 import { useResponsive } from '../hooks/useResponsive';
 import { useAppSelector, useAppDispatch } from '../store';
 import { resetPins } from '../store/slices/pinsSlice';
@@ -70,7 +69,6 @@ export const CollectionPins: FC<CollectionPinsProps> = ({ id }) => {
               Назад
             </Button>
           }
-          right={<StarButton size="s" />}
         />
 
         <Div style={{ 

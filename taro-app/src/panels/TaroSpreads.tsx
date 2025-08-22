@@ -12,7 +12,6 @@ import { fetchSpreads } from '../store/slices/taroSpreadsSlice';
 import { SpreadsDisplaySection } from '../components/SpreadsDisplaySection';
 import { TaroSpreadDetails } from '../components/TaroSpreadDetails';
 import { Footer } from '../components/Footer';
-import { StarButton } from '../components/StarButton';
 import { AppHeader } from '../components/AppHeader';
 import { DEFAULT_VIEW_PANELS } from '../routes';
 
@@ -60,7 +59,6 @@ export const TaroSpreads: FC<TaroSpreadsProps> = ({ id }) => {
               {selectedSpreadId ? 'К раскладам' : 'Назад'}
             </Button>
           }
-          right={<StarButton size="s" />}
         />
 
         <Div style={{ 

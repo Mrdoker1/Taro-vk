@@ -10,7 +10,6 @@ import {
 } from '@vkontakte/vkui';
 import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
 import { Footer } from '../components/Footer';
-import { StarButton } from '../components/StarButton';
 import { AppHeader } from '../components/AppHeader';
 import { useResponsive } from '../hooks/useResponsive';
 import { BACKGROUND_BASE } from '../constants/styles';
@@ -45,7 +44,6 @@ export const LegalInfo: FC<LegalInfoProps> = ({ id }) => {
               Назад
             </Button>
           }
-          right={<StarButton size="s" />}
         />
         
         <Div style={{ 

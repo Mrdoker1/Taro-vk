@@ -14,7 +14,6 @@ import { clearCurrentTemplate } from '../store/slices/promptSlice';
 import { AppHeader } from '../components/AppHeader';
 import settingsIcon from '../assets/settings.svg';
 import { Footer } from '../components/Footer';
-import { StarButton } from '../components/StarButton';
 import { CustomSelect } from '../components/CustomSelect';
 import { CustomToggle } from '../components/CustomToggle';
 import { DEFAULT_VIEW_PANELS } from '../routes';
@@ -97,7 +96,6 @@ export const Settings: FC<SettingsProps> = ({ id }) => {
               Назад
             </Button>
           }
-          right={<StarButton size="s" />}
         />
 
         <Div style={{ 

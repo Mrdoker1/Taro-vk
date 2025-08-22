@@ -13,7 +13,6 @@ import {
 import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
 import { AppHeader } from '../components/AppHeader';
 import { Footer } from '../components/Footer';
-import { StarButton } from '../components/StarButton';
 import { CustomButton } from '../components/CustomButton';
 import { useResponsive } from '../hooks/useResponsive';
 import { useAppSelector, useAppDispatch } from '../store';
@@ -81,7 +80,6 @@ export const Profile: FC<ProfileProps> = ({ id, fetchedUser }) => {
               Назад
             </Button>
           }
-          right={<StarButton size="s" />}
         />
 
         <Div style={{ 

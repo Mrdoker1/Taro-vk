@@ -10,7 +10,6 @@ import {
 } from '@vkontakte/vkui';
 import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
 import { Footer } from '../components/Footer';
-import { StarButton } from '../components/StarButton';
 import { AppHeader } from '../components/AppHeader';
 import { useResponsive } from '../hooks/useResponsive';
 import thumbnail from '../assets/thumbnail.png';
@@ -46,7 +45,6 @@ export const AboutApp: FC<AboutAppProps> = ({ id }) => {
               Назад
             </Button>
           }
-          right={<StarButton size="s" />}
         />
         
         <Div style={{ 

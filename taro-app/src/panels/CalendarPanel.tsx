@@ -9,7 +9,6 @@ import {
 import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
 import { Calendar } from '../components/Calendar';
 import { Footer } from '../components/Footer';
-import { StarButton } from '../components/StarButton';
 import { AppHeader } from '../components/AppHeader';
 import { useResponsive } from '../hooks/useResponsive';
 import { DEFAULT_VIEW_PANELS } from '../routes';
@@ -46,7 +45,6 @@ export const CalendarPanel: FC<CalendarPanelProps> = ({ id }) => {
               Назад
             </Button>
           }
-          right={<StarButton size="s" />}
         />
 
         <Div style={{ 

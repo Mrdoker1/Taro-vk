@@ -10,7 +10,6 @@ import { clearUserQuestion } from '../store/slices/appSlice';
 import { CardSelector } from '../components/CardSelector';
 import { TaroReading } from '../components/TaroReading';
 import { Footer } from '../components/Footer';
-import { StarButton } from '../components/StarButton';
 import { AppHeader } from '../components/AppHeader';
 import { DEFAULT_VIEW_PANELS } from '../routes';
 
@@ -70,7 +69,6 @@ export const TaroReadingPanel: FC<TaroReadingPanelProps> = ({ id, spreadId, deck
             {currentStep === 'VIEW_READING' ? 'К выбору карт' : 'Назад'}
           </Button>
         }
-        right={<StarButton size="s" />}
       />
 
       {currentStep === 'SELECT_CARDS' && (
