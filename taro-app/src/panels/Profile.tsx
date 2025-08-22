@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useEffect } from 'react';
 import { UserInfo } from '@vkontakte/vk-bridge';
 import {
   Panel,
@@ -16,7 +16,8 @@ import { Footer } from '../components/Footer';
 import { StarButton } from '../components/StarButton';
 import { CustomButton } from '../components/CustomButton';
 import { useResponsive } from '../hooks/useResponsive';
-import { useAppSelector } from '../store';
+import { useAppSelector, useAppDispatch } from '../store';
+import { loadCalendarData } from '../store/slices/calendarSlice';
 import { DEFAULT_VIEW_PANELS } from '../routes';
 import { BACKGROUND_BASE } from '../constants/styles';
 
@@ -27,11 +28,17 @@ export interface ProfileProps extends NavIdProps {
 export const Profile: FC<ProfileProps> = ({ id, fetchedUser }) => {
   const { photo_200, first_name } = { ...fetchedUser };
   const routeNavigator = useRouteNavigator();
+  const dispatch = useAppDispatch();
   const isMobile = useResponsive();
   
   // Получаем данные из store
   const { pins } = useAppSelector(state => state.pins);
   const { daysData } = useAppSelector(state => state.calendar);
+
+  // Инициализируем календарные данные при загрузке компонента
+  useEffect(() => {
+    dispatch(loadCalendarData());
+  }, [dispatch]);
 
   const handleBackClick = () => {
     routeNavigator.back();
