@@ -259,6 +259,19 @@ div button.vkuiButton--mode-primary,
 .vkuiTextarea,
 .vkuiTextarea__el {
   background-color: transparent !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  border-radius: 8px !important;
+}
+
+/* Базовый border для всех input и textarea элементов */
+.vkuiInput,
+.vkuiInput__el,
+textarea,
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  background-color: transparent !important;
 }
 
 /* Изменяем цвет фокуса с синего на золотой */
@@ -270,6 +283,7 @@ div button.vkuiButton--mode-primary,
   border-color: #978041 !important;
   outline: 2px solid #978041 !important;
   outline-offset: 0px !important;
+  box-shadow: 0 0 0 2px rgba(151, 128, 65, 0.3) !important;
 }
 
 /* Дополнительные стили для состояния фокуса */
@@ -279,6 +293,7 @@ div button.vkuiButton--mode-primary,
   border-color: #978041 !important;
   outline: 2px solid #978041 !important;
   outline-offset: 0px !important;
+  box-shadow: 0 0 0 2px rgba(151, 128, 65, 0.3) !important;
 }
 
 /* Убираем все возможные синие обводки и заменяем на золотые */
@@ -295,6 +310,8 @@ input:focus,
 [class*="vkui"] textarea:focus,
 [class*="vkui"] input:focus {
   outline: 2px solid #978041 !important;
+  border-color: #978041 !important;
+  box-shadow: 0 0 0 2px rgba(151, 128, 65, 0.3) !important;
 }
 
 /* Переопределяем стандартные CSS переменные VKUI для фокуса */
