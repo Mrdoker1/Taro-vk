@@ -433,12 +433,6 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
                       alignItems: 'center',
                       gap: '8px'
                     }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = 'transparent';
-                    }}
                   >
                     <Icon24Delete fill="white" width={16} height={16} />
                     Удалить карту

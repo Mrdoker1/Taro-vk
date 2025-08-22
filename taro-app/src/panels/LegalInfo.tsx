@@ -44,12 +44,6 @@ export const LegalInfo: FC<LegalInfoProps> = ({ id }) => {
                 color: '#ffffff',
                 transition: 'background-color 0.2s ease',
               }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = 'transparent';
-              }}
             >
               Назад
             </Button>

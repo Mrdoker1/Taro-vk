@@ -125,12 +125,6 @@ export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
                   color: '#ffffff',
                   transition: 'background-color 0.2s ease',
                 }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = 'transparent';
-                }}
               >
                 Расклады
               </Button>
@@ -143,12 +137,6 @@ export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
                   color: '#ffffff',
                   transition: 'background-color 0.2s ease',
                 }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = 'transparent';
-                }}
               >
                 Аффирмации
               </Button>
@@ -160,12 +148,6 @@ export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
                 style={{ 
                   color: '#ffffff',
                   transition: 'background-color 0.2s ease',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = 'transparent';
                 }}
               >
                 Календарь
@@ -180,12 +162,6 @@ export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
               style={{ 
                 color: '#ffffff',
                 transition: 'background-color 0.2s ease',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = 'transparent';
               }}
             >
               Настройки
