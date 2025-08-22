@@ -156,7 +156,20 @@ export const StarsPurchase: FC<StarsPurchaseProps> = ({ id }) => {
       <Panel id={id}>
         <AppHeader
           left={
-            <Button mode="tertiary" onClick={handleBackClick}>
+            <Button 
+              mode="tertiary" 
+              onClick={handleBackClick}
+              style={{ 
+                color: '#ffffff',
+                transition: 'background-color 0.2s ease',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'transparent';
+              }}
+            >
               Назад
             </Button>
           }

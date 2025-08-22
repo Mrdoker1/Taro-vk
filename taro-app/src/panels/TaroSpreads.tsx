@@ -55,6 +55,16 @@ export const TaroSpreads: FC<TaroSpreadsProps> = ({ id }) => {
             <Button
               mode="tertiary"
               onClick={handleBack}
+              style={{ 
+                color: '#ffffff',
+                transition: 'background-color 0.2s ease',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'transparent';
+              }}
             >
               {selectedSpreadId ? 'К раскладам' : 'Назад'}
             </Button>
