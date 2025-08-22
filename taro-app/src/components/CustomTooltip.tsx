@@ -19,21 +19,23 @@ export const CustomTooltip: React.FC<CustomTooltipProps> = ({
         <Div style={{ 
           maxWidth: '250px', 
           padding: '8px',
-          backgroundColor: 'rgba(41, 40, 69, 0.95)',
-          borderRadius: '8px'
+          backgroundColor: 'var(--app-background-color)',
+          borderRadius: '8px',
+          border: '1px solid rgba(227, 199, 122, 0.3)'
         }}>
           <div style={{ 
             fontSize: '14px',
-            color: '#1a1a1a',
-            fontWeight: '500'
+            color: '#ffffff',
+            fontWeight: '500',
+            lineHeight: '1.4'
           }}>
             {content}
           </div>
         </Div>
       }
       style={{
-        '--vkui--color_background_content': 'rgba(227, 199, 122, 0.95)',
-        '--vkui--color_text_primary': '#1a1a1a'
+        '--vkui--color_background_content': 'var(--app-background-color)',
+        '--vkui--color_text_primary': '#ffffff'
       } as React.CSSProperties}
     >
       <IconButton

@@ -373,3 +373,23 @@ footer .vkuiButton:hover,
 .vkuiTabbarItem:hover {
   background: rgba(255, 255, 255, 0.05) !important;
 }
+
+/* Стили для Popover и Tooltip компонентов */
+.vkuiPopover,
+.vkuiPopover__content,
+.vkuiPopover__container {
+  background-color: var(--app-background-color) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(227, 199, 122, 0.3) !important;
+}
+
+/* Стрелка Popover */
+.vkuiPopover__arrow {
+  border-color: var(--app-background-color) !important;
+}
+
+/* Текст внутри Popover */
+.vkuiPopover .vkuiDiv,
+.vkuiPopover div {
+  color: #ffffff !important;
+}
