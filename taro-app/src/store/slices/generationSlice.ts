@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { AppDispatch, RootState } from '../index';
-import { showPurchasePopup, spendStar } from './starsSlice';
+// БЕСПЛАТНАЯ ВЕРСИЯ: Импорты для звезд оставлены для возможного восстановления
+// import { showPurchasePopup, spendStar } from './starsSlice';
 import { API } from '../../constants/api';
 
 // Типы данных
@@ -170,14 +171,19 @@ export const generateText = createAsyncThunk<GenerationResponse, GenerationReque
   state: RootState;
 }>(
   'generation/generateText',
+  // @ts-ignore unused parameters for free version
   async (requestData: GenerationRequest, { dispatch, getState, rejectWithValue }) => {
     try {
       // Проверяем, достаточно ли звёзд для запроса
-      const { stars } = getState();
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      // const { stars } = getState();
+      // БЕСПЛАТНАЯ ВЕРСИЯ: Убираем ограничения по звездам
+      /*
       if (stars.count <= 0) {
         dispatch(showPurchasePopup());
         return rejectWithValue('Недостаточно звёзд для выполнения запроса. Перейдите на страницу покупки звёзд.');
       }
+      */
       
       // Подготавливаем данные для запроса
       const preparedData = prepareRequestData(requestData);
@@ -267,15 +273,15 @@ export const generateText = createAsyncThunk<GenerationResponse, GenerationReque
       
       if (data.text) {
         // Если есть поле text, возвращаем ответ как есть
-        // Списываем звезду за успешный запрос
-        dispatch(spendStar());
+        // БЕСПЛАТНАЯ ВЕРСИЯ: Не списываем звезды
+        // dispatch(spendStar());
         return data;
       } else if (data.message && (data.positions || Array.isArray(data.positions))) {
         // Если есть поле message и positions, значит это формат JSON-толкования для Таро
         const jsonResult = JSON.stringify(data);
         console.log('Преобразовали объект толкования Таро в строку:', jsonResult);
-        // Списываем звезду за успешный запрос
-        dispatch(spendStar());
+        // БЕСПЛАТНАЯ ВЕРСИЯ: Не списываем звезды
+        // dispatch(spendStar());
         return {
           text: jsonResult
         };
@@ -283,8 +289,8 @@ export const generateText = createAsyncThunk<GenerationResponse, GenerationReque
         // Если есть поля title и sections, это формат ответа для аффирмаций
         console.log('Получен ответ в формате аффирмаций:', data);
         // Для компонента DailyAffirmation мы возвращаем объект напрямую
-        // Списываем звезду за успешный запрос
-        dispatch(spendStar());
+        // БЕСПЛАТНАЯ ВЕРСИЯ: Не списываем звезды
+        // dispatch(spendStar());
         return {
           text: JSON.stringify(data)
         };
@@ -300,8 +306,8 @@ export const generateText = createAsyncThunk<GenerationResponse, GenerationReque
         console.log('Получен ответ в неизвестном формате, пробуем преобразовать в JSON:', data);
         try {
           const jsonResult = JSON.stringify(data);
-          // Списываем звезду за успешный запрос
-          dispatch(spendStar());
+          // БЕСПЛАТНАЯ ВЕРСИЯ: Не списываем звезды
+          // dispatch(spendStar());
           return {
             text: jsonResult
           };

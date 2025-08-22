@@ -58,7 +58,7 @@ export const AboutApp: FC<AboutAppProps> = ({ id }) => {
         />
         
         <Div style={{ 
-          padding: '20px 12px',
+          padding: '0 12px',
           display: 'flex',
           justifyContent: 'center'
         }}>

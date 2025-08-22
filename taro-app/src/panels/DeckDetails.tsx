@@ -54,7 +54,7 @@ export const DeckDetails: FC<DeckDetailsProps> = ({ id }) => {
   // Компонент скелетона для отображения во время загрузки
   const DeckDetailsSkeleton = () => (
     <Div style={{ 
-      padding: '20px 12px',
+      padding: '0 12px',
       display: 'flex',
       justifyContent: 'center'
     }}>
@@ -181,7 +181,7 @@ export const DeckDetails: FC<DeckDetailsProps> = ({ id }) => {
       
       {!deckLoading && !deckError && currentDeck && (
         <Div style={{ 
-          padding: '20px 12px',
+          padding: '0 12px',
           display: 'flex',
           justifyContent: 'center'
         }}>

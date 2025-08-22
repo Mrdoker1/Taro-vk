@@ -142,7 +142,7 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
   if (deckLoading) {
     return (
       <Div style={{ 
-        padding: '20px 12px',
+        padding: '0 12px',
         display: 'flex',
         justifyContent: 'center'
       }}>
@@ -167,7 +167,7 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
   if (deckError) {
     return (
       <Div style={{ 
-        padding: '20px 12px',
+        padding: '0 12px',
         display: 'flex',
         justifyContent: 'center'
       }}>
@@ -199,7 +199,7 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
   if (!currentDeck || !currentSpread) {
     return (
       <Div style={{ 
-        padding: '20px 12px',
+        padding: '0 12px',
         display: 'flex',
         justifyContent: 'center'
       }}>
@@ -253,7 +253,7 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
   // Если включен ручной режим, показываем выбор из списка
   return (
     <Div style={{ 
-      padding: '20px 12px',
+      padding: '0 12px',
       display: 'flex',
       justifyContent: 'center'
     }}>

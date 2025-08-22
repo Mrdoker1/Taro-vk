@@ -42,7 +42,7 @@ export const CardDetails: FC<CardDetailsProps> = ({ id }) => {
   // Компонент скелетона для отображения во время загрузки
   const CardDetailsSkeleton = () => (
     <Div style={{ 
-      padding: '20px 12px',
+      padding: '0 12px',
       display: 'flex',
       justifyContent: 'center'
     }}>
@@ -169,7 +169,7 @@ export const CardDetails: FC<CardDetailsProps> = ({ id }) => {
         
         {!cardLoading && !cardError && currentCard && (
           <Div style={{ 
-            padding: '20px 12px',
+            padding: '0 12px',
             display: 'flex',
             justifyContent: 'center'
           }}>

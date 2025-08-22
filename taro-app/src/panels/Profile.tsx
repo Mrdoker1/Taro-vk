@@ -96,7 +96,7 @@ export const Profile: FC<ProfileProps> = ({ id, fetchedUser }) => {
         />
 
         <Div style={{ 
-          padding: '20px 12px',
+          padding: '0 12px',
           display: 'flex',
           justifyContent: 'flex-start'
         }}>
