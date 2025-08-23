@@ -138,36 +138,8 @@ export const TaroReading: React.FC<TaroReadingProps> = ({
 
   // Функция для публикации в VK
   const handleShareToVK = async () => {
-    if (!parsedInterpretation || !currentSpread) return;
-
     try {
-      // Создаем временную активность для использования с новой утилитой
-      const fullReadingInfo = {
-        question: question.trim() || undefined,
-        cards: selectedCards.map((card) => {
-          const cardInfo = currentDeck?.cards?.find(c => c.id === card.cardId);
-          const positionInfo = currentSpread?.meta[card.position.toString()];
-          return {
-            position: card.position,
-            cardName: cardInfo?.name || 'Неизвестная карта',
-            positionLabel: positionInfo?.label || `Позиция ${card.position}`,
-            isReversed: card.isReversed
-          };
-        }),
-        interpretation: parsedInterpretation.message,
-        detailedPositions: parsedInterpretation.positions || []
-      };
-
-      const tempActivity: CalendarActivity = {
-        id: `temp_${Date.now()}`,
-        type: 'tarot_reading',
-        title: currentSpread.name,
-        summary: `Колода: ${currentDeck?.name || 'Неизвестная колода'}`,
-        timestamp: Date.now(),
-        fullContent: JSON.stringify(fullReadingInfo)
-      };
-
-      await shareActivityToVK(tempActivity);
+      await shareActivityToVK();
     } catch (error) {
       console.error('Ошибка при публикации в VK:', error);
     }

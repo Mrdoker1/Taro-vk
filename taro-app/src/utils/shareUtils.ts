@@ -205,157 +205,28 @@ interface VKShareParams {
 }
 
 /**
- * Делится активностью в VK через VKWebAppShare согласно официальной документации
+ * Делится активностью в VK через VKWebAppShare согласно документации
  */
-export const shareActivityToVK = async (activity: CalendarActivity): Promise<void> => {
-  if (!activity.fullContent) {
-    console.error('Нет данных для поделиться');
-    return;
-  }
-
+export const shareActivityToVK = async (): Promise<void> => {
   try {
-    let shareText = '';
-
-    if (activity.type === 'tarot_reading') {
-      const data: TarotData = JSON.parse(activity.fullContent);
-      
-      // Создаем краткий текст для сообщения (максимум 100 символов)
-      shareText = `🔮 Расклад Таро: ${activity.title}`;
-      
-      if (data.question && shareText.length < 80) {
-        const questionPreview = data.question.length > 50 ? 
-          data.question.substring(0, 47) + '...' : data.question;
-        shareText += ` • ${questionPreview}`;
-      }
-      
-      // Обрезаем до 100 символов если нужно
-      if (shareText.length > 100) {
-        shareText = shareText.substring(0, 97) + '...';
-      }
-      
-    } else if (activity.type === 'affirmation') {
-      const data: AffirmationData = JSON.parse(activity.fullContent);
-      shareText = `🌞 Ежедневные аффирмации`;
-      
-      if (data.sections && data.sections.length > 0 && shareText.length < 70) {
-        const firstSection = data.sections[0];
-        const preview = firstSection.title.length > 30 ? 
-          firstSection.title.substring(0, 27) + '...' : firstSection.title;
-        shareText += ` • ${preview}`;
-      }
-      
-      // Обрезаем до 100 символов если нужно
-      if (shareText.length > 100) {
-        shareText = shareText.substring(0, 97) + '...';
-      }
-      
-    } else {
-      // Для других типов активностей
-      shareText = activity.title.length > 90 ? 
-        activity.title.substring(0, 87) + '...' : activity.title;
-    }
-
-    // Используем правильный VKWebAppShare метод согласно документации
-    try {
-      // Сначала пытаемся с текстом (для мобильных платформ)
-      const shareParams: VKShareParams = {
-        link: window.location.href,
-        text: shareText
-      };
-      
-      const result = await bridge.send('VKWebAppShare', shareParams);
-      
-      console.log('Успешно открыто окно поделиться в VK с текстом:', result);
-      
-      // Проверяем результат (result может быть массивом или объектом)
-      if (Array.isArray(result) && result.length > 0) {
-        console.log('Сообщения отправлены:', result);
-      } else if (result && typeof result === 'object') {
-        console.log('Результат поделиться:', result);
-      }
-      
-    } catch (shareWithTextError) {
-      console.log('Не удалось поделиться с текстом, пробуем без текста:', shareWithTextError);
-      
-      // Фолбэк: пытаемся без параметра text
-      const result = await bridge.send('VKWebAppShare', {
-        link: window.location.href
-      });
-      
-      console.log('Успешно открыто окно поделиться в VK без текста:', result);
-      
-      // Уведомляем пользователя, что текст нужно добавить вручную
-      if (navigator.clipboard) {
-        await navigator.clipboard.writeText(shareText);
-        alert('🎉 Окно поделиться открыто!\n📋 Краткое описание скопировано в буфер - добавьте его к сообщению.');
-      }
+    // Используем правильную ссылку на VK мини-приложение и добавляем текст
+    const shareParams: VKShareParams = {
+      link: 'https://vk.com/app53429194#/',
+      text: '🔮✨ Расклады Таро и аффирмации! Узнай, что говорят карты именно тебе 🌟 #Таро #Seluna'
+    };
+    
+    const result = await bridge.send('VKWebAppShare', shareParams);
+    
+    console.log('Окно поделиться открыто успешно:', result);
+    
+    // Проверяем результат согласно документации
+    if (result && Array.isArray(result) && result.length > 0) {
+      console.log('Сообщения отправлены пользователям:', result);
+    } else if (result && typeof result === 'object') {
+      console.log('Результат поделиться:', result);
     }
     
   } catch (error) {
     console.error('Ошибка при попытке поделиться в VK:', error);
-    
-    // Фолбэк - копируем подробный текст в буфер обмена
-    try {
-      let fullText = '';
-      
-      if (activity.type === 'tarot_reading') {
-        const data: TarotData = JSON.parse(activity.fullContent);
-        fullText = `🔮✨ Расклад Таро: ${activity.title} ✨🔮\n\n`;
-        
-        if (data.question) {
-          fullText += `🤔 Мой вопрос: "${data.question}"\n\n`;
-        }
-
-        if (data.cards && data.cards.length > 0) {
-          fullText += `🃏 Выпали карты:\n`;
-          data.cards.slice(0, 3).forEach((card, index) => {
-            const reversedIcon = card.isReversed ? '🔄' : '⬆️';
-            fullText += `${index + 1}. ${card.cardName} ${reversedIcon}\n`;
-          });
-          if (data.cards.length > 3) {
-            fullText += `... и еще ${data.cards.length - 3} карт\n`;
-          }
-          fullText += '\n';
-        }
-
-        if (data.interpretation) {
-          let interpretation = data.interpretation;
-          if (interpretation.length > 180) {
-            interpretation = interpretation.substring(0, 180) + '...';
-          }
-          fullText += `💫 Краткое толкование:\n${interpretation}\n\n`;
-        }
-        
-        fullText += `Хочешь узнать, что говорят карты тебе? 🌟\n\n`;
-        fullText += `#ТароГадание #Таро #Эзотерика #ВКМиниАпп #Seluna`;
-        
-      } else if (activity.type === 'affirmation') {
-        const data: AffirmationData = JSON.parse(activity.fullContent);
-        fullText = `🌞✨ Мои ежедневные аффирмации ✨🌞\n\n`;
-
-        if (data.sections && data.sections.length > 0) {
-          const firstSection = data.sections[0];
-          fullText += `💎 ${firstSection.title}:\n"${firstSection.text}"\n\n`;
-        }
-        
-        fullText += `Начни день с позитива! 🌈\n\n`;
-        fullText += `#Аффирмации #ПозитивноеМышление #Мотивация #ВКМиниАпп #Seluna`;
-        
-      } else {
-        fullText = `📝 ${activity.title}\n\n${activity.summary}\n\n#ВКМиниАпп #Seluna`;
-      }
-
-      // Пытаемся скопировать в буфер обмена как фолбэк
-      if (navigator.clipboard) {
-        await navigator.clipboard.writeText(fullText);
-        alert('📋 Не удалось открыть окно поделиться ВК.\n\nТекст скопирован в буфер обмена!\nВы можете вставить его в сообщение или пост вручную.');
-      } else {
-        alert('❌ Не удалось открыть окно поделиться.\nПопробуйте позже или обратитесь к поддержке.');
-      }
-      
-    } catch (fallbackError) {
-      console.error('Ошибка в фолбэке:', fallbackError);
-      alert('❌ Произошла ошибка при попытке поделиться.\nПопробуйте позже.');
-    }
   }
 };
