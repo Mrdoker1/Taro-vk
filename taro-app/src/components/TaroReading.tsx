@@ -927,7 +927,8 @@ ${systemPromptText}`;
                     backgroundImage: cardInfo?.imageUrl ? `url(${cardInfo.imageUrl})` : 'none',
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
-                    backgroundColor: 'rgba(210,175,80,0.1)'
+                    backgroundColor: 'rgba(210,175,80,0.1)',
+                    border: '1px solid #a89d7dff'
                   }}>
                     {/* Оверлей сверху для номера позиции и иконки тултипа */}
                     <div style={{
@@ -940,12 +941,31 @@ ${systemPromptText}`;
                       borderRadius: '8px 8px 0 0',
                       transform: card.isReversed ? 'rotate(180deg)' : 'none'
                     }}>
-                      {/* CustomTooltip в левом верхнем углу */}
+                      {/* Номер позиции в левом верхнем углу */}
+                      <div style={{
+                        position: 'absolute',
+                        top: '6px',
+                        left: '6px',
+                        width: '16px',
+                        height: '16px',
+                        borderRadius: '50%',
+                        background: 'rgba(210,175,80,1)',
+                        color: '#000',
+                        fontSize: '10px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontWeight: '500',
+                        boxShadow: '0 1px 3px rgba(0,0,0,0.5)'
+                      }}>
+                        {card.position}
+                      </div>
+                      {/* CustomTooltip в правом верхнем углу */}
                       {hasInterpretation && (
                         <div style={{
                           position: 'absolute',
                           top: '6px',
-                          left: '6px'
+                          right: '6px'
                         }}>
                           <CustomTooltip
                             content={getCardInterpretation(card.position) || ''}
@@ -962,25 +982,6 @@ ${systemPromptText}`;
                           />
                         </div>
                       )}
-                      {/* Номер позиции */}
-                      <div style={{
-                        position: 'absolute',
-                        top: '6px',
-                        right: '6px',
-                        width: '16px',
-                        height: '16px',
-                        borderRadius: '50%',
-                        background: 'rgba(210,175,80,1)',
-                        color: '#000',
-                        fontSize: '10px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontWeight: '500',
-                        boxShadow: '0 1px 3px rgba(0,0,0,0.5)'
-                      }}>
-                        {card.position}
-                      </div>
                     </div>
                     {/* Оверлей для названия карты */}
                     <div style={{
@@ -1149,7 +1150,8 @@ ${systemPromptText}`;
                         backgroundImage: cardInfo?.imageUrl ? `url(${cardInfo.imageUrl})` : 'none',
                         backgroundSize: 'cover',
                         backgroundPosition: 'center',
-                        backgroundColor: 'rgba(210,175,80,0.1)'
+                        backgroundColor: 'rgba(210,175,80,0.1)',
+                        border: '1px solid #646464'
                       }}>
                         {/* Оверлей сверху для номера позиции и иконки тултипа */}
                         <div style={{
@@ -1162,12 +1164,31 @@ ${systemPromptText}`;
                           borderRadius: '6px 6px 0 0',
                           transform: card.isReversed ? 'rotate(180deg)' : 'none'
                         }}>
-                          {/* CustomTooltip в левом верхнем углу */}
+                          {/* Номер позиции в левом верхнем углу */}
+                          <div style={{
+                            position: 'absolute',
+                            top: '4px',
+                            left: '4px',
+                            width: '14px',
+                            height: '14px',
+                            borderRadius: '50%',
+                            background: 'rgba(210,175,80,1)',
+                            color: '#000',
+                            fontSize: '9px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontWeight: '500',
+                            boxShadow: '0 1px 3px rgba(0,0,0,0.5)'
+                          }}>
+                            {card.position}
+                          </div>
+                          {/* CustomTooltip в правом верхнем углу */}
                           {hasInterpretation && (
                             <div style={{
                               position: 'absolute',
                               top: '4px',
-                              left: '4px'
+                              right: '4px'
                             }}>
                               <CustomTooltip
                                 content={getCardInterpretation(card.position) || ''}
@@ -1184,25 +1205,6 @@ ${systemPromptText}`;
                               />
                             </div>
                           )}
-                          {/* Номер позиции */}
-                          <div style={{
-                            position: 'absolute',
-                            top: '4px',
-                            right: '4px',
-                            width: '14px',
-                            height: '14px',
-                            borderRadius: '50%',
-                            background: 'rgba(210,175,80,1)',
-                            color: '#000',
-                            fontSize: '9px',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            fontWeight: '500',
-                            boxShadow: '0 1px 3px rgba(0,0,0,0.5)'
-                          }}>
-                            {card.position}
-                          </div>
                         </div>
                         {/* Оверлей для названия карты */}
                         <div style={{
