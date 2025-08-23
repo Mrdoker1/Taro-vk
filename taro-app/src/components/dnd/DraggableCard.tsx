@@ -1,6 +1,7 @@
 import React from 'react';
 import { useDraggable } from '@dnd-kit/core';
 import { Card } from '@vkontakte/vkui';
+import { getSectionBackgroundColor } from '../../constants/styles';
 
 interface DraggableCardProps {
   id: string;
@@ -23,6 +24,7 @@ export const DraggableCard: React.FC<DraggableCardProps> = ({
   disabled = false,
   backImageUrl
 }) => {
+  const sectionBackgroundColor = getSectionBackgroundColor();
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
     id,
     data: { cardData },
@@ -109,6 +111,7 @@ export const DraggableCard: React.FC<DraggableCardProps> = ({
         width: '100%', 
         height: '100%', 
         overflow: 'hidden',
+        backgroundColor: sectionBackgroundColor,
         ...cardRotation 
       }}>
         {preview ? (

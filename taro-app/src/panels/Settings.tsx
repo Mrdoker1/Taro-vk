@@ -8,16 +8,17 @@ import {
 } from '@vkontakte/vkui';
 import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
 import { useAppDispatch, useAppSelector } from '../store';
-import { setSign, setLanguage } from '../store/slices/horoscopeSlice';
+import { setSign } from '../store/slices/horoscopeSlice';
+// import { setLanguage } from '../store/slices/horoscopeSlice';
 import { setUseManualCardSelection, setTheme } from '../store/slices/appSlice';
-import { clearCurrentTemplate } from '../store/slices/promptSlice';
+// import { clearCurrentTemplate } from '../store/slices/promptSlice';
 import { AppHeader } from '../components/AppHeader';
 import settingsIcon from '../assets/settings.svg';
 import { Footer } from '../components/Footer';
 import { CustomSelect } from '../components/CustomSelect';
 import { CustomToggle } from '../components/CustomToggle';
 import { DEFAULT_VIEW_PANELS } from '../routes';
-import { AppLanguage, getLanguageDisplayName } from '../utils/languageUtils';
+// import { AppLanguage, getLanguageDisplayName } from '../utils/languageUtils';
 import { BACKGROUND_BASE } from '../constants/styles';
 import { getThemeOptions, ThemeKey } from '../constants/themes';
 
@@ -39,13 +40,13 @@ const zodiacSigns = [
 ];
 
 // Доступные в настоящее время языки
-const availableLanguages: AppLanguage[] = ['russian', 'english'];
+// const availableLanguages: AppLanguage[] = ['russian', 'english'];
 
 // Создаем список языков для дропдауна
-const languages = availableLanguages.map(lang => ({
-  value: lang,
-  label: getLanguageDisplayName(lang)
-}));
+// const languages = availableLanguages.map(lang => ({
+//   value: lang,
+//   label: getLanguageDisplayName(lang)
+// }));
 
 // Создаем список тем для дропдауна
 const themes = getThemeOptions();
@@ -55,18 +56,19 @@ export interface SettingsProps extends NavIdProps {}
 export const Settings: FC<SettingsProps> = ({ id }) => {
   const routeNavigator = useRouteNavigator();
   const dispatch = useAppDispatch();
-  const { sign, lang } = useAppSelector((state) => state.horoscope);
+  const { sign } = useAppSelector((state) => state.horoscope);
+  // const { lang } = useAppSelector((state) => state.horoscope);
   const { useManualCardSelection, theme } = useAppSelector((state) => state.app);
 
   const handleZodiacChange = (value: string) => {
     dispatch(setSign(value as ZodiacSign));
   };
 
-  const handleLanguageChange = (value: string) => {
-    // Очищаем текущий промпт при смене языка, чтобы загрузился новый
-    dispatch(clearCurrentTemplate());
-    dispatch(setLanguage(value as AppLanguage));
-  };
+  // const handleLanguageChange = (value: string) => {
+  //   // Очищаем текущий промпт при смене языка, чтобы загрузился новый
+  //   dispatch(clearCurrentTemplate());
+  //   dispatch(setLanguage(value as AppLanguage));
+  // };
 
   const handleManualCardSelectionChange = (checked: boolean) => {
     dispatch(setUseManualCardSelection(checked));
@@ -187,6 +189,7 @@ export const Settings: FC<SettingsProps> = ({ id }) => {
                 onChange={handleZodiacChange}
               />
 
+              {/* Временно скрыто
               <CustomSelect
                 value={lang}
                 options={languages}
@@ -194,6 +197,7 @@ export const Settings: FC<SettingsProps> = ({ id }) => {
                 placeholder="Выберите язык"
                 onChange={handleLanguageChange}
               />
+              */}
 
               <CustomSelect
                 value={theme}

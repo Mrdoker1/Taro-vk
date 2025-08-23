@@ -72,7 +72,8 @@ export const CardDeck: React.FC<CardDeckProps> = ({ cards, usedCardIds, isShuffl
               height: '230px',
               borderRadius: '18px',
               overflow: 'hidden',
-              animation: isShuffling ? 'shuffleTopCard 0.8s ease-in-out' : 'none'
+              animation: isShuffling ? 'shuffleTopCard 0.8s ease-in-out' : 'none',
+              background: 'transparent',
             }}>
               <DraggableCard
                 id={`draggable-${topCard.id}`}

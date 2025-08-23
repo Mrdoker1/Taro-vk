@@ -20,7 +20,6 @@ import {
   removeCalendarActivity,
   CalendarActivity
 } from '../store/slices/calendarSlice';
-import { CustomButton } from './CustomButton';
 import { ActivityDetailPopup } from './ActivityDetailPopup';
 import { DeleteActivityPopup } from './DeleteActivityPopup';
 
@@ -749,14 +748,27 @@ export const Calendar: React.FC<CalendarProps> = () => {
                       }}>
                         {new Date(selectedDateData!.note!.timestamp).toLocaleString('ru-RU')}
                       </Text>
-                      <CustomButton
-                        variant="tertiary"
+                      <Button
+                        mode="tertiary"
                         size="s"
                         onClick={() => setIsEditingNote(true)}
-                        style={{ fontSize: isMobile ? '10px' : '11px' }}
+                        style={{ 
+                          fontSize: isMobile ? '10px' : '11px',
+                          transition: 'all 0.2s ease',
+                          border: '1px solid rgba(255, 255, 255, 0.3)'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1) !important';
+                          e.currentTarget.style.transform = 'translateY(-1px)';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = 'transparent';
+                          e.currentTarget.style.transform = 'translateY(0)';
+                          e.currentTarget.style.boxShadow = 'none';
+                        }}
                       >
                         Редактировать заметку
-                      </CustomButton>
+                      </Button>
                     </>
                   ) : (
                     <>
@@ -784,14 +796,27 @@ export const Calendar: React.FC<CalendarProps> = () => {
                       }}>
                         Нажмите "Добавить заметку" чтобы создать заметку для этого дня.
                       </Text>
-                      <CustomButton
-                        variant="tertiary"
+                      <Button
+                        mode="tertiary"
                         size="s"
                         onClick={() => setIsEditingNote(true)}
-                        style={{ fontSize: isMobile ? '10px' : '11px' }}
+                        style={{ 
+                          fontSize: isMobile ? '10px' : '11px',
+                          transition: 'all 0.2s ease',
+                          border: '1px solid rgba(255, 255, 255, 0.3)'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1) !important';
+                          e.currentTarget.style.transform = 'translateY(-1px)';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = 'transparent';
+                          e.currentTarget.style.transform = 'translateY(0)';
+                          e.currentTarget.style.boxShadow = 'none';
+                        }}
                       >
                         Добавить заметку
-                      </CustomButton>
+                      </Button>
                     </>
                   )}
                 </>
