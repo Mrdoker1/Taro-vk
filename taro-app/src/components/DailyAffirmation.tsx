@@ -80,7 +80,7 @@ const EmptyStateContent = () => (
         margin: 'auto 0',
         fontFamily: 'Jost, -apple-system, BlinkMacSystemFont, sans-serif'
       }}>
-        Нажмите кнопку "Получить аффирмации" для генерации персонализированных утверждений
+        Нажмите кнопку "Получить аффирмации" для создания персонализированных утверждений
       </div>
     </div>
   </>
@@ -291,7 +291,7 @@ export const DailyAffirmation: React.FC = () => {
             disabled={!canGenerate() || isGenerating}
             onClick={handleGenerate}
           >
-            {isGenerating ? 'Генерируем...' : 'Получить аффирмации'}
+            {isGenerating ? 'Создаём магию...' : 'Получить аффирмации'}
           </CustomButton>
         </div>
       </div>

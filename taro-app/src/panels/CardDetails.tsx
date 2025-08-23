@@ -5,7 +5,6 @@ import {
   NavIdProps,
   Text,
   Placeholder,
-  Skeleton,
   Button,
   ConfigProvider,
 } from '@vkontakte/vkui';
@@ -13,6 +12,7 @@ import { useParams } from '@vkontakte/vk-mini-apps-router';
 import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
 import { Footer } from '../components/Footer';
 import { AppHeader } from '../components/AppHeader';
+import { MagicLoader } from '../components/MagicLoader';
 import { DEFAULT_VIEW_PANELS } from '../routes';
 import { useAppDispatch, useAppSelector } from '../store';
 import { fetchCardDetails, clearCurrentCard } from '../store/slices/taroDecksSlice';
@@ -38,94 +38,6 @@ export const CardDetails: FC<CardDetailsProps> = ({ id }) => {
       dispatch(clearCurrentCard());
     };
   }, [dispatch, deckId, cardId, lang]);
-
-  // Компонент скелетона для отображения во время загрузки
-  const CardDetailsSkeleton = () => (
-    <Div style={{ 
-      padding: '0 12px',
-      display: 'flex',
-      justifyContent: 'center'
-    }}>
-      <div className="card-details" style={{
-        width: '100%',
-        ...BACKGROUND_BASE,
-        borderRadius: '12px',
-        overflow: 'hidden',
-        position: 'relative',
-        padding: '32px'
-      }}>
-        {/* Открывающий декоративный элемент */}
-        <div style={{
-          display: 'flex',
-          justifyContent: 'center',
-          marginBottom: '16px'
-        }}>
-          <Skeleton width={90} height={20} borderRadius={8} />
-        </div>
-
-        {/* Разделитель */}
-        <div style={{
-          width: '100%',
-          height: '2px',
-          marginBottom: '32px'
-        }}>
-          <Skeleton width="100%" height={2} />
-        </div>
-
-        {/* Контент */}
-        <div className="card-details-container">
-          {/* Секция изображения */}
-          <div className="card-image-section">
-            <Skeleton width={200} height={300} borderRadius={12} />
-            <div className="card-title-section">
-              <Skeleton width="150px" height={24} style={{ marginBottom: '8px' }} />
-              <Skeleton width="120px" height={16} />
-            </div>
-          </div>
-
-          {/* Секция информации */}
-          <div className="card-info-section">
-            {/* Значение карты */}
-            <div>
-              <div style={{ marginBottom: '16px' }}>
-                <Skeleton width="180px" height={20} style={{ marginBottom: '8px' }} />
-                <Skeleton width="100%" height={16} />
-              </div>
-              <div>
-                <Skeleton width="200px" height={20} style={{ marginBottom: '8px' }} />
-                <Skeleton width="100%" height={16} />
-              </div>
-            </div>
-
-            {/* О колоде */}
-            <div>
-              <Skeleton width="80px" height={20} style={{ marginBottom: '16px' }} />
-              <Skeleton width="100%" height={16} style={{ marginBottom: '8px' }} />
-              <Skeleton width="100%" height={16} style={{ marginBottom: '8px' }} />
-              <Skeleton width="80%" height={16} />
-            </div>
-          </div>
-        </div>
-
-        {/* Нижний разделитель */}
-        <div style={{
-          width: '100%',
-          height: '2px',
-          marginBottom: '16px'
-        }}>
-          <Skeleton width="100%" height={2} />
-        </div>
-
-        {/* Закрывающий декоративный элемент */}
-        <div style={{
-          display: 'flex',
-          justifyContent: 'center'
-        }}>
-          <Skeleton width={90} height={20} borderRadius={8} />
-        </div>
-      </div>
-    </Div>
-  );
 
   const handleAboutApp = () => {
     routeNavigator.push(`/${DEFAULT_VIEW_PANELS.ABOUT_APP}`);
@@ -153,7 +65,16 @@ export const CardDetails: FC<CardDetailsProps> = ({ id }) => {
           }
         />
 
-        {cardLoading && <CardDetailsSkeleton />}
+        {cardLoading && (
+          <Div style={{ 
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '50vh'
+          }}>
+            <MagicLoader />
+          </Div>
+        )}
         
         {cardError && (
           <Placeholder>

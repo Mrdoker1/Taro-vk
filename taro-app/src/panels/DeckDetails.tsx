@@ -5,7 +5,6 @@ import {
   NavIdProps,
   Text,
   Placeholder,
-  Skeleton,
   Button,
   ConfigProvider,
 } from '@vkontakte/vkui';
@@ -13,6 +12,7 @@ import { useParams } from '@vkontakte/vk-mini-apps-router';
 import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
 import { Footer } from '../components/Footer';
 import { AppHeader } from '../components/AppHeader';
+import { MagicLoader } from '../components/MagicLoader';
 import { DEFAULT_VIEW_PANELS } from '../routes';
 import { useAppDispatch, useAppSelector } from '../store';
 import { fetchDeckDetails, clearCurrentDeck } from '../store/slices/taroDecksSlice';
@@ -51,102 +51,6 @@ export const DeckDetails: FC<DeckDetailsProps> = ({ id }) => {
     routeNavigator.push(`/${DEFAULT_VIEW_PANELS.LEGAL_INFO}`);
   };
 
-  // Компонент скелетона для отображения во время загрузки
-  const DeckDetailsSkeleton = () => (
-    <Div style={{ 
-      padding: '0 12px',
-      display: 'flex',
-      justifyContent: 'center'
-    }}>
-      <div style={{
-        width: '100%',
-        ...BACKGROUND_BASE,
-        borderRadius: '12px',
-        overflow: 'hidden',
-        position: 'relative',
-        padding: '32px'
-      }} className="deck-details">
-        {/* Скелетон для информации о колоде */}
-        <div 
-          className="deck-info-container"
-          style={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: '20px',
-            marginBottom: '32px'
-          }}
-        >
-          <Skeleton width={120} height={180} borderRadius={12} />
-          <div className="deck-info-content" style={{ flex: 1 }}>
-            <Skeleton width="70%" height={32} style={{ marginBottom: '12px' }} />
-            <Skeleton width="100%" height={16} style={{ marginBottom: '8px' }} />
-            <Skeleton width="100%" height={16} style={{ marginBottom: '8px' }} />
-            <Skeleton width="40%" height={16} />
-          </div>
-        </div>
-        
-        {/* Декоративный элемент */}
-        <div style={{
-          display: 'flex',
-          justifyContent: 'center',
-          marginBottom: '16px'
-        }}>
-          <Skeleton width={90} height={20} borderRadius={8} />
-        </div>
-
-        {/* Разделитель */}
-        <div style={{
-          width: '100%',
-          height: '2px',
-          marginBottom: '32px'
-        }}>
-          <Skeleton width="100%" height={2} />
-        </div>
-
-        {/* Заголовок секции */}
-        <div style={{
-          display: 'flex',
-          justifyContent: 'center',
-          marginBottom: '24px'
-        }}>
-          <Skeleton width="200px" height={24} />
-        </div>
-
-        {/* Сетка карт */}
-        <div className="cards-grid">
-          {Array(4).fill(null).map((_, index) => (
-            <div key={index} className="card-item">
-              <div className="card-content">
-                <Skeleton width={70} height={100} borderRadius={8} />
-                <div className="card-info">
-                  <Skeleton width="80%" height={20} style={{ marginBottom: '8px' }} />
-                  <Skeleton width="100%" height={14} />
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Нижний разделитель */}
-        <div style={{
-          width: '100%',
-          height: '2px',
-          marginBottom: '16px'
-        }}>
-          <Skeleton width="100%" height={2} />
-        </div>
-
-        {/* Нижний декоративный элемент */}
-        <div style={{
-          display: 'flex',
-          justifyContent: 'center'
-        }}>
-          <Skeleton width={90} height={20} borderRadius={8} />
-        </div>
-      </div>
-    </Div>
-  );
-
   return (
     <ConfigProvider hasCustomPanelHeaderAfter={false}>
       <Panel id={id}>
@@ -165,7 +69,16 @@ export const DeckDetails: FC<DeckDetailsProps> = ({ id }) => {
         }
       />
 
-      {deckLoading && <DeckDetailsSkeleton />}
+      {deckLoading && (
+        <Div style={{ 
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '50vh'
+        }}>
+          <MagicLoader />
+        </Div>
+      )}
       
       {deckError && (
         <Placeholder>

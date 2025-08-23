@@ -572,7 +572,7 @@ ${systemPromptText}`;
               <div style={{ 
                 marginBottom: '24px'
               }}>
-                <MagicLoader text="Генерируется толкование..." size="m" />
+                <MagicLoader text="Карты раскрывают свои тайны..." size="m" />
               </div>
             )}
 
