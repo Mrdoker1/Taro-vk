@@ -755,7 +755,7 @@ ${systemPromptText}`;
                         <div style={{
                           overflow: 'hidden',
                           transition: 'max-height 0.3s ease-in-out',
-                          maxHeight: showAllPositions ? '1000px' : '0'
+                          maxHeight: showAllPositions ? 'none' : '0'
                         }}>
                           {parsedInterpretation.positions
                             .slice(2)

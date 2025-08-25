@@ -6,6 +6,7 @@ import { useAppSelector } from '../store';
 import { TaroDeck } from '../store/slices/taroDecksSlice';
 import { BACKGROUND_BASE } from '../constants/styles';
 import noImagePlaceholder from '../assets/no-image.png';
+import decksIcon from '../assets/decks.svg';
 
 // Кастомный хук для адаптивности
 const useResponsive = () => {
@@ -277,7 +278,7 @@ export const DecksDisplaySection: React.FC<DecksDisplaySectionProps> = React.mem
       {/* Заголовок секции */}
       <div style={headerStyle}>
         <img
-          src="https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/422b8f1fec7732342ea78d4241b1689d2bdf4a9c?placeholderIfAbsent=true"
+          src={decksIcon}
           alt="Deck icon"
           style={{
             width: '44px',

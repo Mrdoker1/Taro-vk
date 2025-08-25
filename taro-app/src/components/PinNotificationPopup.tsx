@@ -1,10 +1,8 @@
 import React, { useEffect } from 'react';
 import { Button, Text, Title } from '@vkontakte/vkui';
 import { Icon24Dismiss } from '@vkontakte/icons';
-import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
 import { useAppSelector, useAppDispatch } from '../store';
 import { hideNotification, clearNotification } from '../store/slices/pinsSlice';
-import { DEFAULT_VIEW_PANELS } from '../routes';
 import pinAffirmation from '../assets/pin-affirmation.png';
 import pinCalendar from '../assets/pin-calendar.png';
 import pinSpreads from '../assets/pin-spreads.png';
@@ -20,7 +18,6 @@ const pinImages: Record<string, string> = {
 
 export const PinNotificationPopup: React.FC = () => {
   const dispatch = useAppDispatch();
-  const routeNavigator = useRouteNavigator();
   const notification = useAppSelector(state => state.pins.notification);
 
   // Полная очистка после анимации скрытия
@@ -34,6 +31,31 @@ export const PinNotificationPopup: React.FC = () => {
     }
   }, [notification, dispatch]);
 
+  // Блокировка скролла при открытом модальном окне
+  useEffect(() => {
+    if (notification?.isVisible) {
+      // Сохраняем текущее значение overflow
+      const originalOverflow = document.body.style.overflow;
+      const originalPosition = document.body.style.position;
+      
+      // Блокируем скролл
+      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.top = '0';
+      document.body.style.left = '0';
+      document.body.style.right = '0';
+      
+      // Восстанавливаем при размонтировании
+      return () => {
+        document.body.style.overflow = originalOverflow;
+        document.body.style.position = originalPosition;
+        document.body.style.top = '';
+        document.body.style.left = '';
+        document.body.style.right = '';
+      };
+    }
+  }, [notification?.isVisible]);
+
   if (!notification) return null;
 
   const { pin, isVisible } = notification;
@@ -43,8 +65,9 @@ export const PinNotificationPopup: React.FC = () => {
   };
 
   const handleGoToCollection = () => {
+    // Просто закрываем уведомление без навигации, чтобы не потерять состояние текущей страницы
     dispatch(hideNotification());
-    routeNavigator.push(`/${DEFAULT_VIEW_PANELS.COLLECTION_PINS}`);
+    // Пользователь может самостоятельно перейти к коллекции через профиль или настройки
   };
 
   return (
@@ -170,9 +193,21 @@ export const PinNotificationPopup: React.FC = () => {
           fontSize: '14px',
           textAlign: 'center',
           display: 'block',
-          marginBottom: '20px'
+          marginBottom: '8px'
         }}>
           ✓ {pin.requirement}
+        </Text>
+
+        {/* Подсказка о коллекции */}
+        <Text style={{
+          color: 'rgba(255, 255, 255, 0.6)',
+          fontSize: '12px',
+          textAlign: 'center',
+          display: 'block',
+          marginBottom: '20px',
+          fontStyle: 'italic'
+        }}>
+          Ваши достижения доступны в профиле
         </Text>
 
         {/* Кнопки */}
@@ -203,18 +238,7 @@ export const PinNotificationPopup: React.FC = () => {
               e.currentTarget.style.boxShadow = 'none';
             }}
           >
-            Перейти к коллекции
-          </Button>
-          
-          <Button 
-            mode="tertiary" 
-            size="l" 
-            onClick={handleClose}
-            style={{
-              fontSize: '16px'
-            }}
-          >
-            Продолжить
+            Отлично!
           </Button>
         </div>
       </div>
