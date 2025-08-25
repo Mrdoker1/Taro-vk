@@ -365,14 +365,65 @@ footer .vkuiButton:hover,
 .vkuiTabbarItem,
 .vkuiTabbarItem__label,
 .vkuiTabbarItem__icon {
-  color: #ffffff !important;
+  color: rgba(255, 255, 255, 0.6) !important;
+  transition: color 0.2s ease !important;
 }
 
-/* Активный элемент мобильного меню */
+/* Убираем фон у TabbarItem */
+.vkuiTabbarItem {
+  background-color: transparent !important;
+  background: transparent !important;
+}
+
+/* Активный элемент мобильного меню - все возможные селекторы */
 .vkuiTabbarItem--selected,
 .vkuiTabbarItem--selected .vkuiTabbarItem__label,
-.vkuiTabbarItem--selected .vkuiTabbarItem__icon {
-  color: var(--vkui--color_accent) !important;
+.vkuiTabbarItem--selected .vkuiTabbarItem__icon,
+.vkuiTabbarItem[aria-selected="true"],
+.vkuiTabbarItem[aria-selected="true"] .vkuiTabbarItem__label,
+.vkuiTabbarItem[aria-selected="true"] .vkuiTabbarItem__icon,
+.vkuiTabbarItem[data-selected="true"],
+.vkuiTabbarItem[data-selected="true"] .vkuiTabbarItem__label,
+.vkuiTabbarItem[data-selected="true"] .vkuiTabbarItem__icon {
+  color: rgba(210, 175, 80, 1) !important;
+  background-color: transparent !important;
+  background: transparent !important;
+}
+
+/* Дополнительная форсированная стилизация для активного состояния */
+.vkuiTabbarItem[style*="210, 175, 80"],
+.vkuiTabbarItem[style*="210, 175, 80"] .vkuiTabbarItem__label,
+.vkuiTabbarItem[style*="210, 175, 80"] .vkuiTabbarItem__icon,
+.vkuiTabbarItem[style*="210, 175, 80"] span,
+.vkuiTabbarItem[style*="210, 175, 80"] svg {
+  color: rgba(210, 175, 80, 1) !important;
+  fill: rgba(210, 175, 80, 1) !important;
+}
+
+/* Классы для активных и неактивных табов - только иконки и текст */
+.active-tab .vkuiTabbarItem__label,
+.active-tab .vkuiTabbarItem__icon,
+.active-tab div,
+.active-tab span,
+.active-tab svg {
+  color: rgba(210, 175, 80, 1) !important;
+  fill: rgba(210, 175, 80, 1) !important;
+}
+
+.inactive-tab .vkuiTabbarItem__label,
+.inactive-tab .vkuiTabbarItem__icon,
+.inactive-tab div,
+.inactive-tab span,
+.inactive-tab svg {
+  color: rgba(255, 255, 255, 0.6) !important;
+  fill: rgba(255, 255, 255, 0.6) !important;
+}
+
+/* Убираем фон у контейнеров табов */
+.active-tab,
+.inactive-tab {
+  background-color: transparent !important;
+  background: transparent !important;
 }
 
 /* Hover эффекты для мобильного меню */

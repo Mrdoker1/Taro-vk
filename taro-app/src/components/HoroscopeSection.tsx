@@ -13,6 +13,7 @@ import moonImage from '../assets/moon.png';
 import bigStarImage from '../assets/big-star.png';
 import starImage from '../assets/star.png';
 import star2Image from '../assets/star-2.png';
+import appIcon from '../assets/app.svg';
 import { BACKGROUND_IMAGE_URL } from '../constants/styles';
 
 // Функция для парсинга цвета в новом формате "название#hex"
@@ -745,7 +746,7 @@ export const HoroscopeSection = () => {
       {/* Header */}
       <div style={headerStyle}>
         <img
-          src="https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/a454a9aefa63c89b1f3f6882a43da00885c70554?placeholderIfAbsent=true"
+          src={appIcon}
           alt="Horoscope icon"
           style={iconStyle}
         />
