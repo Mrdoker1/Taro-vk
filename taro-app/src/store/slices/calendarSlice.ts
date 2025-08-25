@@ -44,8 +44,8 @@ const initialState: CalendarState = {
 const STORAGE_KEY = 'calendar_data';
 // New VK storage scheme: small values per day + index
 const VK_INDEX_KEY = 'calendar_index'; // JSON: { dates: string[] }
-const VK_DAY_PREFIX = 'calendar_day:'; // + YYYY-MM-DD
-const VK_NOTE_PREFIX = 'calendar_note:'; // + YYYY-MM-DD (note stored separately for reliability)
+const VK_DAY_PREFIX = 'calendar_day_'; // + YYYY-MM-DD
+const VK_NOTE_PREFIX = 'calendar_note_'; // + YYYY-MM-DD (note stored separately for reliability)
 
 // Кэш для данных календаря в памяти
 let memoryCache: Record<string, CalendarDayData> | null = null;
