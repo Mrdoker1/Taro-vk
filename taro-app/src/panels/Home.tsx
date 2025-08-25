@@ -23,6 +23,7 @@ import { Footer } from '../components/Footer';
 import { HoroscopeSection } from '../components/HoroscopeSection';
 import { ExploreSection } from '../components/ExploreSection';
 import { DecksDisplaySection } from '../components/DecksDisplaySection';
+import { AndroidAppBanner } from '../components/AndroidAppBanner';
 
 
 
@@ -180,12 +181,10 @@ export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
             />
           </div>
 
-          {/* Баннер получения звезд - временно скрыт */}
-          {/* 
+          {/* Android App Banner */}
           <div style={{ marginTop: '12px' }}>
-            <BannerStars />
+            <AndroidAppBanner />
           </div>
-          */}
 
           {/* Секция с колодами */}
           <div style={{ marginBottom: '20px' }}>

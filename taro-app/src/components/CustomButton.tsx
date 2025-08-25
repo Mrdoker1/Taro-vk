@@ -103,10 +103,10 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
     if (variant === 'primary') {
       return {
         ...baseStyles,
-        border: isMobile ? '1px solid #978041' : '1px solid #978041',
+        border: isMobile ? '2px solid #FDC824' : '3px solid #FDC824',
         background: shouldShowHoverEffects 
-          ? 'linear-gradient(90deg, #CFAE1D 0%, #714F0D 100%)'
-          : 'linear-gradient(90deg, #CFAE1D 0%, #714F0D 100%)',
+          ? 'linear-gradient(90deg, #C9801E 0%, #9A510D 100%)'
+          : 'linear-gradient(90deg, #C9801E 0%, #9A510D 100%)',
         color: 'white',
         boxShadow: shouldShowHoverEffects 
           ? '0 0 20px rgba(227, 199, 122, 0.6), 0 0 40px rgba(227, 199, 122, 0.4), 0 0 60px rgba(227, 199, 122, 0.2), inset 0 0 0 3px rgba(0, 0, 0, 0.3)'
