@@ -33,6 +33,7 @@ export const Calendar: React.FC<CalendarProps> = () => {
   const { daysData, selectedDate, loading, error } = useAppSelector((state) => state.calendar);
   const isMobile = useResponsive();
   const [noteText, setNoteText] = useState('');
+  const [originalNoteText, setOriginalNoteText] = useState(''); // Для отслеживания изменений
   const [isEditingNote, setIsEditingNote] = useState(false);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [activeModal, setActiveModal] = useState<string | null>(null);
@@ -50,7 +51,9 @@ export const Calendar: React.FC<CalendarProps> = () => {
   useEffect(() => {
     if (selectedDate) {
       const dayData = daysData[selectedDate];
-      setNoteText(dayData?.note?.content || '');
+      const noteContent = dayData?.note?.content || '';
+      setNoteText(noteContent);
+      setOriginalNoteText(noteContent); // Сохраняем оригинальный текст
     }
   }, [selectedDate, daysData]);
 
@@ -62,6 +65,10 @@ export const Calendar: React.FC<CalendarProps> = () => {
   };
 
   const handleDateSelect = (dateStr: string) => {
+    // Запрещаем переключение дат во время редактирования заметки
+    if (isEditingNote) {
+      return;
+    }
     dispatch(setSelectedDate(dateStr));
   };
 
@@ -78,6 +85,9 @@ export const Calendar: React.FC<CalendarProps> = () => {
       } else {
         await dispatch(deleteCalendarNote(selectedDate));
       }
+      
+      // Обновляем оригинальный текст после успешного сохранения
+      setOriginalNoteText(noteText.trim());
     } catch (error) {
       console.error('Ошибка при сохранении заметки:', error);
     } finally {
@@ -88,8 +98,18 @@ export const Calendar: React.FC<CalendarProps> = () => {
 
   const handleCancelEdit = () => {
     const dayData = selectedDate ? daysData[selectedDate] : null;
-    setNoteText(dayData?.note?.content || '');
+    const noteContent = dayData?.note?.content || '';
+    setNoteText(noteContent);
+    setOriginalNoteText(noteContent); // Восстанавливаем оригинальный текст
     setIsEditingNote(false);
+  };
+
+  const handleStartEdit = () => {
+    const dayData = selectedDate ? daysData[selectedDate] : null;
+    const noteContent = dayData?.note?.content || '';
+    setNoteText(noteContent);
+    setOriginalNoteText(noteContent); // Устанавливаем оригинальный текст при начале редактирования
+    setIsEditingNote(true);
   };
 
   const handleViewActivity = (activity: CalendarActivity) => {
@@ -215,6 +235,10 @@ export const Calendar: React.FC<CalendarProps> = () => {
   };
 
   const navigateMonth = (direction: 'prev' | 'next') => {
+    // Запрещаем навигацию по месяцам во время редактирования заметки
+    if (isEditingNote) {
+      return;
+    }
     const newDate = new Date(currentDate);
     if (direction === 'prev') {
       newDate.setMonth(newDate.getMonth() - 1);
@@ -227,6 +251,9 @@ export const Calendar: React.FC<CalendarProps> = () => {
   const selectedDateData = selectedDate ? daysData[selectedDate] : null;
   const hasActivities = selectedDateData?.activities && selectedDateData.activities.length > 0;
   const hasNote = selectedDateData?.note;
+  
+  // Проверяем, были ли внесены изменения в заметку
+  const hasNoteChanges = noteText.trim() !== originalNoteText.trim();
 
   const getDayMarkers = (date: Date): React.ReactNode => {
     const dateStr = formatDate(date);
@@ -367,7 +394,12 @@ export const Calendar: React.FC<CalendarProps> = () => {
           alignItems: 'center', 
           marginBottom: isMobile ? '12px' : '16px'
         }}>
-          <IconButton onClick={() => navigateMonth('prev')} aria-label="Предыдущий месяц">
+          <IconButton 
+            onClick={() => navigateMonth('prev')} 
+            aria-label="Предыдущий месяц"
+            disabled={isEditingNote}
+            style={{ opacity: isEditingNote ? 0.5 : 1 }}
+          >
             <Icon24ChevronLeft />
           </IconButton>
           <Title level="2" style={{ 
@@ -377,7 +409,12 @@ export const Calendar: React.FC<CalendarProps> = () => {
           }}>
             {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
           </Title>
-          <IconButton onClick={() => navigateMonth('next')} aria-label="Следующий месяц">
+          <IconButton 
+            onClick={() => navigateMonth('next')} 
+            aria-label="Следующий месяц"
+            disabled={isEditingNote}
+            style={{ opacity: isEditingNote ? 0.5 : 1 }}
+          >
             <Icon24ChevronRight />
           </IconButton>
         </div>
@@ -424,6 +461,7 @@ export const Calendar: React.FC<CalendarProps> = () => {
                 mode={isSelected ? 'primary' : 'tertiary'}
                 size="s"
                 onClick={() => handleDateSelect(dateStr)}
+                disabled={isEditingNote} // Блокируем кнопки во время редактирования
                 style={{ 
                   height: isMobile ? '32px' : '40px',
                   minWidth: isMobile ? '32px' : '40px',
@@ -435,7 +473,9 @@ export const Calendar: React.FC<CalendarProps> = () => {
                   fontSize: isToday ? (isMobile ? '9px' : '10px') : (isMobile ? '10px' : '12px'),
                   padding: '0', // Убираем весь padding
                   paddingLeft: '0',
-                  paddingRight: '0'
+                  paddingRight: '0',
+                  opacity: isEditingNote ? 0.5 : 1, // Визуально показываем блокировку
+                  cursor: isEditingNote ? 'not-allowed' : 'pointer'
                 }}
               >
                 <div style={{
@@ -676,6 +716,15 @@ export const Calendar: React.FC<CalendarProps> = () => {
                   }}>
                     Редактирование заметки
                   </Text>
+                  <Text style={{ 
+                    fontSize: isMobile ? '10px' : '11px', 
+                    fontWeight: '300',
+                    color: '#E8D28C',
+                    marginBottom: isMobile ? '4px' : '6px',
+                    opacity: 0.8
+                  }}>
+                    💡 Переключение дат заблокировано во время редактирования
+                  </Text>
                   <div style={{
                     width: '100%',
                     height: '1px',
@@ -702,26 +751,35 @@ export const Calendar: React.FC<CalendarProps> = () => {
                       mode="primary"
                       size="s"
                       onClick={handleSaveNote}
+                      disabled={!hasNoteChanges} // Блокируем если нет изменений
                       style={{ 
                         fontSize: isMobile ? '9px' : '10px',
-                        color: '#000000',
-                        backgroundColor: '#978041',
-                        border: '1px solid #E8D28C',
-                        transition: 'all 0.2s ease'
+                        color: hasNoteChanges ? '#000000' : '#666666',
+                        backgroundColor: hasNoteChanges ? '#978041' : '#444444',
+                        border: hasNoteChanges ? '1px solid #E8D28C' : '1px solid #666666',
+                        transition: 'all 0.2s ease',
+                        opacity: hasNoteChanges ? 1 : 0.6,
+                        cursor: hasNoteChanges ? 'pointer' : 'not-allowed'
                       }}
                       className="calendar-save-button"
                       onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = '#B8985C';
-                        e.currentTarget.style.transform = 'translateY(-1px)';
-                        e.currentTarget.style.boxShadow = '0 4px 8px rgba(232, 210, 140, 0.3)';
+                        if (hasNoteChanges) {
+                          e.currentTarget.style.backgroundColor = '#B8985C';
+                          e.currentTarget.style.transform = 'translateY(-1px)';
+                          e.currentTarget.style.boxShadow = '0 4px 8px rgba(232, 210, 140, 0.3)';
+                        }
                       }}
                       onMouseLeave={(e) => {
-                        e.currentTarget.style.backgroundColor = '#978041';
-                        e.currentTarget.style.transform = 'translateY(0)';
-                        e.currentTarget.style.boxShadow = 'none';
+                        if (hasNoteChanges) {
+                          e.currentTarget.style.backgroundColor = '#978041';
+                          e.currentTarget.style.transform = 'translateY(0)';
+                          e.currentTarget.style.boxShadow = 'none';
+                        }
                       }}
                     >
-                      <span style={{ color: '#000000 !important' }}>Сохранить</span>
+                      <span style={{ color: hasNoteChanges ? '#000000 !important' : '#666666 !important' }}>
+                        Сохранить
+                      </span>
                     </Button>
                   </div>
                 </>
@@ -764,7 +822,7 @@ export const Calendar: React.FC<CalendarProps> = () => {
                       <Button
                         mode="tertiary"
                         size="s"
-                        onClick={() => setIsEditingNote(true)}
+                        onClick={handleStartEdit}
                         style={{ 
                           fontSize: isMobile ? '10px' : '11px',
                           transition: 'all 0.2s ease',
@@ -812,7 +870,7 @@ export const Calendar: React.FC<CalendarProps> = () => {
                       <Button
                         mode="tertiary"
                         size="s"
-                        onClick={() => setIsEditingNote(true)}
+                        onClick={handleStartEdit}
                         style={{ 
                           fontSize: isMobile ? '10px' : '11px',
                           transition: 'all 0.2s ease',
