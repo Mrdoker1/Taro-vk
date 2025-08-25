@@ -10,6 +10,7 @@ import {
 } from '@vkontakte/vkui';
 import { useParams } from '@vkontakte/vk-mini-apps-router';
 import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
+import { safeNavigateBack } from '../utils/navigation';
 import { Footer } from '../components/Footer';
 import { AppHeader } from '../components/AppHeader';
 import { MagicLoader } from '../components/MagicLoader';
@@ -54,7 +55,7 @@ export const CardDetails: FC<CardDetailsProps> = ({ id }) => {
           left={
             <Button
               mode="tertiary"
-              onClick={() => routeNavigator.back()}
+              onClick={() => safeNavigateBack(routeNavigator)}
               style={{ 
                 color: '#ffffff',
                 transition: 'background-color 0.2s ease',

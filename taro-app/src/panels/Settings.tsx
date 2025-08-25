@@ -18,6 +18,7 @@ import { Footer } from '../components/Footer';
 import { CustomSelect } from '../components/CustomSelect';
 import { CustomToggle } from '../components/CustomToggle';
 import { DEFAULT_VIEW_PANELS } from '../routes';
+import { safeNavigateBack } from '../utils/navigation';
 // import { AppLanguage, getLanguageDisplayName } from '../utils/languageUtils';
 import { BACKGROUND_BASE } from '../constants/styles';
 import { getThemeOptions, ThemeKey } from '../constants/themes';
@@ -93,7 +94,7 @@ export const Settings: FC<SettingsProps> = ({ id }) => {
           left={
             <Button
               mode="tertiary"
-              onClick={() => routeNavigator.back()}
+              onClick={() => safeNavigateBack(routeNavigator)}
               style={{ 
                 color: '#ffffff',
                 transition: 'background-color 0.2s ease',

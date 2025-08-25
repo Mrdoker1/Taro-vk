@@ -12,6 +12,7 @@ import { Footer } from '../components/Footer';
 import { AppHeader } from '../components/AppHeader';
 import { useResponsive } from '../hooks/useResponsive';
 import { DEFAULT_VIEW_PANELS } from '../routes';
+import { safeNavigateBack } from '../utils/navigation';
 import affirmationIcon from '../assets/afirmation.svg';
 import { BACKGROUND_BASE } from '../constants/styles';
 
@@ -21,7 +22,7 @@ export const DailyAffirmationPanel: FC<DailyAffirmationPanelProps> = ({ id }) =>
   const routeNavigator = useRouteNavigator();
   const isMobile = useResponsive();
 
-  const handleBackClick = () => routeNavigator.back();
+  const handleBackClick = () => safeNavigateBack(routeNavigator);
   const handleAboutApp = () => routeNavigator.push(`/${DEFAULT_VIEW_PANELS.ABOUT_APP}`);
   const handleLegalInfo = () => routeNavigator.push(`/${DEFAULT_VIEW_PANELS.LEGAL_INFO}`);
 
