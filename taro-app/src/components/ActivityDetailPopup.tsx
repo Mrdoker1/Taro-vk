@@ -83,7 +83,7 @@ export const ActivityDetailPopup: React.FC<ActivityDetailPopupProps> = ({
   };
 
   const handleShare = async () => {
-    await shareActivityToVK(activity);
+    await shareActivityToVK();
   };
 
   const renderActivityContent = () => {

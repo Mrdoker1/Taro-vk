@@ -67,22 +67,8 @@ export const AffirmationResult: React.FC<AffirmationResultProps> = ({
 
   const handleShare = async () => {
     try {
-      // Создаем временную активность для использования с новой утилитой
-      const affirmationData = {
-        sections: parsedAffirmation.sections || [],
-        usage: undefined
-      };
 
-      const tempActivity: CalendarActivity = {
-        id: `temp_${Date.now()}`,
-        type: 'affirmation',
-        title: 'Ежедневная аффирмация',
-        summary: parsedAffirmation.title || getCurrentTopic(),
-        timestamp: Date.now(),
-        fullContent: JSON.stringify(affirmationData)
-      };
-
-      await shareActivityToVK(tempActivity);
+      await shareActivityToVK();
     } catch (error) {
       console.error('Ошибка при поделиться аффирмацией:', error);
     }
