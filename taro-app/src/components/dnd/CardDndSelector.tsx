@@ -31,6 +31,7 @@ interface CardDndSelectorProps {
   onCardsSelected: (cards: { position: number; cardId: string; isReversed: boolean }[]) => void;
   onBack?: () => void;
   onShuffleCards?: () => void;
+  onCardReturned?: (cardId: string) => void; // Новый callback для возврата карты в колоду
 }
 
 interface SelectedCard {
@@ -51,12 +52,13 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
   deckName,
   cards,
   positions,
-  spreadGrid = [[1]], // Дефолтное значение для одной карты
-  userQuestion = '',
+  spreadGrid,
+  userQuestion,
   backImageUrl,
   onCardsSelected,
   onBack,
-  onShuffleCards
+  onShuffleCards,
+  onCardReturned
 }) => {
   const [selectedCards, setSelectedCards] = useState<SelectedCard[]>([]);
   const [activeDragCard, setActiveDragCard] = useState<{id: string; cardData: CardData} | null>(null);
@@ -228,7 +230,16 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
   
   // Функция для удаления карты из позиции
   const handleRemoveCard = (position: number) => {
+    // Находим карту, которую удаляем
+    const removedCard = selectedCards.find(card => card.position === position);
+    
+    // Обновляем состояние выбранных карт
     setSelectedCards(prev => prev.filter(card => card.position !== position));
+    
+    // Возвращаем удаленную карту в конец колоды через callback
+    if (removedCard && onCardReturned) {
+      onCardReturned(removedCard.cardId);
+    }
   };
   
   // Проверка готовности к отправке результатов

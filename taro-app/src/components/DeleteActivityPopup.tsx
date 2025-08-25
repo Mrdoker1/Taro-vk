@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button, Text, IconButton, Title } from '@vkontakte/vkui';
 import { Icon24Dismiss } from '@vkontakte/icons';
+import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
 import { CalendarActivity } from '../store/slices/calendarSlice';
 import calendarSpreadIcon from '../assets/calendar-spread.svg';
 import calendarAffirmIcon from '../assets/calendar-affirm.svg';
@@ -21,6 +22,31 @@ export const DeleteActivityPopup: React.FC<DeleteActivityPopupProps> = ({
   onConfirm,
   getActivityDetails
 }) => {
+  // Обработчик системной кнопки "Назад"
+  useEffect(() => {
+    if (!isOpen) return;
+
+    // Создаем обработчик истории для перехвата кнопки "Назад"
+    const handlePopState = (event: PopStateEvent) => {
+      event.preventDefault();
+      event.stopPropagation();
+      onClose();
+      // Восстанавливаем состояние истории
+      window.history.pushState(null, '', window.location.href);
+    };
+
+    // Добавляем состояние в историю
+    window.history.pushState(null, '', window.location.href);
+    
+    // Подписываемся на событие popstate
+    window.addEventListener('popstate', handlePopState);
+
+    // Отписываемся при размонтировании или закрытии модалки
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [isOpen, onClose]);
+
   if (!isOpen || !activity) return null;
 
   const getActivityIcon = () => {

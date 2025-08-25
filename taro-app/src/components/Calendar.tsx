@@ -264,7 +264,6 @@ export const Calendar: React.FC<CalendarProps> = () => {
     const hasNote = !!dayData.note;
     const hasTarotReading = dayData.activities.some(activity => activity.type === 'tarot_reading');
     const hasAffirmation = dayData.activities.some(activity => activity.type === 'affirmation');
-    const hasOtherActivity = dayData.activities.some(activity => activity.type === 'other');
     
     const markers = [];
     
@@ -325,23 +324,6 @@ export const Calendar: React.FC<CalendarProps> = () => {
         />
       );
       markerIndex++;
-    }
-    
-    if (hasOtherActivity) {
-      markers.push(
-        <div
-          key="other"
-          style={{
-            position: 'absolute',
-            top: '2px',
-            right: `${2 + markerIndex * markerSpacing}px`,
-            width: `${markerSize}px`,
-            height: `${markerSize}px`,
-            backgroundColor: '#2196f3', // Синий для других активностей
-            zIndex: 1
-          }}
-        />
-      );
     }
     
     return markers.length > 0 ? <>{markers}</> : null;
@@ -542,14 +524,6 @@ export const Calendar: React.FC<CalendarProps> = () => {
                 backgroundColor: '#4caf50'
               }} />
               <Text style={{ fontSize: isMobile ? '10px' : '11px', color: '#E8D28C' }}>Заметка</Text>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <div style={{
-                width: isMobile ? '10px' : '12px',
-                height: isMobile ? '10px' : '12px',
-                backgroundColor: '#2196f3'
-              }} />
-              <Text style={{ fontSize: isMobile ? '10px' : '11px', color: '#E8D28C' }}>Другая активность</Text>
             </div>
           </div>
         </div>

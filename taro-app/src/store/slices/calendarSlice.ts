@@ -5,7 +5,7 @@ import { checkPinConditions } from './pinsSlice';
 
 export interface CalendarActivity {
   id: string;
-  type: 'tarot_reading' | 'affirmation' | 'other';
+  type: 'tarot_reading' | 'affirmation';
   title: string;
   summary: string;
   fullContent?: string; // Полная информация об активности

@@ -83,6 +83,24 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
     setShuffledCards(newCards);
   };
 
+  // Функция для возврата карты в конец колоды
+  const handleCardReturned = (cardId: string) => {
+    setShuffledCards(prev => {
+      // Удаляем карту из текущей позиции (если она есть)
+      const filteredCards = prev.filter(card => card.id !== cardId);
+      
+      // Находим карту в оригинальной колоде
+      const cardToReturn = currentDeck?.cards?.find(card => card.id === cardId);
+      
+      if (cardToReturn) {
+        // Добавляем карту в конец колоды
+        return [...filteredCards, cardToReturn];
+      }
+      
+      return filteredCards;
+    });
+  };
+
   // Функция для обновления выбранной карты
   const handleCardSelect = (position: number, cardId: string) => {
     setSelectedCards(prev => {
@@ -246,6 +264,7 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
         onCardsSelected={onCardsSelected}
         onBack={onBack}
         onShuffleCards={shuffleCards}
+        onCardReturned={handleCardReturned}
       />
     );
   }
