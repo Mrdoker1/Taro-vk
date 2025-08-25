@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Text } from '@vkontakte/vkui';
+import { Text, IconButton } from '@vkontakte/vkui';
+import { Icon24Refresh } from '@vkontakte/icons';
 import { useAppDispatch, useAppSelector } from '../store';
 import { fetchSpreadDetails } from '../store/slices/taroSpreadsSlice';
 import { fetchDecks } from '../store/slices/taroDecksSlice';
@@ -42,15 +43,24 @@ export const TaroSpreadDetails: React.FC<TaroSpreadDetailsProps> = ({
     dispatch(fetchDecks({ lang: 'russian' }));
   }, [dispatch]);
 
+  // Автоматическая перезагрузка колод, если их нет после завершения загрузки
+  useEffect(() => {
+    if (!decksLoading && decks.length === 0) {
+      console.log('Колоды не загрузились, пробуем перезагрузить автоматически...');
+      dispatch(fetchDecks({ lang: 'russian' }));
+    }
+  }, [decksLoading, decks.length, dispatch]);
+
   // Устанавливаем первую доступную колоду по умолчанию
   useEffect(() => {
-    if (decks.length > 0 && !selectedDeckId) {
+    if (decks.length > 0 && !selectedDeckId && !decksLoading) {
       const availableDeck = decks.find(deck => deck.available);
+      console.log('Setting default deck:', availableDeck);
       if (availableDeck) {
         setSelectedDeckId(availableDeck.id);
       }
     }
-  }, [decks, selectedDeckId]);
+  }, [decks, selectedDeckId, decksLoading]);
 
   // Определим, является ли схема сложной (многострочной)
   // Функция для определения иконки расклада
@@ -105,6 +115,15 @@ export const TaroSpreadDetails: React.FC<TaroSpreadDetailsProps> = ({
     value: question,
     label: question
   })) || [];
+
+  // Функция для перезагрузки колод
+  const handleReloadDecks = () => {
+    console.log('Перезагрузка колод...');
+    // Сброс текущего выбора колоды
+    setSelectedDeckId('');
+    // Перезагрузка колод
+    dispatch(fetchDecks({ lang: 'russian' }));
+  };
 
   // Проверяем, есть ли вопрос (готовый или пользовательский)
   const hasQuestion = Boolean(selectedPresetQuestion || customQuestion.trim());
@@ -175,6 +194,15 @@ export const TaroSpreadDetails: React.FC<TaroSpreadDetailsProps> = ({
   }
 
   const availableDecks = decks.filter(deck => deck.available);
+  
+  // Добавляем отладочную информацию
+  console.log('TaroSpreadDetails Debug:', {
+    decks: decks.length,
+    availableDecks: availableDecks.length,
+    decksLoading,
+    selectedDeckId
+  });
+  
   const deckOptions = availableDecks.map(deck => ({
     value: deck.id,
     label: deck.name
@@ -267,13 +295,78 @@ export const TaroSpreadDetails: React.FC<TaroSpreadDetailsProps> = ({
       }}>
         {/* Выбор колоды */}
         {currentSpread.available && !currentSpread.paid && (
-          <CustomSelect
-            label="Выберите колоду для гадания"
-            value={selectedDeckId}
-            options={deckOptions}
-            placeholder="Выберите колоду"
-            onChange={setSelectedDeckId}
-          />
+          <div>
+            {decksLoading ? (
+              <Text style={{ color: '#ffffff', textAlign: 'center' }}>
+                Загрузка колод...
+              </Text>
+            ) : deckOptions.length === 0 ? (
+              <div style={{ 
+                display: 'flex', 
+                flexDirection: 'column', 
+                gap: '12px',
+                alignItems: 'center'
+              }}>
+                <Text style={{ color: '#ff6b6b', textAlign: 'center' }}>
+                  Нет доступных колод
+                </Text>
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}>
+                  <Text style={{ color: '#ffffff', fontSize: '14px' }}>
+                    Попробуйте перезагрузить
+                  </Text>
+                  <IconButton 
+                    onClick={handleReloadDecks}
+                    disabled={decksLoading}
+                    style={{
+                      color: '#E8D28C',
+                      backgroundColor: 'rgba(232, 210, 140, 0.1)',
+                      borderRadius: '8px',
+                      transform: decksLoading ? 'rotate(360deg)' : 'none',
+                      transition: 'transform 1s linear',
+                      opacity: decksLoading ? 0.7 : 1
+                    }}
+                  >
+                    <Icon24Refresh />
+                  </IconButton>
+                </div>
+              </div>
+            ) : (
+              <div style={{ 
+                display: 'flex', 
+                alignItems: 'flex-end', 
+                gap: '12px' 
+              }}>
+                <div style={{ flex: 1 }}>
+                  <CustomSelect
+                    label="Выберите колоду для гадания"
+                    value={selectedDeckId}
+                    options={deckOptions}
+                    placeholder="Выберите колоду"
+                    onChange={setSelectedDeckId}
+                  />
+                </div>
+                <IconButton 
+                  onClick={handleReloadDecks}
+                  disabled={decksLoading}
+                  style={{
+                    color: '#E8D28C',
+                    backgroundColor: 'rgba(232, 210, 140, 0.1)',
+                    borderRadius: '8px',
+                    marginBottom: '2px',
+                    transform: decksLoading ? 'rotate(360deg)' : 'none',
+                    transition: 'transform 1s linear',
+                    opacity: decksLoading ? 0.7 : 1
+                  }}
+                >
+                  <Icon24Refresh />
+                </IconButton>
+              </div>
+            )}
+          </div>
         )}
 
         {/* Поле для вопроса в стиле аффирмаций */}

@@ -64,6 +64,7 @@ export const fetchDecks = createAsyncThunk(
       // Используем утилиту для получения языка в нужном формате для API
       const apiLang = getLanguageForApi(lang, ApiType.TARO_DECKS);
       
+      console.log('Fetching decks with apiLang:', apiLang);
       const response = await fetch(API.decks(`includeAll=false&lang=${apiLang}`));
       
       if (!response.ok) {
@@ -72,7 +73,19 @@ export const fetchDecks = createAsyncThunk(
       }
       
       const data = await response.json();
-      return data;
+      console.log('Decks API response:', data);
+      
+      // Проверяем структуру данных
+      if (Array.isArray(data)) {
+        console.log('Available decks:', data.filter((deck: TaroDeck) => deck.available));
+        return data;
+      } else if (data.decks && Array.isArray(data.decks)) {
+        console.log('Available decks from data.decks:', data.decks.filter((deck: TaroDeck) => deck.available));
+        return data.decks;
+      } else {
+        console.error('Unexpected data structure:', data);
+        return [];
+      }
     } catch (error) {
       console.error('Error fetching decks:', error);
       return rejectWithValue(error instanceof Error ? error.message : 'Не удалось получить список колод');
