@@ -149,6 +149,96 @@ ${data.usage}
 };
 
 /**
+ * Определяет, является ли устройство мобильным
+ */
+const isMobileDevice = (): boolean => {
+  return /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+         window.innerWidth <= 768 ||
+         'ontouchstart' in window;
+};
+
+/**
+ * Определяет, поддерживает ли браузер Web Share API
+ */
+const isWebShareSupported = (): boolean => {
+  return typeof navigator.share === 'function';
+};
+
+/**
+ * Универсальная функция для "скачивания" контента
+ * На мобильных использует Web Share API или VK Bridge для шеринга
+ * На десктопе - классическое скачивание файла
+ */
+export const downloadOrShareActivity = async (activity: CalendarActivity): Promise<void> => {
+  if (!activity.fullContent) {
+    console.error('Нет данных для скачивания');
+    return;
+  }
+
+  try {
+    let content = '';
+    let title = '';
+
+    if (activity.type === 'tarot_reading') {
+      const data: TarotData = JSON.parse(activity.fullContent);
+      content = createTarotFileContent(activity, data);
+      title = `🔮 Расклад Таро: ${activity.title}`;
+    } else if (activity.type === 'affirmation') {
+      const data: AffirmationData = JSON.parse(activity.fullContent);
+      content = createAffirmationFileContent(activity, data);
+      title = `✨ Аффирмации`;
+    } else {
+      content = `${activity.title}\n\n${activity.summary}\n\nСоздано: ${new Date(activity.timestamp).toLocaleString('ru-RU')}`;
+      title = activity.title;
+    }
+
+    // Если мобильное устройство - используем шеринг
+    if (isMobileDevice()) {
+      // Пробуем Web Share API
+      if (isWebShareSupported()) {
+        try {
+          await navigator.share({
+            title: title,
+            text: content
+          });
+          console.log('Поделились через Web Share API');
+          return;
+        } catch (shareError) {
+          console.log('Web Share API отменен пользователем или недоступен');
+        }
+      }
+
+      // Fallback на VK Bridge для копирования
+      try {
+        await bridge.send('VKWebAppCopyText', { text: content });
+        console.log('Текст скопирован через VK Bridge');
+        alert('Текст скопирован в буфер обмена!');
+        return;
+      } catch (vkError) {
+        console.log('VK Bridge копирование недоступно');
+      }
+
+      // Последний fallback - обычный Clipboard API
+      try {
+        await navigator.clipboard.writeText(content);
+        console.log('Текст скопирован через Clipboard API');
+        alert('Текст скопирован в буфер обмена!');
+        return;
+      } catch (clipboardError) {
+        console.log('Clipboard API недоступен');
+        alert('Выделите текст и скопируйте вручную');
+      }
+    } else {
+      // Десктоп - обычное скачивание файла
+      await downloadActivity(activity);
+    }
+
+  } catch (error) {
+    console.error('Ошибка при обработке контента:', error);
+  }
+};
+
+/**
  * Скачивает активность как текстовый файл
  */
 export const downloadActivity = async (activity: CalendarActivity): Promise<void> => {
@@ -228,5 +318,29 @@ export const shareActivityToVK = async (): Promise<void> => {
     
   } catch (error) {
     console.error('Ошибка при попытке поделиться в VK:', error);
+  }
+};
+
+/**
+ * Подготавливает контент активности для отображения в модальном окне
+ */
+export const prepareActivityContent = (activity: CalendarActivity): string => {
+  if (!activity.fullContent) {
+    return 'Нет данных для отображения';
+  }
+
+  try {
+    if (activity.type === 'tarot_reading') {
+      const data: TarotData = JSON.parse(activity.fullContent);
+      return createTarotFileContent(activity, data);
+    } else if (activity.type === 'affirmation') {
+      const data: AffirmationData = JSON.parse(activity.fullContent);
+      return createAffirmationFileContent(activity, data);
+    } else {
+      return `${activity.title}\n\n${activity.summary}\n\nСоздано: ${new Date(activity.timestamp).toLocaleString('ru-RU')}`;
+    }
+  } catch (error) {
+    console.error('Ошибка при подготовке контента:', error);
+    return 'Ошибка при загрузке данных';
   }
 };

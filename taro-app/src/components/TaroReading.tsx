@@ -4,7 +4,7 @@ import { fetchPromptTemplate, clearCurrentTemplate } from '../store/slices/promp
 import { generateText, clearGeneratedText } from '../store/slices/generationSlice';
 import { Button, Text } from '@vkontakte/vkui';
 import { Icon24Download, Icon24Share } from '@vkontakte/icons';
-import { downloadActivity, shareActivityToVK } from '../utils/shareUtils';
+import { downloadOrShareActivity, shareActivityToVK } from '../utils/shareUtils';
 import { CalendarActivity } from '../store/slices/calendarSlice';
 import { CustomButton } from './CustomButton';
 import { MagicLoader } from './MagicLoader';
@@ -130,7 +130,7 @@ export const TaroReading: React.FC<TaroReadingProps> = ({
         fullContent: JSON.stringify(fullReadingInfo)
       };
 
-      await downloadActivity(tempActivity);
+      await downloadOrShareActivity(tempActivity);
     } catch (error) {
       console.error('Ошибка при скачивании файла:', error);
     }

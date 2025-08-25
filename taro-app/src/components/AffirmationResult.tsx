@@ -3,7 +3,7 @@ import { Button, Text, Title } from '@vkontakte/vkui';
 import { Icon24Download, Icon24Share } from '@vkontakte/icons';
 import { ParsedAffirmation } from '../types/affirmation';
 import { getAffirmationIcon } from '../constants/affirmation';
-import { downloadActivity, shareActivityToVK } from '../utils/shareUtils';
+import { downloadOrShareActivity, shareActivityToVK } from '../utils/shareUtils';
 import { CalendarActivity } from '../store/slices/calendarSlice';
 
 interface AffirmationResultProps {
@@ -59,7 +59,7 @@ export const AffirmationResult: React.FC<AffirmationResultProps> = ({
         fullContent: JSON.stringify(affirmationData)
       };
 
-      await downloadActivity(tempActivity);
+      await downloadOrShareActivity(tempActivity);
     } catch (error) {
       console.error('Ошибка при скачивании аффирмации:', error);
     }
