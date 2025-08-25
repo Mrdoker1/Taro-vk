@@ -79,6 +79,73 @@ export const loadUserQuestion = createAsyncThunk(
   }
 );
 
+// Асинхронный action для загрузки настройки выбора карт из VK Storage
+export const loadManualCardSelection = createAsyncThunk(
+  'app/loadManualCardSelection',
+  async () => {
+    try {
+      if (isVKEnvironment()) {
+        // VK Storage для продакшена
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('VK Storage timeout')), 3000)
+        );
+        
+        const storagePromise = bridge.send('VKWebAppStorageGet', {
+          keys: ['useManualCardSelection'],
+        });
+        
+        const result = await Promise.race([storagePromise, timeoutPromise]) as { keys: Array<{ key: string; value: string }> };
+        const savedValue = result.keys.find(item => item.key === 'useManualCardSelection')?.value;
+        
+        return savedValue === 'true';
+      } else {
+        // localStorage для разработки
+        const savedValue = localStorage.getItem('useManualCardSelection');
+        return savedValue === 'true';
+      }
+    } catch (error) {
+      console.warn('Не удалось загрузить настройку выбора карт из VK Storage, используем localStorage:', error);
+      // Fallback к localStorage
+      try {
+        const savedValue = localStorage.getItem('useManualCardSelection');
+        return savedValue === 'true';
+      } catch {
+        return false;
+      }
+    }
+  }
+);
+
+// Функция для сохранения настройки выбора карт в VK Storage/localStorage
+const saveManualCardSelectionToStorage = async (value: boolean): Promise<void> => {
+  try {
+    if (isVKEnvironment()) {
+      // VK Storage для продакшена
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('VK Storage timeout')), 3000)
+      );
+      
+      const savePromise = bridge.send('VKWebAppStorageSet', {
+        key: 'useManualCardSelection',
+        value: value.toString(),
+      });
+      
+      await Promise.race([savePromise, timeoutPromise]);
+    } else {
+      // localStorage для разработки
+      localStorage.setItem('useManualCardSelection', value.toString());
+    }
+  } catch (error) {
+    console.error('Failed to save manual card selection setting:', error);
+    // Fallback к localStorage даже в VK среде
+    try {
+      localStorage.setItem('useManualCardSelection', value.toString());
+    } catch {
+      console.error('Failed to save manual card selection setting to localStorage as well');
+    }
+  }
+};
+
 // Функция для сохранения темы в VK Storage/localStorage
 const saveThemeToStorage = async (theme: ThemeKey): Promise<void> => {
   try {
@@ -195,6 +262,7 @@ const appSlice = createSlice({
     },
     setUseManualCardSelection: (state, action: PayloadAction<boolean>) => {
       state.useManualCardSelection = action.payload;
+      saveManualCardSelectionToStorage(action.payload);
     },
     setUserQuestion: (state, action: PayloadAction<string>) => {
       state.userQuestion = action.payload;
@@ -228,6 +296,14 @@ const appSlice = createSlice({
         console.warn('Не удалось загрузить тему пользователя, используем дефолтную');
         state.theme = DEFAULT_THEME;
         applyTheme(DEFAULT_THEME);
+      })
+      .addCase(loadManualCardSelection.fulfilled, (state, action) => {
+        state.useManualCardSelection = action.payload;
+      })
+      .addCase(loadManualCardSelection.rejected, (state) => {
+        // В случае ошибки используем дефолтное значение
+        console.warn('Не удалось загрузить настройку выбора карт, используем дефолтное значение');
+        state.useManualCardSelection = false;
       });
   },
 });

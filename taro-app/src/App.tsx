@@ -8,7 +8,7 @@ import { Persik, Home, NewPage, Settings, DeckDetails, CardDetails, TaroSpreads,
 import { DEFAULT_VIEW_PANELS } from './routes';
 import bridge from './bridge';
 import { store } from './store';
-import { loadUserQuestion, loadUserTheme } from './store/slices/appSlice';
+import { loadUserQuestion, loadUserTheme, loadManualCardSelection } from './store/slices/appSlice';
 import { loadZodiacSign } from './store/slices/horoscopeSlice';
 import { initializePins } from './store/slices/pinsSlice';
 import { initializeStars } from './store/slices/starsSlice';
@@ -50,6 +50,10 @@ export const App = () => {
         // Загружаем сохраненную тему
         console.log('Загружаем тему...');
         store.dispatch(loadUserTheme());
+        
+        // Загружаем настройку выбора карт
+        console.log('Загружаем настройку выбора карт...');
+        store.dispatch(loadManualCardSelection());
         
         setPopout(null);
       } catch (error) {
