@@ -6,7 +6,7 @@ import { checkPinConditions } from '../store/slices/pinsSlice';
 import { ApiType, getLanguageForApi } from '../utils/languageUtils';
 import { saveAffirmationToCalendar } from '../utils/calendarUtils';
 import { ParsedAffirmation, PromptMode } from '../types/affirmation';
-import { AFFIRMATION_TOPICS } from '../constants/affirmation';
+import { AFFIRMATION_TOPICS, getCurrentTopic } from '../constants/affirmation';
 
 export const useAffirmation = () => {
   const dispatch = useAppDispatch();
@@ -18,6 +18,9 @@ export const useAffirmation = () => {
   const [selectedTopic, setSelectedTopic] = useState<string>('');
   const [parsedAffirmation, setParsedAffirmation] = useState<ParsedAffirmation | null>(null);
   const [promptMode, setPromptMode] = useState<PromptMode>('preset');
+  
+  // Состояние для хранения темы на момент генерации
+  const [generatingTopic, setGeneratingTopic] = useState<string>('');
 
   // Инициализация - загрузка шаблона
   useEffect(() => {
@@ -63,7 +66,10 @@ export const useAffirmation = () => {
       }
       
       if (parsedData.title && Array.isArray(parsedData.sections)) {
-        setParsedAffirmation(parsedData);
+        setParsedAffirmation({
+          ...parsedData,
+          generatedTopic: generatingTopic // Используем сохраненную тему
+        });
         
         // Сохранение в календарь
         const affirmationText = parsedData.sections
@@ -86,7 +92,7 @@ export const useAffirmation = () => {
         message: 'Не удалось разобрать ответ сервера'
       });
     }
-  }, [generatedText, dispatch]);
+  }, [generatedText, dispatch, generatingTopic]);
 
   // Подготовка промпта для генерации
   const preparePrompt = useCallback(() => {
@@ -114,9 +120,15 @@ export const useAffirmation = () => {
   const handleGenerate = useCallback(() => {
     const requestData = preparePrompt();
     if (requestData) {
+      // Сохраняем тему на момент генерации
+      const currentTopic = getCurrentTopic(promptMode, customPrompt, selectedTopic);
+      setGeneratingTopic(currentTopic);
+      
+      // Сбрасываем предыдущую аффирмацию при начале новой генерации
+      setParsedAffirmation(null);
       dispatch(generateText(requestData));
     }
-  }, [dispatch, preparePrompt]);
+  }, [dispatch, preparePrompt, promptMode, customPrompt, selectedTopic]);
 
   // Экспорт состояния в window для использования в панели
   useEffect(() => {

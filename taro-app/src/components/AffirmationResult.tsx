@@ -136,7 +136,7 @@ export const AffirmationResult: React.FC<AffirmationResultProps> = ({
           letterSpacing: '0.5px',
           width: isMobile ? '100%' : 'auto'
         }}>
-          Сопровождение на день
+          {parsedAffirmation.generatedTopic || 'Сопровождение на день'}
         </Text>
         
         <div style={{ 

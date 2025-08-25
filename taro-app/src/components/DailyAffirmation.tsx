@@ -10,7 +10,6 @@ import { AffirmationForm } from './AffirmationForm';
 import { AffirmationResult } from './AffirmationResult';
 import { MagicLoader } from './MagicLoader';
 import { CustomButton } from './CustomButton';
-import { getCurrentTopic } from '../constants/affirmation';
 
 const EmptyStateContent = () => (
   <>
@@ -245,8 +244,8 @@ export const DailyAffirmation: React.FC = () => {
             marginBottom: '16px',
             lineHeight: isMobile ? '1.4' : '1.2'
           }}>
-            {isGenerating || parsedAffirmation ? (
-              `🌞 Аффирмация на день на ${getCurrentTopic(promptMode, customPrompt, selectedTopic)}`
+            {parsedAffirmation ? (
+              '🌞 Аффирмация на день'
             ) : (
               'Ждём ваш запрос, чтобы подобрать аффирмации'
             )}

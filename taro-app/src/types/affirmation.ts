@@ -14,6 +14,7 @@ export interface ParsedAffirmation {
   usage: string;
   error?: boolean;
   message?: string;
+  generatedTopic?: string; // Тема, использованная для генерации этой аффирмации
 }
 
 export type PromptMode = 'preset' | 'custom';
