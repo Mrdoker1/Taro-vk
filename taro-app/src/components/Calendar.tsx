@@ -432,10 +432,23 @@ export const Calendar: React.FC<CalendarProps> = () => {
                   color: isSelected ? '#ffffff' : (isToday ? '#ffffff' : undefined),
                   border: isToday ? '2px solid #E8D28C' : undefined,
                   fontWeight: isToday ? 'bold' : undefined,
-                  fontSize: isMobile ? '12px' : '14px'
+                  fontSize: isToday ? (isMobile ? '9px' : '10px') : (isMobile ? '10px' : '12px'),
+                  padding: '0', // Убираем весь padding
+                  paddingLeft: '0',
+                  paddingRight: '0'
                 }}
               >
-                {day.getDate()}
+                <div style={{
+                  position: 'absolute',
+                  top: '50%',
+                  left: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  width: '100%',
+                  textAlign: 'center',
+                  lineHeight: 1
+                }}>
+                  {day.getDate()}
+                </div>
                 {getDayMarkers(day)}
               </Button>
             );
