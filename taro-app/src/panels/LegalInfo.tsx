@@ -13,6 +13,7 @@ import { Footer } from '../components/Footer';
 import { AppHeader } from '../components/AppHeader';
 import { useResponsive } from '../hooks/useResponsive';
 import { BACKGROUND_BASE } from '../constants/styles';
+import appIcon from '../assets/app.svg';
 
 export interface LegalInfoProps extends NavIdProps {}
 
@@ -71,7 +72,7 @@ export const LegalInfo: FC<LegalInfoProps> = ({ id }) => {
               marginBottom: '32px'
             }}>
               <img
-                src="https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/a454a9aefa63c89b1f3f6882a43da00885c70554?placeholderIfAbsent=true"
+                src={appIcon}
                 alt="Legal info icon"
                 style={{
                   width: '44px',

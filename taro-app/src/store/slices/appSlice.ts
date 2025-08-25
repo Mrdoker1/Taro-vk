@@ -3,6 +3,48 @@ import bridge from '../../bridge';
 import { applyTheme } from '../../constants/styles';
 import { ThemeKey, DEFAULT_THEME, isValidTheme } from '../../constants/themes';
 
+// Функция для определения VK окружения
+const isVKEnvironment = (): boolean => {
+  return window.location.search.includes('vk_') || window.location.hash.includes('vk_');
+};
+
+// Асинхронный action для загрузки темы из VK Storage
+export const loadUserTheme = createAsyncThunk(
+  'app/loadUserTheme',
+  async () => {
+    try {
+      if (isVKEnvironment()) {
+        // VK Storage для продакшена
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('VK Storage timeout')), 3000)
+        );
+        
+        const storagePromise = bridge.send('VKWebAppStorageGet', {
+          keys: ['userTheme'],
+        });
+        
+        const result = await Promise.race([storagePromise, timeoutPromise]) as { keys: Array<{ key: string; value: string }> };
+        const savedTheme = result.keys.find(item => item.key === 'userTheme')?.value;
+        
+        return savedTheme && isValidTheme(savedTheme) ? savedTheme : DEFAULT_THEME;
+      } else {
+        // localStorage для разработки
+        const savedTheme = localStorage.getItem('userTheme');
+        return savedTheme && isValidTheme(savedTheme) ? savedTheme : DEFAULT_THEME;
+      }
+    } catch (error) {
+      console.warn('Не удалось загрузить тему из VK Storage, используем localStorage:', error);
+      // Fallback к localStorage
+      try {
+        const savedTheme = localStorage.getItem('userTheme');
+        return savedTheme && isValidTheme(savedTheme) ? savedTheme : DEFAULT_THEME;
+      } catch {
+        return DEFAULT_THEME;
+      }
+    }
+  }
+);
+
 // Асинхронный action для загрузки вопроса из VK Storage
 export const loadUserQuestion = createAsyncThunk(
   'app/loadUserQuestion',
@@ -37,22 +79,33 @@ export const loadUserQuestion = createAsyncThunk(
   }
 );
 
-// Функция для получения темы из localStorage
-const getThemeFromStorage = (): ThemeKey => {
+// Функция для сохранения темы в VK Storage/localStorage
+const saveThemeToStorage = async (theme: ThemeKey): Promise<void> => {
   try {
-    const savedTheme = localStorage.getItem('userTheme');
-    return savedTheme && isValidTheme(savedTheme) ? savedTheme : DEFAULT_THEME;
-  } catch {
-    return DEFAULT_THEME;
-  }
-};
-
-// Функция для сохранения темы в localStorage
-const saveThemeToStorage = (theme: ThemeKey): void => {
-  try {
-    localStorage.setItem('userTheme', theme);
-  } catch {
-    // Игнорируем ошибки
+    if (isVKEnvironment()) {
+      // VK Storage для продакшена
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('VK Storage timeout')), 3000)
+      );
+      
+      const savePromise = bridge.send('VKWebAppStorageSet', {
+        key: 'userTheme',
+        value: theme,
+      });
+      
+      await Promise.race([savePromise, timeoutPromise]);
+    } else {
+      // localStorage для разработки
+      localStorage.setItem('userTheme', theme);
+    }
+  } catch (error) {
+    console.error('Failed to save theme:', error);
+    // Fallback к localStorage даже в VK среде
+    try {
+      localStorage.setItem('userTheme', theme);
+    } catch {
+      console.error('Failed to save theme to localStorage as well');
+    }
   }
 };
 
@@ -127,7 +180,7 @@ const initialState: AppState = {
   error: null,
   useManualCardSelection: false,
   userQuestion: getUserQuestionFromStorage(),
-  theme: getThemeFromStorage(),
+  theme: DEFAULT_THEME, // Будет загружена асинхронно
 };
 
 const appSlice = createSlice({
@@ -165,6 +218,16 @@ const appSlice = createSlice({
       .addCase(loadUserQuestion.rejected, () => {
         // В случае ошибки оставляем текущее значение
         console.warn('Не удалось загрузить вопрос пользователя');
+      })
+      .addCase(loadUserTheme.fulfilled, (state, action) => {
+        state.theme = action.payload;
+        applyTheme(action.payload);
+      })
+      .addCase(loadUserTheme.rejected, (state) => {
+        // В случае ошибки используем дефолтную тему
+        console.warn('Не удалось загрузить тему пользователя, используем дефолтную');
+        state.theme = DEFAULT_THEME;
+        applyTheme(DEFAULT_THEME);
       });
   },
 });

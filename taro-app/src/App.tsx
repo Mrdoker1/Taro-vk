@@ -8,11 +8,10 @@ import { Persik, Home, NewPage, Settings, DeckDetails, CardDetails, TaroSpreads,
 import { DEFAULT_VIEW_PANELS } from './routes';
 import bridge from './bridge';
 import { store } from './store';
-import { loadUserQuestion } from './store/slices/appSlice';
+import { loadUserQuestion, loadUserTheme } from './store/slices/appSlice';
 import { loadZodiacSign } from './store/slices/horoscopeSlice';
 import { initializePins } from './store/slices/pinsSlice';
 import { initializeStars } from './store/slices/starsSlice';
-import { applyTheme } from './constants/styles';
 import { AppWrapper } from './components/AppWrapper';
 import { PinNotificationPopup } from './components/PinNotificationPopup';
 import { PurchaseStarsPopup } from './components/PurchaseStarsPopup';
@@ -48,9 +47,9 @@ export const App = () => {
         console.log('Инициализируем звёзды...');
         store.dispatch(initializeStars());
         
-        // Применяем сохраненную тему
-        const currentTheme = store.getState().app.theme;
-        applyTheme(currentTheme);
+        // Загружаем сохраненную тему
+        console.log('Загружаем тему...');
+        store.dispatch(loadUserTheme());
         
         setPopout(null);
       } catch (error) {
