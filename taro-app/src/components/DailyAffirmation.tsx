@@ -1,8 +1,11 @@
 import React from 'react';
-import { Text, Card, Spinner } from '@vkontakte/vkui';
+import { Text, Card, Spinner, IconButton } from '@vkontakte/vkui';
+import { Icon24Refresh } from '@vkontakte/icons';
 import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
 import { useResponsive } from '../hooks/useResponsive';
 import { useAffirmation } from '../hooks/useAffirmation';
+import { useAppDispatch, useAppSelector } from '../store';
+import { fetchPromptTemplate } from '../store/slices/promptSlice';
 import { AffirmationForm } from './AffirmationForm';
 import { AffirmationResult } from './AffirmationResult';
 import { MagicLoader } from './MagicLoader';
@@ -89,6 +92,9 @@ const EmptyStateContent = () => (
 export const DailyAffirmation: React.FC = () => {
   const isMobile = useResponsive();
   const routeNavigator = useRouteNavigator();
+  const dispatch = useAppDispatch();
+  const { lang } = useAppSelector((state) => state.horoscope);
+  
   const {
     customPrompt,
     selectedTopic,
@@ -103,6 +109,11 @@ export const DailyAffirmation: React.FC = () => {
     setPromptMode,
     handleGenerate
   } = useAffirmation();
+
+  // Функция перезагрузки шаблона
+  const handleReloadTemplate = () => {
+    dispatch(fetchPromptTemplate({ promptId: 'daily-affirmation', lang }));
+  };
 
   // Проверка возможности генерации
   const canGenerate = () => {
@@ -142,17 +153,45 @@ export const DailyAffirmation: React.FC = () => {
       <Card mode="shadow" style={{ 
         padding: '20px',
         background: 'rgba(255, 255, 255, 0.1)',
-        border: '2px solid rgba(255, 107, 107, 0.5)',
-        borderRadius: '12px'
+        borderRadius: '4px'
       }}>
-        <Text style={{ 
-          color: '#ff6b6b',
-          textAlign: 'center',
-          fontSize: '16px',
-          fontFamily: 'Jost'
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '16px'
         }}>
-          Ошибка: {templateError}
-        </Text>
+          <Text style={{ 
+            color: '#ff6b6b',
+            textAlign: 'center',
+            fontSize: '16px',
+            fontFamily: 'Jost'
+          }}>
+            Ошибка соединения с сервером - попробуйте перезагрузить (код: {templateError})
+          </Text>
+          <IconButton
+            onClick={handleReloadTemplate}
+            disabled={templateLoading}
+            style={{
+              backgroundColor: 'rgba(227, 199, 122, 0.1)',
+              border: '1px solid rgba(227, 199, 122, 0.3)',
+              borderRadius: '8px',
+              color: '#e3c77a',
+              transition: 'all 0.2s ease',
+              animation: templateLoading ? 'spin 1s linear infinite' : 'none'
+            }}
+          >
+            <Icon24Refresh />
+          </IconButton>
+        </div>
+        <style>
+          {`
+            @keyframes spin {
+              from { transform: rotate(0deg); }
+              to { transform: rotate(360deg); }
+            }
+          `}
+        </style>
       </Card>
     );
   }
@@ -176,9 +215,11 @@ export const DailyAffirmation: React.FC = () => {
           selectedTopic={selectedTopic}
           customPrompt={customPrompt}
           generationError={generationError}
+          isGenerating={isGenerating}
           onTopicChange={setSelectedTopic}
           onCustomPromptChange={setCustomPrompt}
           onModeChange={setPromptMode}
+          onRetry={handleGenerate}
         />
       </div>
       
@@ -239,6 +280,8 @@ export const DailyAffirmation: React.FC = () => {
                   customPrompt={customPrompt}
                   selectedTopic={selectedTopic}
                   isMobile={isMobile}
+                  onRetry={handleGenerate}
+                  isGenerating={isGenerating}
                 />
               ) : (
                 <EmptyStateContent />

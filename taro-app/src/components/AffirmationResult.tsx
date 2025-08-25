@@ -1,6 +1,6 @@
 import React from 'react';
-import { Button, Text, Title } from '@vkontakte/vkui';
-import { Icon24Download, Icon24Share } from '@vkontakte/icons';
+import { Button, Text, Title, IconButton } from '@vkontakte/vkui';
+import { Icon24Download, Icon24Share, Icon24Refresh } from '@vkontakte/icons';
 import { ParsedAffirmation } from '../types/affirmation';
 import { getAffirmationIcon } from '../constants/affirmation';
 import { downloadOrShareActivity, shareActivityToVK } from '../utils/shareUtils';
@@ -12,6 +12,8 @@ interface AffirmationResultProps {
   customPrompt: string;
   selectedTopic: string;
   isMobile: boolean;
+  onRetry?: () => void;
+  isGenerating?: boolean;
 }
 
 export const AffirmationResult: React.FC<AffirmationResultProps> = ({
@@ -19,21 +21,60 @@ export const AffirmationResult: React.FC<AffirmationResultProps> = ({
   promptMode,
   customPrompt,
   selectedTopic,
-  isMobile
+  isMobile,
+  onRetry,
+  isGenerating = false
 }) => {
   if (!parsedAffirmation) return null;
 
   // Отображение ошибки
   if (parsedAffirmation.error) {
     return (
-      <Text style={{ 
-        color: '#ff6b6b',
-        textAlign: 'center',
-        fontSize: '16px',
-        fontFamily: 'Jost'
-      }}>
-        {parsedAffirmation.message || 'Произошла ошибка при генерации аффирмаций'}
-      </Text>
+      <>
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '16px',
+          padding: '20px',
+          background: 'rgba(255, 107, 107, 0.1)',
+          border: '1px solid rgba(255, 107, 107, 0.3)',
+          borderRadius: '12px'
+        }}>
+          <Text style={{ 
+            color: '#ff6b6b',
+            textAlign: 'center',
+            fontSize: '16px',
+            fontFamily: 'Jost'
+          }}>
+            {parsedAffirmation.message || 'Произошла ошибка при генерации аффирмаций'}
+          </Text>
+          {onRetry && (
+            <IconButton
+              onClick={onRetry}
+              disabled={isGenerating}
+              style={{
+                backgroundColor: 'rgba(227, 199, 122, 0.1)',
+                border: '1px solid rgba(227, 199, 122, 0.3)',
+                borderRadius: '50%',
+                color: '#e3c77a',
+                transition: 'all 0.2s ease',
+                animation: isGenerating ? 'spin 1s linear infinite' : 'none'
+              }}
+            >
+              <Icon24Refresh />
+            </IconButton>
+          )}
+        </div>
+        <style>
+          {`
+            @keyframes spin {
+              from { transform: rotate(0deg); }
+              to { transform: rotate(360deg); }
+            }
+          `}
+        </style>
+      </>
     );
   }
 
