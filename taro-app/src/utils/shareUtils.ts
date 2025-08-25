@@ -287,37 +287,88 @@ export const downloadActivity = async (activity: CalendarActivity): Promise<void
   }
 };
 
-// Интерфейс для параметров VKWebAppShare с поддержкой text
+// Интерфейс для параметров VKWebAppShare
 interface VKShareParams {
   link?: string;
   text?: string;
   user_id?: number;
 }
 
+// Интерфейс для результата VKWebAppShare
+interface VKShareResult {
+  type: 'message' | 'story';
+  users?: Array<{
+    id: number;
+    first_name: string;
+    last_name: string;
+    photo?: string;
+    sex?: number;
+  }>;
+  story_id?: string;
+}
+
+// Интерфейс для VKWebAppShowStoryBox
+interface VKStoryParams {
+  background_type: 'none' | 'image' | 'video';
+  url?: string;
+  text?: string;
+}
+
+// Общий текст для шаринга
+const SHARE_TEXT = '🔮✨ Расклады Таро и аффирмации!\n\nУзнай, что говорят карты именно тебе 🌟\n\n#Таро #Селуна #Аффирмации';
+
 /**
- * Делится активностью в VK через VKWebAppShare согласно документации
+ * Делится активностью в VK через VKWebAppShare с поддержкой историй
  */
-export const shareActivityToVK = async (): Promise<void> => {
+export const shareActivityToVK = async (shareToStory: boolean = false): Promise<void> => {
   try {
-    // Используем правильную ссылку на VK мини-приложение и добавляем текст
-    const shareParams: VKShareParams = {
-      link: 'https://vk.com/app53429194#/',
-      text: '🔮✨ Расклады Таро и аффирмации! Узнай, что говорят карты именно тебе 🌟 #Таро #Seluna'
-    };
-    
-    const result = await bridge.send('VKWebAppShare', shareParams);
-    
-    console.log('Окно поделиться открыто успешно:', result);
-    
-    // Проверяем результат согласно документации
-    if (result && Array.isArray(result) && result.length > 0) {
-      console.log('Сообщения отправлены пользователям:', result);
-    } else if (result && typeof result === 'object') {
-      console.log('Результат поделиться:', result);
+    if (shareToStory) {
+      // Для историй используем VKWebAppShowStoryBox
+      const storyParams: VKStoryParams = {
+        background_type: 'none',
+        url: 'https://vk.com/app53429194',
+        text: SHARE_TEXT
+      };
+      
+      const storyResult = await bridge.send('VKWebAppShowStoryBox', storyParams);
+      console.log('История создана:', storyResult);
+      
+    } else {
+      // Для обычного шаринга используем VKWebAppShare
+      const shareParams: VKShareParams = {
+        link: 'https://vk.com/app53429194',
+        text: SHARE_TEXT
+      };
+      
+      const result = await bridge.send('VKWebAppShare', shareParams) as VKShareResult | VKShareResult[];
+      
+      console.log('Окно поделиться открыто успешно:', result);
+      
+      // Обрабатываем результат согласно документации
+      if (Array.isArray(result)) {
+        // Отправлено в личных сообщениях
+        console.log('Сообщения отправлены пользователям:', result);
+        result.forEach((message: VKShareResult) => {
+          if (message.type === 'message' && message.users) {
+            console.log(`Отправлено ${message.users.length} пользователям`);
+          }
+        });
+      } else if (result && typeof result === 'object' && result.type === 'story') {
+        // Опубликовано в истории
+        console.log('История опубликована, ID:', result.story_id);
+      }
     }
     
   } catch (error) {
     console.error('Ошибка при попытке поделиться в VK:', error);
+    
+    // Обрабатываем специфичные ошибки VK Bridge
+    if (error && typeof error === 'object') {
+      const vkError = error as { error_code?: number; error_msg?: string };
+      if (vkError.error_code) {
+        console.error(`VK Bridge ошибка ${vkError.error_code}: ${vkError.error_msg || 'Неизвестная ошибка'}`);
+      }
+    }
   }
 };
 
