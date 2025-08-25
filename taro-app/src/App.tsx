@@ -9,6 +9,7 @@ import { DEFAULT_VIEW_PANELS } from './routes';
 import bridge from './bridge';
 import { store } from './store';
 import { loadUserQuestion } from './store/slices/appSlice';
+import { loadZodiacSign } from './store/slices/horoscopeSlice';
 import { initializePins } from './store/slices/pinsSlice';
 import { initializeStars } from './store/slices/starsSlice';
 import { applyTheme } from './constants/styles';
@@ -32,9 +33,12 @@ export const App = () => {
         console.log('Получены данные пользователя:', user);
         setUser(user);
         
-        // Загружаем сохраненный вопрос пользователя
+  // Загружаем сохраненный вопрос пользователя
         console.log('Загружаем сохраненный вопрос пользователя...');
         store.dispatch(loadUserQuestion());
+  // Загружаем сохраненный знак зодиака
+  console.log('Загружаем сохраненный знак зодиака...');
+  store.dispatch(loadZodiacSign());
         
         // Инициализируем пины
         console.log('Инициализируем пины...');

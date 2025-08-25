@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { API } from '../../constants/api';
 import { AppLanguage, ApiType, getLanguageForApi } from '../../utils/languageUtils';
+import bridge from '../../bridge';
 
 type HoroscopeType = 'daily' | 'weekly' | 'monthly';
 type ZodiacSign = 'Aries' | 'Taurus' | 'Gemini' | 'Cancer' | 'Leo' | 'Virgo' | 'Libra' | 'Scorpio' | 'Sagittarius' | 'Capricorn' | 'Aquarius' | 'Pisces';
@@ -27,8 +28,63 @@ interface HoroscopeState {
   error: string | null;
 }
 
+// --- Persistence helpers for zodiac sign ---
+const ZODIAC_STORAGE_KEY = 'userZodiacSign';
+
+const isValidZodiacSign = (val: string): val is ZodiacSign => (
+  [
+    'Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'
+  ] as const
+).includes(val as ZodiacSign);
+
+// Quick fallback read to avoid UI flicker before async load
+const getZodiacSignFromFallback = (): ZodiacSign => {
+  try {
+    const stored = sessionStorage.getItem(ZODIAC_STORAGE_KEY) || localStorage.getItem(ZODIAC_STORAGE_KEY);
+    if (stored && isValidZodiacSign(stored)) return stored;
+  } catch {
+    // ignore
+  }
+  return 'Aries';
+};
+
+// Save selected sign into VK Storage with timeouts + fallback mirrors
+const saveZodiacSignToStorage = async (sign: ZodiacSign): Promise<void> => {
+  try {
+    const timeout = new Promise((_, reject) => setTimeout(() => reject(new Error('VK Storage save timeout')), 3000));
+    const vkSave = bridge.send('VKWebAppStorageSet', { key: ZODIAC_STORAGE_KEY, value: sign });
+    await Promise.race([vkSave, timeout]);
+  try { sessionStorage.setItem(ZODIAC_STORAGE_KEY, sign); } catch { /* ignore */ }
+  try { localStorage.setItem(ZODIAC_STORAGE_KEY, sign); } catch { /* ignore */ }
+  } catch {
+  try { sessionStorage.setItem(ZODIAC_STORAGE_KEY, sign); } catch { /* ignore */ }
+  try { localStorage.setItem(ZODIAC_STORAGE_KEY, sign); } catch { /* ignore */ }
+  }
+};
+
+// Thunk to load sign from VK Storage at startup
+export const loadZodiacSign = createAsyncThunk(
+  'horoscope/loadZodiacSign',
+  async () => {
+    try {
+      const timeout = new Promise((_, reject) => setTimeout(() => reject(new Error('VK Storage timeout')), 3000));
+      const vkGet = bridge.send('VKWebAppStorageGet', { keys: [ZODIAC_STORAGE_KEY] });
+      const result = await Promise.race([vkGet, timeout]) as { keys: Array<{ key: string; value: string }>} ;
+      const raw = result?.keys?.[0]?.value;
+      if (raw && isValidZodiacSign(raw)) {
+  try { sessionStorage.setItem(ZODIAC_STORAGE_KEY, raw); } catch { /* ignore */ }
+  try { localStorage.setItem(ZODIAC_STORAGE_KEY, raw); } catch { /* ignore */ }
+        return raw as ZodiacSign;
+      }
+      return null;
+    } catch {
+      return null;
+    }
+  }
+);
+
 const initialState: HoroscopeState = {
-  sign: 'Aries',
+  sign: getZodiacSignFromFallback(),
   type: 'daily',
   day: 'TODAY',
   lang: 'russian',
@@ -81,6 +137,9 @@ const horoscopeSlice = createSlice({
   reducers: {
     setSign: (state, action: PayloadAction<ZodiacSign>) => {
       state.sign = action.payload;
+      // persist (fire-and-forget)
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      saveZodiacSignToStorage(action.payload);
     },
     setType: (state, action: PayloadAction<HoroscopeType>) => {
       state.type = action.payload;
@@ -94,6 +153,11 @@ const horoscopeSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(loadZodiacSign.fulfilled, (state, action) => {
+        if (action.payload && isValidZodiacSign(action.payload)) {
+          state.sign = action.payload;
+        }
+      })
       .addCase(fetchHoroscope.pending, (state) => {
         state.loading = true;
         state.error = null;
