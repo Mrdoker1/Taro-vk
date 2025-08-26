@@ -13,6 +13,10 @@ import { fetchDeckDetails } from '../store/slices/taroDecksSlice';
 import { saveTarotReadingToCalendar } from '../utils/calendarUtils';
 import { BACKGROUND_BASE } from '../constants/styles';
 
+// Константы для стилизации
+const POSITION_NUMBER_COLOR = '#978041'; // Красный цвет для номеров позиций карт
+const POSITION_NUMBER_TEXT_COLOR = '#fff'; // Белый цвет текста номеров
+
 interface TaroReadingProps {
   spreadId: string;
   deckId: string;
@@ -921,8 +925,8 @@ ${systemPromptText}`;
                         width: '16px',
                         height: '16px',
                         borderRadius: '50%',
-                        background: 'rgba(210,175,80,1)',
-                        color: '#000',
+                        border: `1px solid ${POSITION_NUMBER_COLOR}`,
+                        color: POSITION_NUMBER_TEXT_COLOR,
                         fontSize: '10px',
                         display: 'flex',
                         alignItems: 'center',
@@ -1053,8 +1057,8 @@ ${systemPromptText}`;
                             width: '14px',
                             height: '14px',
                             borderRadius: '50%',
-                            background: 'rgba(210,175,80,1)',
-                            color: '#000',
+                            border: `1px solid ${POSITION_NUMBER_COLOR}`,
+                            color: POSITION_NUMBER_TEXT_COLOR,
                             fontSize: '9px',
                             display: 'flex',
                             alignItems: 'center',
@@ -1144,8 +1148,8 @@ ${systemPromptText}`;
                             width: '14px',
                             height: '14px',
                             borderRadius: '50%',
-                            background: 'rgba(210,175,80,1)',
-                            color: '#000',
+                            border: `1px solid ${POSITION_NUMBER_COLOR}`,
+                            color: POSITION_NUMBER_TEXT_COLOR,
                             fontSize: '9px',
                             display: 'flex',
                             alignItems: 'center',
