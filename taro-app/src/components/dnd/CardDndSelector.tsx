@@ -372,7 +372,7 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
                 <IconButton
                   onClick={() => toggleControls(position)}
                   style={{
-                    backgroundColor: showControls ? 'rgba(0, 123, 255, 0.8)' : 'rgba(0, 0, 0, 0.4)',
+                    backgroundColor: showControls ? 'rgba(0, 0, 0, 0.6)' : 'rgba(0, 0, 0, 0.6)',
                     borderRadius: '4px', // Делаем квадратным
                     padding: '6px',
                     width: '30px', // Фиксированная ширина для квадрата
@@ -381,7 +381,9 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
                     alignItems: 'center',
                     justifyContent: 'center',
                     boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
-                    transition: 'background-color 0.3s ease'
+                    transition: 'background-color 0.3s ease',
+                    outline: 'none',
+                    border: 'none'
                   }}
                 >
                   <Icon24MoreHorizontal fill="#ffffff" width={18} height={18} />
