@@ -15,6 +15,8 @@ import { initializeStars } from './store/slices/starsSlice';
 import { AppWrapper } from './components/AppWrapper';
 import { PinNotificationPopup } from './components/PinNotificationPopup';
 import { PurchaseStarsPopup } from './components/PurchaseStarsPopup';
+import { InitialLoader } from './components/InitialLoader';
+import { useFirstLaunch } from './hooks/useFirstLaunch';
 
 export const App = () => {
   const { panel: activePanel = DEFAULT_VIEW_PANELS.HOME } = useActiveVkuiLocation();
@@ -24,6 +26,9 @@ export const App = () => {
   const deckId = params?.deckId || '';
   const [fetchedUser, setUser] = useState<UserInfo | undefined>();
   const [popout, setPopout] = useState<ReactNode | null>(<ScreenSpinner />);
+  
+  // Хук для управления первым запуском
+  const { isLoading, completeFirstLaunch } = useFirstLaunch();
 
   // Список всех валидных панелей
   const validPanels = Object.values(DEFAULT_VIEW_PANELS);
@@ -78,43 +83,51 @@ export const App = () => {
 
   return (
     <Provider store={store}>
-      <AppWrapper>
-        <SplitLayout>
-          <SplitCol>
-            <View activePanel={activePanel}>
-              <Home id={DEFAULT_VIEW_PANELS.HOME} fetchedUser={fetchedUser} />
-              <Persik id={DEFAULT_VIEW_PANELS.PERSIK} />
-              <NewPage id={DEFAULT_VIEW_PANELS.NEW_PAGE} />
-              <Settings id={DEFAULT_VIEW_PANELS.SETTINGS} />
-              <DeckDetails id={DEFAULT_VIEW_PANELS.DECK_DETAILS} />
-              <CardDetails id={DEFAULT_VIEW_PANELS.CARD_DETAILS} />
-              <TaroSpreads id={DEFAULT_VIEW_PANELS.TARO_SPREADS} />
-              <TaroReadingPanel 
-                id={DEFAULT_VIEW_PANELS.TARO_READING} 
-                spreadId={spreadId} 
-                deckId={deckId} 
-              />
-              <DailyAffirmationPanel id={DEFAULT_VIEW_PANELS.DAILY_AFFIRMATION} />
-              <CalendarPanel id={DEFAULT_VIEW_PANELS.CALENDAR} />
-              <AboutApp id={DEFAULT_VIEW_PANELS.ABOUT_APP} />
-              <LegalInfo id={DEFAULT_VIEW_PANELS.LEGAL_INFO} />
-              <StarsPurchase id={DEFAULT_VIEW_PANELS.STARS_PURCHASE} />
-              <CollectionPins id={DEFAULT_VIEW_PANELS.COLLECTION_PINS} />
-              <Profile id={DEFAULT_VIEW_PANELS.PROFILE} fetchedUser={fetchedUser} />
-            </View>
-          </SplitCol>
-          {popout}
-        </SplitLayout>
-        
-        {/* Глобальный попап для уведомлений о пинах */}
-        <PinNotificationPopup />
-        
-        {/* Глобальный попап для покупки звёзд */}
-        <PurchaseStarsPopup 
-          activeModal={null} 
-          onClose={() => {}} 
-        />
-      </AppWrapper>
+      {/* Показываем лоадер при каждом запуске как сплеш-скрин */}
+      {isLoading && (
+        <InitialLoader onLoadComplete={completeFirstLaunch} />
+      )}
+      
+      {/* Основное приложение */}
+      {!isLoading && (
+        <AppWrapper>
+          <SplitLayout>
+            <SplitCol>
+              <View activePanel={activePanel}>
+                <Home id={DEFAULT_VIEW_PANELS.HOME} fetchedUser={fetchedUser} />
+                <Persik id={DEFAULT_VIEW_PANELS.PERSIK} />
+                <NewPage id={DEFAULT_VIEW_PANELS.NEW_PAGE} />
+                <Settings id={DEFAULT_VIEW_PANELS.SETTINGS} />
+                <DeckDetails id={DEFAULT_VIEW_PANELS.DECK_DETAILS} />
+                <CardDetails id={DEFAULT_VIEW_PANELS.CARD_DETAILS} />
+                <TaroSpreads id={DEFAULT_VIEW_PANELS.TARO_SPREADS} />
+                <TaroReadingPanel 
+                  id={DEFAULT_VIEW_PANELS.TARO_READING} 
+                  spreadId={spreadId} 
+                  deckId={deckId} 
+                />
+                <DailyAffirmationPanel id={DEFAULT_VIEW_PANELS.DAILY_AFFIRMATION} />
+                <CalendarPanel id={DEFAULT_VIEW_PANELS.CALENDAR} />
+                <AboutApp id={DEFAULT_VIEW_PANELS.ABOUT_APP} />
+                <LegalInfo id={DEFAULT_VIEW_PANELS.LEGAL_INFO} />
+                <StarsPurchase id={DEFAULT_VIEW_PANELS.STARS_PURCHASE} />
+                <CollectionPins id={DEFAULT_VIEW_PANELS.COLLECTION_PINS} />
+                <Profile id={DEFAULT_VIEW_PANELS.PROFILE} fetchedUser={fetchedUser} />
+              </View>
+            </SplitCol>
+            {popout}
+          </SplitLayout>
+          
+          {/* Глобальный попап для уведомлений о пинах */}
+          <PinNotificationPopup />
+          
+          {/* Глобальный попап для покупки звёзд */}
+          <PurchaseStarsPopup 
+            activeModal={null} 
+            onClose={() => {}} 
+          />
+        </AppWrapper>
+      )}
     </Provider>
   );
 };
