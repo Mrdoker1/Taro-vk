@@ -17,14 +17,33 @@ export const DroppablePosition: React.FC<DroppablePositionProps> = ({
   children, 
   isOccupied = false 
 }) => {
+  // Адаптивные размеры в зависимости от ширины экрана
+  const getCardSize = () => {
+    if (typeof window === 'undefined') return { width: '60px', height: '95px' };
+    
+    const width = window.innerWidth;
+    if (width <= 480) {
+      return { width: '50px', height: '80px' }; // Очень маленькие для телефонов
+    } else if (width <= 768) {
+      return { width: '60px', height: '95px' }; // Средние для планшетов
+    } else if (width <= 900) {
+      return { width: '65px', height: '105px' }; // Промежуточный размер
+    } else if (width <= 1024) {
+      return { width: '70px', height: '110px' }; // Больше для небольших десктопов
+    } else {
+      return { width: '80px', height: '125px' }; // Максимальные для больших экранов
+    }
+  };
+
+  const cardSize = getCardSize();
   const { isOver, setNodeRef } = useDroppable({
     id,
     disabled: isOccupied
   });
 
   const style: React.CSSProperties = {
-    width: '80px',
-    height: '130px',
+    width: cardSize.width,
+    height: cardSize.height,
     borderRadius: '8px',
     border: isOver 
       ? '3px dashed #FFD700' 
@@ -58,18 +77,18 @@ export const DroppablePosition: React.FC<DroppablePositionProps> = ({
           }
         }}
       >
-        {!children && (
+                {!children && (
           <Text style={{
             color: isOver ? '#FFD700' : 'var(--vkui--color_text_secondary)', 
             textAlign: 'center',
             position: 'absolute',
-            fontSize: '11px',
-            padding: '0 4px',
+            fontSize: typeof window !== 'undefined' && window.innerWidth <= 480 ? '9px' : '10px',
+            padding: '0 2px',
             fontWeight: isOver ? 'bold' : 'normal',
             zIndex: 5,
             margin: 0,
-            lineHeight: 1.2,
-            maxWidth: '70px',
+            lineHeight: 1.1,
+            maxWidth: `calc(${cardSize.width} - 8px)`,
             wordWrap: 'break-word'
           }}>
             {isOccupied ? 'Занята' : (position ? `${position}. ${label}` : label)}

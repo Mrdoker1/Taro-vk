@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Text } from '@vkontakte/vkui';
 import DraggableCard from './DraggableCard';
 
@@ -14,6 +14,48 @@ interface CardDeckProps {
 }
 
 export const CardDeck: React.FC<CardDeckProps> = ({ cards, usedCardIds, isShuffling = false, backImageUrl }) => {
+  const [windowWidth, setWindowWidth] = useState<number>(typeof window !== 'undefined' ? window.innerWidth : 1024);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Адаптивные размеры колоды
+  const getDeckSize = () => {
+    if (windowWidth <= 480) {
+      return { width: '85px', height: '135px' }; // Еще меньше для телефонов
+    } else if (windowWidth <= 768) {
+      return { width: '95px', height: '150px' }; // Средние для планшетов
+    } else if (windowWidth <= 900) {
+      return { width: '105px', height: '165px' }; // Промежуточный размер
+    } else if (windowWidth <= 1200) {
+      return { width: '110px', height: '170px' }; // Больше для небольших десктопов
+    } else {
+      return { width: '130px', height: '200px' }; // Максимальные для больших экранов
+    }
+  };
+
+  const deckSize = getDeckSize();
+  
+  // Адаптивный borderRadius в зависимости от размера карты
+  const getBorderRadius = () => {
+    const width = parseInt(deckSize.width);
+    if (width <= 90) {
+      return '10px'; // Маленький радиус для маленьких карт
+    } else if (width <= 110) {
+      return '12px'; // Средний радиус
+    } else {
+      return '15px'; // Большой радиус для больших карт
+    }
+  };
+  
+  const borderRadius = getBorderRadius();
+
   // Карты, которые еще не использованы
   const availableCards = cards.filter(card => !usedCardIds.includes(card.id));
   
@@ -34,8 +76,8 @@ export const CardDeck: React.FC<CardDeckProps> = ({ cards, usedCardIds, isShuffl
       ) : (
         <div style={{ 
           position: 'relative', 
-          width: '150px', 
-          height: '230px',
+          width: deckSize.width, 
+          height: deckSize.height,
           animation: isShuffling ? 'shuffle 0.8s ease-in-out' : 'none'
         }}>
           {/* Фоновые карты стопки */}
@@ -46,9 +88,9 @@ export const CardDeck: React.FC<CardDeckProps> = ({ cards, usedCardIds, isShuffl
                 position: 'absolute',
                 top: 0,
                 left: 0,
-                width: '150px',
-                height: '230px',
-                borderRadius: '8px',
+                width: deckSize.width,
+                height: deckSize.height,
+                borderRadius: borderRadius,
                 background: backImageUrl ? `url(${backImageUrl})` : 'linear-gradient(135deg, #7B68EE, #4B0082)',
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
@@ -68,9 +110,9 @@ export const CardDeck: React.FC<CardDeckProps> = ({ cards, usedCardIds, isShuffl
               top: 0,
               left: 0,
               zIndex: 15,
-              width: '150px',
-              height: '230px',
-              borderRadius: '18px',
+              width: deckSize.width,
+              height: deckSize.height,
+              borderRadius: borderRadius,
               overflow: 'hidden',
               animation: isShuffling ? 'shuffleTopCard 0.8s ease-in-out' : 'none',
               background: 'transparent',

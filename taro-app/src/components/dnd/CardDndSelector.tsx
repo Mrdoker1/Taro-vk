@@ -471,6 +471,38 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
       setIsShuffling(false);
     }, 800);
   };
+
+  // Адаптивные размеры для DragOverlay
+  const getDragOverlaySize = () => {
+    if (windowWidth <= 480) {
+      return { 
+        deck: { width: '85px', height: '135px' },
+        position: { width: '50px', height: '80px' }
+      };
+    } else if (windowWidth <= 768) {
+      return { 
+        deck: { width: '95px', height: '150px' },
+        position: { width: '60px', height: '95px' }
+      };
+    } else if (windowWidth <= 900) {
+      return { 
+        deck: { width: '105px', height: '165px' },
+        position: { width: '65px', height: '105px' }
+      };
+    } else if (windowWidth <= 1200) {
+      return { 
+        deck: { width: '110px', height: '170px' },
+        position: { width: '70px', height: '110px' }
+      };
+    } else {
+      return { 
+        deck: { width: '130px', height: '200px' },
+        position: { width: '80px', height: '125px' }
+      };
+    }
+  };
+
+  const dragOverlaySize = getDragOverlaySize();
   
   return (
     <div style={{ 
@@ -597,9 +629,9 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
           {/* Основной контейнер с колодой, кнопками и позициями */}
           <div style={{ 
             display: 'flex', 
-            gap: windowWidth <= 768 ? '16px' : '32px', 
+            gap: windowWidth <= 900 ? '16px' : '32px', 
             alignItems: 'center',
-            flexDirection: windowWidth <= 768 ? 'column' : 'row', // Адаптивность
+            flexDirection: windowWidth <= 900 ? 'column' : 'row', // Адаптивность
             flexWrap: 'wrap',
           }}>
             {/* Левая колонка - Колода карт, кнопки и позиции для карт */}
@@ -614,11 +646,11 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
               {/* Контейнер с колодой и кнопкой */}
               <div style={{
                 display: 'flex',
-                gap: windowWidth <= 768 ? '16px' : '32px',
+                gap: windowWidth <= 900 ? '16px' : '32px',
                 alignItems: 'center',
-                flexDirection: windowWidth <= 768 ? 'column-reverse' : 'row',
+                flexDirection: windowWidth <= 900 ? 'column-reverse' : 'row',
                 width: '100%',
-                justifyContent: windowWidth <= 768 ? 'center' : 'flex-start'
+                justifyContent: windowWidth <= 900 ? 'center' : 'flex-start'
               }}>
                 {/* Блок с колодой и кнопками */}
                 <div style={{
@@ -626,17 +658,17 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
                   flexDirection: 'column', 
                   alignItems: 'center', 
                   gap: windowWidth <= 480 ? '12px' : '16px',
-                  flex: windowWidth <= 768 ? 'none' : '0 0 400px'
+                  flex: windowWidth <= 900 ? 'none' : '0 0 400px'
                 }}>
                   <div style={{ position: 'relative' }}>
                     <CardDeck cards={cards} usedCardIds={usedCardIds} isShuffling={isShuffling} backImageUrl={backImageUrl} />
                     
                     {/* Анимированная стрелка для подсказки драг-н-дропа */}
-                    {cards.length > 0 && Object.keys(selectedCards).length === 0 && !isMobile && windowWidth > 768 && (
+                    {cards.length > 0 && Object.keys(selectedCards).length === 0 && !isMobile && windowWidth > 900 && (
                       <div style={{
                         position: 'absolute',
                         top: '50%',
-                        right: '-80px',
+                        right: '-70px',
                         transform: 'translateY(-50%)',
                         fontSize: '32px',
                         animation: 'dragAndDropHint 2s ease-in-out infinite',
@@ -673,7 +705,7 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
                   display: 'flex', 
                   flexDirection: 'column',
                   alignItems: 'center',
-                  minWidth: windowWidth <= 768 ? '100%' : '300px',
+                  minWidth: windowWidth <= 900 ? '100%' : '300px',
                   width: '100%'
                 }}>
                   {/* Контейнер для карт */}
@@ -697,12 +729,12 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
           <DragOverlay>
             {activeDragCard && (
               <div style={{ 
-                width: activeDropTarget ? '100px' : '150px', // Изначально размер колоды, при наведении - размер зоны
-                height: activeDropTarget ? '150px' : '230px',
+                width: activeDropTarget ? dragOverlaySize.position.width : dragOverlaySize.deck.width,
+                height: activeDropTarget ? dragOverlaySize.position.height : dragOverlaySize.deck.height,
                 transform: 'scale(1)', // Убираем дополнительное масштабирование
                 transition: 'all 0.2s ease', // Плавная анимация изменения размера
                 filter: 'drop-shadow(0 8px 16px rgba(0, 0, 0, 0.3))', // Добавляем тень для объёма
-                borderRadius: '18px',
+                borderRadius: activeDropTarget ? '8px' : '15px', // Пропорциональный радиус к размеру карты
                 overflow: 'hidden',
                 zIndex: 9999
               }}>
@@ -746,7 +778,7 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
         <div style={{ 
           display: 'flex', 
           gap: '16px',
-          justifyContent: windowWidth <= 768 ? 'center' : 'flex-end',
+          justifyContent: windowWidth <= 900 ? 'center' : 'flex-end',
           flexDirection: windowWidth <= 480 ? 'column' : 'row',
           alignItems: 'center',
           marginTop: '24px'
