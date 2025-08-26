@@ -153,25 +153,35 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
 
   const getSparkleEffect = (): React.CSSProperties => ({
     position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
+    bottom: -10,
+    left: '50%',
+    transform: 'translateX(-50%)',
+    width: '120%',
+    height: '70%',
     background: (isHovered && !isTouch && variant !== 'tertiary') 
-      ? 'linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.3) 50%, transparent 70%)'
+      ? 'radial-gradient(ellipse at center bottom, rgba(255, 189, 66, 0.4) 0%, rgba(255, 189, 66, 0.2) 40%, rgba(255, 189, 66, 0.1) 60%, transparent 85%)'
       : 'none',
-    animation: (isHovered && !isTouch && variant !== 'tertiary') ? 'magicSparkle 2s infinite' : 'none',
+    opacity: (isHovered && !isTouch && variant !== 'tertiary') ? 1 : 0,
+    animation: (isHovered && !isTouch && variant !== 'tertiary') ? 'glowPulse 2s ease-in-out infinite' : 'none',
+    transition: 'opacity 0.3s ease',
     pointerEvents: 'none',
-    borderRadius: '3px',
-    display: variant === 'tertiary' ? 'none' : 'block'
+    borderRadius: '0 0 50% 50%',
+    display: variant === 'tertiary' ? 'none' : 'block',
+    overflow: 'hidden'
   });
 
   return (
     <>
       <style>{`
-        @keyframes magicSparkle {
-          0% { background-position: -100% 0; }
-          100% { background-position: 100% 0; }
+        @keyframes glowPulse {
+          0%, 100% { 
+            opacity: 0.6;
+            transform: translateX(-50%) translateY(1px);
+          }
+          50% { 
+            opacity: 0.8;
+            transform: translateX(-50%) translateY(-1px);
+          }
         }
         @keyframes magicPulse {
           0%, 100% { 
