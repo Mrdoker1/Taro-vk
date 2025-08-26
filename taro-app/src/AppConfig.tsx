@@ -8,6 +8,7 @@ import './globals.css';
 import { transformVKBridgeAdaptivity } from './utils';
 import { router } from './routes';
 import { App } from './App';
+import { ErrorBoundary } from './components/ErrorBoundary';
 
 export const AppConfig = () => {
   const vkBridgeAppearance = useAppearance() || undefined;
@@ -24,9 +25,11 @@ export const AppConfig = () => {
     >
       <AdaptivityProvider {...adaptivity}>
         <AppRoot mode="full" safeAreaInsets={vkBridgeInsets}>
-          <RouterProvider router={router}>
-            <App />
-          </RouterProvider>
+          <ErrorBoundary>
+            <RouterProvider router={router}>
+              <App />
+            </RouterProvider>
+          </ErrorBoundary>
         </AppRoot>
       </AdaptivityProvider>
     </ConfigProvider>

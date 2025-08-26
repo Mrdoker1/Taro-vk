@@ -46,6 +46,8 @@ export const routes = RoutesConfig.create([
       createPanel(DEFAULT_VIEW_PANELS.STARS_PURCHASE, '/stars-purchase', []),
       createPanel(DEFAULT_VIEW_PANELS.COLLECTION_PINS, '/collection-pins', []),
       createPanel(DEFAULT_VIEW_PANELS.PROFILE, '/profile', []),
+      // Catch-all route: любой неправильный маршрут перенаправляется на главную
+      createPanel(DEFAULT_VIEW_PANELS.HOME, '*', []),
     ]),
   ]),
 ]);

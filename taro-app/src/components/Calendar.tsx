@@ -707,11 +707,27 @@ export const Calendar: React.FC<CalendarProps> = () => {
                   }} />
                   <Textarea
                     value={noteText}
-                    onChange={(e) => setNoteText(e.target.value)}
+                    onChange={(e) => {
+                      const newValue = e.target.value;
+                      if (newValue.length <= 300) {
+                        setNoteText(newValue);
+                      }
+                    }}
                     placeholder="Введи заметку для этого дня..."
                     rows={isMobile ? 3 : 4}
+                    maxLength={300}
                     style={{ marginBottom: isMobile ? '6px' : '8px', fontSize: isMobile ? '11px' : '12px' }}
                   />
+                  {/* Счетчик символов для заметки */}
+                  <div style={{
+                    textAlign: 'right',
+                    fontSize: '10px',
+                    color: noteText.length > 270 ? '#ff6b6b' : 'rgba(255, 255, 255, 0.6)',
+                    marginBottom: isMobile ? '6px' : '8px',
+                    fontFamily: 'Jost, -apple-system, BlinkMacSystemFont, sans-serif'
+                  }}>
+                    {noteText.length}/300
+                  </div>
                   <div style={{ display: 'flex', gap: isMobile ? '6px' : '8px', justifyContent: 'flex-end', alignItems: 'center' }}>
                     <Button
                       mode="tertiary"
@@ -839,7 +855,7 @@ export const Calendar: React.FC<CalendarProps> = () => {
                         marginBottom: isMobile ? '8px' : '12px',
                         lineHeight: '1.4'
                       }}>
-                        Нажмите "Добавить заметку" чтобы создать заметку для этого дня.
+                        Нажмите "Добавить заметку", чтобы создать заметку для этого дня.
                       </Text>
                       <Button
                         mode="tertiary"

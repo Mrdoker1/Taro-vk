@@ -1,7 +1,7 @@
 import { useState, useEffect, ReactNode } from 'react';
 import { UserInfo } from '@vkontakte/vk-bridge';
 import { View, SplitLayout, SplitCol, ScreenSpinner } from '@vkontakte/vkui';
-import { useActiveVkuiLocation, useParams } from '@vkontakte/vk-mini-apps-router';
+import { useActiveVkuiLocation, useParams, useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
 import { Provider } from 'react-redux';
 
 import { Persik, Home, NewPage, Settings, DeckDetails, CardDetails, TaroSpreads, TaroReadingPanel, DailyAffirmationPanel, CalendarPanel, AboutApp, LegalInfo, StarsPurchase, CollectionPins, Profile } from './panels';
@@ -18,11 +18,23 @@ import { PurchaseStarsPopup } from './components/PurchaseStarsPopup';
 
 export const App = () => {
   const { panel: activePanel = DEFAULT_VIEW_PANELS.HOME } = useActiveVkuiLocation();
+  const routeNavigator = useRouteNavigator();
   const params = useParams();
   const spreadId = params?.spreadId || '';
   const deckId = params?.deckId || '';
   const [fetchedUser, setUser] = useState<UserInfo | undefined>();
   const [popout, setPopout] = useState<ReactNode | null>(<ScreenSpinner />);
+
+  // Список всех валидных панелей
+  const validPanels = Object.values(DEFAULT_VIEW_PANELS);
+
+  // Проверка валидности текущей панели и редирект на главную при ошибке
+  useEffect(() => {
+    const validPanelsList = validPanels as string[];
+    if (activePanel && !validPanelsList.includes(activePanel)) {
+      routeNavigator.replace('/');
+    }
+  }, [activePanel, validPanels, routeNavigator]);
 
   useEffect(() => {
     async function fetchData() {

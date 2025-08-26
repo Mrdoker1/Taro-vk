@@ -5,6 +5,7 @@ interface CustomTextareaProps {
   placeholder?: string;
   label?: string;
   rows?: number;
+  maxLength?: number;
   onChange: (value: string) => void;
 }
 
@@ -13,8 +14,14 @@ export const CustomTextarea: FC<CustomTextareaProps> = ({
   placeholder = 'Введи свой вопрос...',
   label,
   rows = 4,
+  maxLength = 150,
   onChange
 }) => {
+  const handleChange = (newValue: string) => {
+    if (newValue.length <= maxLength) {
+      onChange(newValue);
+    }
+  };
   return (
     <div style={{ width: '100%' }}>
       {label && (
@@ -34,7 +41,8 @@ export const CustomTextarea: FC<CustomTextareaProps> = ({
         value={value}
         placeholder={placeholder}
         rows={rows}
-        onChange={(e) => onChange(e.target.value)}
+        maxLength={maxLength}
+        onChange={(e) => handleChange(e.target.value)}
         style={{
           width: '100%',
           minHeight: '80px',
@@ -61,6 +69,18 @@ export const CustomTextarea: FC<CustomTextareaProps> = ({
         }}
       />
       
+      {/* Счетчик символов */}
+      <div style={{
+        textAlign: 'right',
+        fontSize: '12px',
+        color: value.length > maxLength * 0.9 ? '#ff6b6b' : 'rgba(255, 255, 255, 0.6)',
+        marginTop: '4px',
+        paddingRight: '2px', // Небольшой отступ от края, чтобы не накладывался на resize handle
+        fontFamily: 'Jost, -apple-system, BlinkMacSystemFont, sans-serif'
+      }}>
+        {value.length}/{maxLength}
+      </div>
+      
       <style>
         {`
           textarea::placeholder {
@@ -83,6 +103,18 @@ export const CustomTextarea: FC<CustomTextareaProps> = ({
           
           textarea::-webkit-scrollbar-thumb:hover {
             background: rgba(227, 199, 122, 0.7);
+          }
+          
+          /* Стили для resize handle (квадратик для растягивания) */
+
+          
+          textarea::-webkit-resizer:hover {
+            background: rgba(227, 199, 122, 0.8);
+          }
+          
+          /* Для Firefox */
+          textarea {
+            scrollbar-color: rgba(227, 199, 122, 0.5) rgba(255, 255, 255, 0.1);
           }
         `}
       </style>
