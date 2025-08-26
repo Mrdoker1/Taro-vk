@@ -342,10 +342,10 @@ export const TaroSpreadDetails: React.FC<TaroSpreadDetailsProps> = ({
               }}>
                 <div style={{ flex: 1 }}>
                   <CustomSelect
-                    label="Выберите колоду для гадания"
+                    label="Выбери колоду для гадания"
                     value={selectedDeckId}
                     options={deckOptions}
-                    placeholder="Выберите колоду"
+                    placeholder="Выбери колоду"
                     onChange={setSelectedDeckId}
                   />
                 </div>
@@ -379,8 +379,8 @@ export const TaroSpreadDetails: React.FC<TaroSpreadDetailsProps> = ({
           <CustomSelect
             value={selectedPresetQuestion}
             options={questionOptions}
-            label="Выберите готовый вопрос"
-            placeholder="Выберите готовый вопрос"
+            label="Выбери готовый вопрос"
+            placeholder="Выбери готовый вопрос"
             onChange={handlePresetQuestionSelect}
           />
           
@@ -398,7 +398,7 @@ export const TaroSpreadDetails: React.FC<TaroSpreadDetailsProps> = ({
           {/* Поле для собственного вопроса */}
           <CustomTextarea
             value={customQuestion}
-            placeholder="Введите свой вопрос для гадания..."
+            placeholder="Введи свой вопрос для гадания..."
             label="Персональный вопрос"
             onChange={handleCustomQuestionChange}
             rows={3}
@@ -431,7 +431,7 @@ export const TaroSpreadDetails: React.FC<TaroSpreadDetailsProps> = ({
               : availableDecks.length === 0 
                 ? 'Нет доступных колод'
                 : !hasQuestion
-                  ? 'Введите вопрос'
+                  ? 'Введи вопрос'
                   : 'Начать гадание'
             }
           </CustomButton>

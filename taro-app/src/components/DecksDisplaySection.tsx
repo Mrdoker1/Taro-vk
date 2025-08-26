@@ -300,7 +300,7 @@ export const DecksDisplaySection: React.FC<DecksDisplaySectionProps> = React.mem
         </h2>
         <div style={{ position: 'relative' }}>
           <CustomTooltip
-            content="Здесь отображаются доступные колоды Таро. Выберите колоду для просмотра подробной информации о картах."
+            content="Здесь отображаются доступные колоды Таро. Выбери колоду для просмотра подробной информации о картах."
             ariaLabel="Показать справку о разделе Твои колоды"
           />
         </div>

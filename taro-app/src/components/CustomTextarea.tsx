@@ -10,7 +10,7 @@ interface CustomTextareaProps {
 
 export const CustomTextarea: FC<CustomTextareaProps> = ({
   value,
-  placeholder = 'Введите ваш вопрос...',
+  placeholder = 'Введи свой вопрос...',
   label,
   rows = 4,
   onChange

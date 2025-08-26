@@ -53,7 +53,7 @@ export const AffirmationForm: React.FC<AffirmationFormProps> = ({
             value={promptMode === 'preset' ? selectedTopic : ''}
             options={AFFIRMATION_TOPICS}
             label="Тема аффирмации"
-            placeholder="Выберите тему"
+            placeholder="Выбери тему"
             onChange={handleTopicSelect}
           />
           
@@ -69,7 +69,7 @@ export const AffirmationForm: React.FC<AffirmationFormProps> = ({
           
           <CustomTextarea
             value={customPrompt}
-            placeholder="Введите свою тему для аффирмации"
+            placeholder="Введи свою тему для аффирмации"
             label="Персональная тема"
             onChange={handleCustomPromptChange}
           />

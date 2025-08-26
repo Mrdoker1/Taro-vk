@@ -48,7 +48,7 @@ const createTarotFileContent = (activity: CalendarActivity, data: TarotData): st
 `;
   
   if (data.question) {
-    content += `❓ ВАША ТЕМА/ВОПРОС:
+    content += `❓ ТВОЯ ТЕМА/ВОПРОС:
 ${data.question}
 
 `;

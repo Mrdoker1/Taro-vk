@@ -518,7 +518,7 @@ ${systemPromptText}`;
                   margin: '0 0 16px 0',
                   fontFamily: 'Jost, -apple-system, BlinkMacSystemFont, sans-serif'
                 }}>
-                  Ваш вопрос
+                  Твой вопрос
                 </h3>
                 
                 <div style={{ 

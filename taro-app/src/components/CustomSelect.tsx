@@ -16,7 +16,7 @@ interface CustomSelectProps {
 export const CustomSelect: FC<CustomSelectProps> = ({
   value,
   options,
-  placeholder = 'Выберите...',
+  placeholder = 'Выбери...',
   label,
   onChange
 }) => {

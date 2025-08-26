@@ -130,7 +130,7 @@ const prepareRequestData = (requestData: GenerationRequest) => {
       "positions": [ { "index": 1, "interpretation": "толкование позиции на РУССКОМ языке" } ]
     }
     
-    Если вопрос не относится к таро — верни { "error": true, "message": "Ваш вопрос не относится к таро или астрологии." }. Без markdown, ≤ 800 токенов.
+    Если вопрос не относится к таро — верни { "error": true, "message": "Твой вопрос не относится к таро или астрологии." }. Без markdown, ≤ 800 токенов.
     ВАЖНО: Весь ответ должен быть ТОЛЬКО на РУССКОМ языке. Не используй английский язык ни в коем случае.`;
   }
 
@@ -171,8 +171,7 @@ export const generateText = createAsyncThunk<GenerationResponse, GenerationReque
   state: RootState;
 }>(
   'generation/generateText',
-  // @ts-ignore unused parameters for free version
-  async (requestData: GenerationRequest, { dispatch, getState, rejectWithValue }) => {
+  async (requestData: GenerationRequest, { rejectWithValue }) => {
     try {
       // Проверяем, достаточно ли звёзд для запроса
       // eslint-disable-next-line @typescript-eslint/no-unused-vars

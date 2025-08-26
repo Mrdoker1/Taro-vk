@@ -708,7 +708,7 @@ export const Calendar: React.FC<CalendarProps> = () => {
                   <Textarea
                     value={noteText}
                     onChange={(e) => setNoteText(e.target.value)}
-                    placeholder="Введите заметку для этого дня..."
+                    placeholder="Введи заметку для этого дня..."
                     rows={isMobile ? 3 : 4}
                     style={{ marginBottom: isMobile ? '6px' : '8px', fontSize: isMobile ? '11px' : '12px' }}
                   />
@@ -891,7 +891,7 @@ export const Calendar: React.FC<CalendarProps> = () => {
               letterSpacing: '0.5px',
               marginBottom: isMobile ? '6px' : '8px'
             }}>
-              Выберите дату
+              Выбери дату
             </Text>
             <Text style={{ 
               color: 'rgba(232, 210, 140, 0.6)',

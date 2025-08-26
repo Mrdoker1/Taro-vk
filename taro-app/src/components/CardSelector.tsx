@@ -368,7 +368,7 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
               fontWeight: '500',
               fontFamily: 'Jost'
             }}>
-              Выберите карты для каждой позиции:
+              Выбери карты для каждой позиции:
             </div>
             
             <div style={{
@@ -485,7 +485,7 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
                         value: card.id
                       }))}
                       label=""
-                      placeholder="Выберите карту для этой позиции"
+                      placeholder="Выбери карту для этой позиции"
                       onChange={(value) => handleCardSelect(position, value)}
                     />
                   </div>

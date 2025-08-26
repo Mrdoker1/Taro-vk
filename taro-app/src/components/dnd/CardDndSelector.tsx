@@ -516,7 +516,7 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
               fontFamily: 'Jost, -apple-system, BlinkMacSystemFont, sans-serif',
               lineHeight: 1.2
             }}>
-              Выберите карты для расклада
+              Выбери карты для расклада
             </h1>
             <Text style={{ 
               color: 'rgba(255, 255, 255, 0.9)', 
@@ -573,7 +573,7 @@ export const CardDndSelector: React.FC<CardDndSelectorProps> = ({
               margin: '0 0 16px 0',
               fontFamily: 'Jost, -apple-system, BlinkMacSystemFont, sans-serif'
             }}>
-              Ваш вопрос
+              Твой вопрос
             </h3>
             
             {/* Отображаем вопрос пользователя */}

@@ -56,7 +56,7 @@ export const InstructionsPanel: React.FC<InstructionsPanelProps> = ({ windowWidt
             margin: 'auto 0',
             fontFamily: 'Jost, -apple-system, BlinkMacSystemFont, sans-serif'
           }}>
-           Перетасуйте колоду перед началом чтения
+           Перетасуй колоду перед началом чтения
           </div>
         </div>
 
@@ -92,7 +92,7 @@ export const InstructionsPanel: React.FC<InstructionsPanelProps> = ({ windowWidt
             margin: 'auto 0',
             fontFamily: 'Jost, -apple-system, BlinkMacSystemFont, sans-serif'
           }}>
-            {windowWidth <= 768 ? 'Перетащите карту на позицию' : 'Перетащите карту из колоды на позицию справа'}
+            {windowWidth <= 768 ? 'Перетащите карту на позицию' : 'Перетащи карту из колоды на позицию справа'}
           </div>
         </div>
         
@@ -131,7 +131,7 @@ export const InstructionsPanel: React.FC<InstructionsPanelProps> = ({ windowWidt
           }}>
             {windowWidth <= 768 
               ? 'Для изменения позиции карты воспользуйтесь кнопкой "Удалить"' 
-              : 'Для изменения позиции карты воспользуйтесь кнопкой "Удалить" и выберите новую карту из колоды'
+              : 'Для изменения позиции карты воспользуйся кнопкой "Удалить" и выбери новую карту из колоды'
             }
           </div>
         </div>

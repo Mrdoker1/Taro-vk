@@ -55,7 +55,7 @@ export const StarCounter: React.FC<StarCounterProps> = ({
       {showTitle && (
         <>
           <Title level="2" weight="3">
-            Ваши звёзды
+            Твои звёзды
           </Title>
           <Spacing size={12} />
         </>

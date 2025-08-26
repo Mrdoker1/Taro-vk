@@ -186,7 +186,7 @@ export const Settings: FC<SettingsProps> = ({ id }) => {
                 value={sign}
                 options={zodiacSigns}
                 label="Знак зодиака"
-                placeholder="Выберите знак"
+                placeholder="Выбери знак"
                 onChange={handleZodiacChange}
               />
 
@@ -195,7 +195,7 @@ export const Settings: FC<SettingsProps> = ({ id }) => {
                 value={lang}
                 options={languages}
                 label="Язык запросов"
-                placeholder="Выберите язык"
+                placeholder="Выбери язык"
                 onChange={handleLanguageChange}
               />
               */}
@@ -204,7 +204,7 @@ export const Settings: FC<SettingsProps> = ({ id }) => {
                 value={theme}
                 options={themes}
                 label="Тема оформления"
-                placeholder="Выберите тему"
+                placeholder="Выбери тему"
                 onChange={handleThemeChange}
               />
 

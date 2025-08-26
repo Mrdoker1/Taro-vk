@@ -46,7 +46,7 @@ const EmptyStateContent = () => (
         margin: 'auto 0',
         fontFamily: 'Jost, -apple-system, BlinkMacSystemFont, sans-serif'
       }}>
-        Выберите готовую тему из списка или введите свою персональную тему
+        Выбери готовую тему из списка или введи свою персональную тему
       </div>
     </div>
     
@@ -82,7 +82,7 @@ const EmptyStateContent = () => (
         margin: 'auto 0',
         fontFamily: 'Jost, -apple-system, BlinkMacSystemFont, sans-serif'
       }}>
-        Нажмите кнопку "Получить аффирмации" для создания персонализированных утверждений
+        Нажми кнопку "Получить аффирмации" для создания персонализированных утверждений
       </div>
     </div>
   </>
@@ -247,7 +247,7 @@ export const DailyAffirmation: React.FC = () => {
             {parsedAffirmation ? (
               '🌞 Аффирмация на день'
             ) : (
-              'Ждём ваш запрос, чтобы подобрать аффирмации'
+              'Ждём твой запрос, чтобы подобрать аффирмации'
             )}
           </Text>
           
