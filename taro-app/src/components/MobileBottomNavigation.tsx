@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Tabbar, TabbarItem } from '@vkontakte/vkui';
 import { 
   Icon20HomeOutline, 
@@ -13,10 +13,41 @@ import { DEFAULT_VIEW_PANELS } from '../routes';
 const MobileBottomNavigationComponent: React.FC = () => {
   const routeNavigator = useRouteNavigator();
   const { panel: activePanel } = useActiveVkuiLocation();
+  const tabbarRef = useRef<HTMLDivElement>(null);
 
   // Отладочная информация
   console.log('🔍 MobileBottomNavigation - activePanel:', activePanel);
   console.log('🔍 Available panels:', DEFAULT_VIEW_PANELS);
+
+  // Добавляем нативные обработчики событий для более надежного контроля
+  useEffect(() => {
+    const tabbarElement = tabbarRef.current;
+    if (!tabbarElement) return;
+
+    const handleTouchMove = (e: TouchEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+    };
+
+    const handleTouchStart = (e: TouchEvent) => {
+      e.stopPropagation();
+    };
+
+    const handleTouchEnd = (e: TouchEvent) => {
+      e.stopPropagation();
+    };
+
+    // Добавляем обработчики с { passive: false } для preventDefault
+    tabbarElement.addEventListener('touchmove', handleTouchMove, { passive: false });
+    tabbarElement.addEventListener('touchstart', handleTouchStart, { passive: false });
+    tabbarElement.addEventListener('touchend', handleTouchEnd, { passive: false });
+
+    return () => {
+      tabbarElement.removeEventListener('touchmove', handleTouchMove);
+      tabbarElement.removeEventListener('touchstart', handleTouchStart);
+      tabbarElement.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, []);
 
   const handleNavigation = (route: string) => {
     if (route === '/') {
@@ -24,6 +55,19 @@ const MobileBottomNavigationComponent: React.FC = () => {
     } else {
       routeNavigator.push(route);
     }
+  };
+
+  // Упрощенные React обработчики (основная работа делается через нативные в useEffect)
+  const handleTouchStart = (e: React.TouchEvent) => {
+    e.stopPropagation();
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    e.stopPropagation();
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    e.stopPropagation();
   };
 
   // Определяем активную вкладку на основе текущей панели
@@ -70,15 +114,29 @@ const MobileBottomNavigationComponent: React.FC = () => {
   });
 
   return (
-    <Tabbar style={{ 
-      position: 'fixed',
-      bottom: 0,
-      left: 0,
-      right: 0,
-      zIndex: 1000,
-      backgroundColor: 'var(--app-background-color)',
-      borderTop: '1px solid rgba(255, 255, 255, 0.1)'
-    }}>
+    <div 
+      ref={tabbarRef}
+      style={{ 
+        position: 'fixed',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        zIndex: 1000,
+        touchAction: 'none',
+        overscrollBehavior: 'contain'
+      }}
+    >
+      <Tabbar 
+        style={{ 
+          backgroundColor: 'var(--app-background-color)',
+          borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+          touchAction: 'none',
+          overscrollBehavior: 'contain'
+        }}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      >
       <TabbarItem
         onClick={() => handleNavigation('/')}
         selected={currentActiveTab === 'home'}
@@ -87,7 +145,12 @@ const MobileBottomNavigationComponent: React.FC = () => {
         className={currentActiveTab === 'home' ? 'active-tab' : 'inactive-tab'}
         style={{
           backgroundColor: 'transparent',
+          touchAction: 'none',
+          overscrollBehavior: 'contain'
         }}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
       >
         <div style={{ 
           display: 'flex', 
@@ -116,7 +179,12 @@ const MobileBottomNavigationComponent: React.FC = () => {
         className={currentActiveTab === 'spreads' ? 'active-tab' : 'inactive-tab'}
         style={{
           backgroundColor: 'transparent',
+          touchAction: 'none',
+          overscrollBehavior: 'contain'
         }}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
       >
         <div style={{ 
           display: 'flex', 
@@ -145,7 +213,12 @@ const MobileBottomNavigationComponent: React.FC = () => {
         className={currentActiveTab === 'affirmations' ? 'active-tab' : 'inactive-tab'}
         style={{
           backgroundColor: 'transparent',
+          touchAction: 'none',
+          overscrollBehavior: 'contain'
         }}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
       >
         <div style={{ 
           display: 'flex', 
@@ -174,7 +247,12 @@ const MobileBottomNavigationComponent: React.FC = () => {
         className={currentActiveTab === 'calendar' ? 'active-tab' : 'inactive-tab'}
         style={{
           backgroundColor: 'transparent',
+          touchAction: 'none',
+          overscrollBehavior: 'contain'
         }}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
       >
         <div style={{ 
           display: 'flex', 
@@ -203,7 +281,12 @@ const MobileBottomNavigationComponent: React.FC = () => {
         className={currentActiveTab === 'settings' ? 'active-tab' : 'inactive-tab'}
         style={{
           backgroundColor: 'transparent',
+          touchAction: 'none',
+          overscrollBehavior: 'contain'
         }}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
       >
         <div style={{ 
           display: 'flex', 
@@ -224,6 +307,7 @@ const MobileBottomNavigationComponent: React.FC = () => {
         </div>
       </TabbarItem>
     </Tabbar>
+    </div>
   );
 };
 

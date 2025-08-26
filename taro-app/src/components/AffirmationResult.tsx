@@ -161,7 +161,7 @@ export const AffirmationResult: React.FC<AffirmationResultProps> = ({
             onClick={handleShare}
             style={{ fontSize: '14px' }}
           >
-            Поделиться в VK
+            Поделиться
           </Button>
         </div>
       </div>
