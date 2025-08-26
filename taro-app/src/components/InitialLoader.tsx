@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import logoSvg from '../assets/logo.svg';
+import backgroundImage from '../assets/background.png';
 
 interface InitialLoaderProps {
   onLoadComplete: () => void;
@@ -61,7 +62,7 @@ export const InitialLoader: React.FC<InitialLoaderProps> = ({ onLoadComplete }) 
       left: 0,
       right: 0,
       bottom: 0,
-      background: `url("/src/assets/background.png"), var(--app-background-color)`,
+      background: `url(${backgroundImage}), var(--app-background-color)`,
       backgroundSize: 'cover',
       backgroundPosition: 'center',
       backgroundRepeat: 'no-repeat',
