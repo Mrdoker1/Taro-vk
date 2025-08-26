@@ -114,7 +114,6 @@ export const Settings: FC<SettingsProps> = ({ id }) => {
             width: '100%',
             ...BACKGROUND_BASE,
             borderRadius: '12px',
-            overflow: 'hidden',
             position: 'relative',
             padding: '32px'
           }}>
