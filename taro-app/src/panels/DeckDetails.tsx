@@ -16,6 +16,7 @@ import { MagicLoader } from '../components/MagicLoader';
 import { DEFAULT_VIEW_PANELS } from '../routes';
 import { useAppDispatch, useAppSelector } from '../store';
 import { fetchDeckDetails, clearCurrentDeck } from '../store/slices/taroDecksSlice';
+import { useSafeNavigation } from '../utils/routerNavigation';
 import '../styles/deck-details.css';
 import { BACKGROUND_BASE } from '../constants/styles';
 
@@ -25,6 +26,7 @@ export const DeckDetails: FC<DeckDetailsProps> = ({ id }) => {
   const params = useParams() || {};
   const deckId = params.deckId as string;
   const routeNavigator = useRouteNavigator();
+  const { safeBack } = useSafeNavigation();
   const dispatch = useAppDispatch();
   const { currentDeck, deckLoading, deckError } = useAppSelector((state) => state.taroDecks);
   const { lang } = useAppSelector((state) => state.horoscope);
@@ -58,7 +60,7 @@ export const DeckDetails: FC<DeckDetailsProps> = ({ id }) => {
         left={
           <Button
             mode="tertiary"
-            onClick={() => routeNavigator.back()}
+            onClick={() => safeBack()}
             style={{ 
               color: '#ffffff',
               transition: 'background-color 0.2s ease',

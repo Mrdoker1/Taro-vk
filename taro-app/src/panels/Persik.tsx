@@ -1,14 +1,14 @@
 import { FC } from 'react';
 import { NavIdProps, Panel, PanelHeader, PanelHeaderBack, Placeholder } from '@vkontakte/vkui';
-import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
+import { useSafeNavigation } from '../utils/routerNavigation';
 import PersikImage from '../assets/persik.png';
 
 export const Persik: FC<NavIdProps> = ({ id }) => {
-  const routeNavigator = useRouteNavigator();
+  const { safeBack } = useSafeNavigation();
 
   return (
     <Panel id={id}>
-      <PanelHeader before={<PanelHeaderBack onClick={() => routeNavigator.back()} />}>
+      <PanelHeader before={<PanelHeaderBack onClick={() => safeBack()} />}>
         Persik
       </PanelHeader>
       <Placeholder>

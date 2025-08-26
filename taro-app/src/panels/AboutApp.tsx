@@ -12,7 +12,7 @@ import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
 import { Footer } from '../components/Footer';
 import { AppHeader } from '../components/AppHeader';
 import { useResponsive } from '../hooks/useResponsive';
-import { safeNavigateBack } from '../utils/navigation';
+import { useSafeNavigation } from '../utils/routerNavigation';
 import thumbnail from '../assets/thumbnail.png';
 import appIcon from '../assets/app.svg';
 import { BACKGROUND_BASE } from '../constants/styles';
@@ -21,10 +21,11 @@ export interface AboutAppProps extends NavIdProps {}
 
 export const AboutApp: FC<AboutAppProps> = ({ id }) => {
   const routeNavigator = useRouteNavigator();
+  const { safeBack } = useSafeNavigation();
   const isMobile = useResponsive();
 
   const handleBackClick = () => {
-    safeNavigateBack(routeNavigator);
+    safeBack();
   };
 
   const handleAboutApp = () => {

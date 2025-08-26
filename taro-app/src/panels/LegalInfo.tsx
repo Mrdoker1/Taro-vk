@@ -13,17 +13,18 @@ import { Footer } from '../components/Footer';
 import { AppHeader } from '../components/AppHeader';
 import { useResponsive } from '../hooks/useResponsive';
 import { BACKGROUND_BASE } from '../constants/styles';
-import { safeNavigateBack } from '../utils/navigation';
+import { useSafeNavigation } from '../utils/routerNavigation';
 import appIcon from '../assets/app.svg';
 
 export interface LegalInfoProps extends NavIdProps {}
 
 export const LegalInfo: FC<LegalInfoProps> = ({ id }) => {
   const routeNavigator = useRouteNavigator();
+  const { safeBack } = useSafeNavigation();
   const isMobile = useResponsive();
 
   const handleBackClick = () => {
-    safeNavigateBack(routeNavigator);
+    safeBack();
   };
 
   const handleAboutApp = () => {

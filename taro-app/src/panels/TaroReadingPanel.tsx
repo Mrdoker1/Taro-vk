@@ -7,6 +7,7 @@ import {
 import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
 import { useAppSelector, useAppDispatch } from '../store';
 import { clearUserQuestion } from '../store/slices/appSlice';
+import { useSafeNavigation } from '../utils/routerNavigation';
 import { CardSelector } from '../components/CardSelector';
 import { TaroReading } from '../components/TaroReading';
 import { Footer } from '../components/Footer';
@@ -28,6 +29,7 @@ export interface SelectedCard {
 
 export const TaroReadingPanel: FC<TaroReadingPanelProps> = ({ id, spreadId, deckId }) => {
   const routeNavigator = useRouteNavigator();
+  const { safeBack } = useSafeNavigation();
   const dispatch = useAppDispatch();
   const [currentStep, setCurrentStep] = useState<ReadingStep>('SELECT_CARDS');
   const [selectedCards, setSelectedCards] = useState<SelectedCard[]>([]);
@@ -41,7 +43,7 @@ export const TaroReadingPanel: FC<TaroReadingPanelProps> = ({ id, spreadId, deck
     } else {
       // Очищаем вопрос при выходе из гадания
       dispatch(clearUserQuestion());
-      routeNavigator.back();
+      safeBack();
     }
   };
 

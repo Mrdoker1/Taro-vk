@@ -12,7 +12,7 @@ import { Footer } from '../components/Footer';
 import { AppHeader } from '../components/AppHeader';
 import { useResponsive } from '../hooks/useResponsive';
 import { DEFAULT_VIEW_PANELS } from '../routes';
-import { safeNavigateBack } from '../utils/navigation';
+import { useSafeNavigation } from '../utils/routerNavigation';
 import calendarIcon from '../assets/calendar.svg';
 import { BACKGROUND_BASE } from '../constants/styles';
 
@@ -20,10 +20,11 @@ export interface CalendarPanelProps extends NavIdProps {}
 
 export const CalendarPanel: FC<CalendarPanelProps> = ({ id }) => {
   const routeNavigator = useRouteNavigator();
+  const { safeBack } = useSafeNavigation();
   const isMobile = useResponsive();
 
   const handleBackClick = () => {
-    safeNavigateBack(routeNavigator);
+    safeBack();
   };
 
   const handleAboutApp = () => {

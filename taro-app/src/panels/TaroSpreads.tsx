@@ -14,11 +14,13 @@ import { TaroSpreadDetails } from '../components/TaroSpreadDetails';
 import { Footer } from '../components/Footer';
 import { AppHeader } from '../components/AppHeader';
 import { DEFAULT_VIEW_PANELS } from '../routes';
+import { useSafeNavigation } from '../utils/routerNavigation';
 
 export interface TaroSpreadsProps extends NavIdProps {}
 
 export const TaroSpreads: FC<TaroSpreadsProps> = ({ id }) => {
   const routeNavigator = useRouteNavigator();
+  const { safeBack } = useSafeNavigation();
   const dispatch = useAppDispatch();
   const { lang } = useAppSelector((state) => state.horoscope);
   const [selectedSpreadId, setSelectedSpreadId] = useState<string | null>(null);
@@ -35,7 +37,7 @@ export const TaroSpreads: FC<TaroSpreadsProps> = ({ id }) => {
     if (selectedSpreadId) {
       setSelectedSpreadId(null);
     } else {
-      routeNavigator.back();
+      safeBack();
     }
   };
 

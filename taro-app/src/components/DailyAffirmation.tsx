@@ -1,7 +1,6 @@
 import React from 'react';
 import { Text, Card, Spinner, IconButton } from '@vkontakte/vkui';
 import { Icon24Refresh } from '@vkontakte/icons';
-import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
 import { useResponsive } from '../hooks/useResponsive';
 import { useAffirmation } from '../hooks/useAffirmation';
 import { useAppDispatch, useAppSelector } from '../store';
@@ -10,6 +9,7 @@ import { AffirmationForm } from './AffirmationForm';
 import { AffirmationResult } from './AffirmationResult';
 import { MagicLoader } from './MagicLoader';
 import { CustomButton } from './CustomButton';
+import { useSafeNavigation } from '../utils/routerNavigation';
 
 const EmptyStateContent = () => (
   <>
@@ -90,7 +90,7 @@ const EmptyStateContent = () => (
 
 export const DailyAffirmation: React.FC = () => {
   const isMobile = useResponsive();
-  const routeNavigator = useRouteNavigator();
+  const { safeBack } = useSafeNavigation();
   const dispatch = useAppDispatch();
   const { lang } = useAppSelector((state) => state.horoscope);
   
@@ -121,7 +121,7 @@ export const DailyAffirmation: React.FC = () => {
   };
 
   const handleBackClick = () => {
-    routeNavigator.back();
+    safeBack();
   };
 
   // Показываем состояние загрузки шаблона

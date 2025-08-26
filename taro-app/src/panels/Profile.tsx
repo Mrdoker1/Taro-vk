@@ -19,6 +19,7 @@ import { useAppSelector, useAppDispatch } from '../store';
 import { loadCalendarData } from '../store/slices/calendarSlice';
 import { DEFAULT_VIEW_PANELS } from '../routes';
 import { BACKGROUND_BASE } from '../constants/styles';
+import { useSafeNavigation } from '../utils/routerNavigation';
 
 export interface ProfileProps extends NavIdProps {
   fetchedUser?: UserInfo;
@@ -27,6 +28,7 @@ export interface ProfileProps extends NavIdProps {
 export const Profile: FC<ProfileProps> = ({ id, fetchedUser }) => {
   const { photo_200, first_name } = { ...fetchedUser };
   const routeNavigator = useRouteNavigator();
+  const { safeBack } = useSafeNavigation();
   const dispatch = useAppDispatch();
   const isMobile = useResponsive();
   
@@ -40,7 +42,7 @@ export const Profile: FC<ProfileProps> = ({ id, fetchedUser }) => {
   }, [dispatch]);
 
   const handleBackClick = () => {
-    routeNavigator.back();
+    safeBack();
   };
 
   const handleAboutApp = () => {

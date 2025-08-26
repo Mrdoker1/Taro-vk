@@ -23,6 +23,7 @@ import starbuy250 from '../assets/starbuy250.svg';
 import starbuy500 from '../assets/starbuy500.svg';
 import starbuy1000 from '../assets/starbuy1000.svg';
 import { BACKGROUND_BASE } from '../constants/styles';
+import { useSafeNavigation } from '../utils/routerNavigation';
 
 export interface StarsPurchaseProps extends NavIdProps {}
 
@@ -63,6 +64,7 @@ const starPackages: StarPackage[] = [
 
 export const StarsPurchase: FC<StarsPurchaseProps> = ({ id }) => {
   const routeNavigator = useRouteNavigator();
+  const { safeBack } = useSafeNavigation();
   const isMobile = useResponsive();
   const dispatch = useAppDispatch();
   const [purchasingId, setPurchasingId] = useState<string | null>(null);
@@ -112,8 +114,8 @@ export const StarsPurchase: FC<StarsPurchaseProps> = ({ id }) => {
   }, []);
 
   const handleBackClick = useCallback(() => {
-    routeNavigator.back();
-  }, [routeNavigator]);
+    safeBack();
+  }, [safeBack]);
 
   const handleAboutApp = useCallback(() => {
     routeNavigator.push(`/${DEFAULT_VIEW_PANELS.ABOUT_APP}`);

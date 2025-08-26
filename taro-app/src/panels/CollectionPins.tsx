@@ -21,6 +21,7 @@ import pinSpreads from '../assets/pin-spreads.png';
 import pinStar from '../assets/pin-star.png';
 import pinIcon from '../assets/pin.svg';
 import { BACKGROUND_BASE } from '../constants/styles';
+import { useSafeNavigation } from '../utils/routerNavigation';
 
 export interface CollectionPinsProps extends NavIdProps {}
 
@@ -34,6 +35,7 @@ const pinImages: Record<string, string> = {
 
 export const CollectionPins: FC<CollectionPinsProps> = ({ id }) => {
   const routeNavigator = useRouteNavigator();
+  const { safeBack } = useSafeNavigation();
   const isMobile = useResponsive();
   const dispatch = useAppDispatch();
   
@@ -41,7 +43,7 @@ export const CollectionPins: FC<CollectionPinsProps> = ({ id }) => {
   const pins = useAppSelector(state => state.pins.pins);
 
   const handleBackClick = () => {
-    routeNavigator.back();
+    safeBack();
   };
 
   const handleAboutApp = () => {

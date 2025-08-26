@@ -10,7 +10,7 @@ import {
 } from '@vkontakte/vkui';
 import { useParams } from '@vkontakte/vk-mini-apps-router';
 import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
-import { safeNavigateBack } from '../utils/navigation';
+import { useSafeNavigation } from '../utils/routerNavigation';
 import { Footer } from '../components/Footer';
 import { AppHeader } from '../components/AppHeader';
 import { MagicLoader } from '../components/MagicLoader';
@@ -26,6 +26,7 @@ export const CardDetails: FC<CardDetailsProps> = ({ id }) => {
   const params = useParams() || {};
   const { deckId, cardId } = params;
   const routeNavigator = useRouteNavigator();
+  const { safeBack } = useSafeNavigation();
   const dispatch = useAppDispatch();
   const { currentCard, cardLoading, cardError } = useAppSelector((state) => state.taroDecks);
   const { lang } = useAppSelector((state) => state.horoscope);
@@ -55,7 +56,7 @@ export const CardDetails: FC<CardDetailsProps> = ({ id }) => {
           left={
             <Button
               mode="tertiary"
-              onClick={() => safeNavigateBack(routeNavigator)}
+              onClick={() => safeBack()}
               style={{ 
                 color: '#ffffff',
                 transition: 'background-color 0.2s ease',
