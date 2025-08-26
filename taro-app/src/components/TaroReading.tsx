@@ -897,16 +897,25 @@ ${systemPromptText}`;
                     width: '80px',
                     height: '120px',
                     borderRadius: '8px',
-                    transform: card.isReversed ? 'rotate(180deg)' : 'none',
                     position: 'relative',
                     overflow: 'hidden',
-                    backgroundImage: cardInfo?.imageUrl ? `url(${cardInfo.imageUrl})` : 'none',
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
                     backgroundColor: 'rgba(210,175,80,0.1)',
                     border: '1px solid #a89d7dff'
                   }}>
-                    {/* Оверлей сверху для номера позиции и иконки тултипа */}
+                    {/* Фоновое изображение карты с поворотом */}
+                    <div style={{
+                      position: 'absolute',
+                      top: '0',
+                      left: '0',
+                      right: '0',
+                      bottom: '0',
+                      backgroundImage: cardInfo?.imageUrl ? `url(${cardInfo.imageUrl})` : 'none',
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center',
+                      transform: card.isReversed ? 'rotate(180deg)' : 'none'
+                    }} />
+                    
+                    {/* Оверлей сверху для номера позиции и иконки тултипа (без поворота) */}
                     <div style={{
                       position: 'absolute',
                       top: '0',
@@ -914,8 +923,7 @@ ${systemPromptText}`;
                       right: '0',
                       background: 'linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.6), transparent)',
                       height: '40px',
-                      borderRadius: '8px 8px 0 0',
-                      transform: card.isReversed ? 'rotate(180deg)' : 'none'
+                      borderRadius: '8px 8px 0 0'
                     }}>
                       {/* Номер позиции в левом верхнем углу */}
                       <div style={{
@@ -959,15 +967,14 @@ ${systemPromptText}`;
                         </div>
                       )}
                     </div>
-                    {/* Оверлей для названия карты */}
+                    {/* Оверлей для названия карты (без поворота) */}
                     <div style={{
                       position: 'absolute',
                       bottom: '0',
                       left: '0',
                       right: '0',
                       background: 'linear-gradient(transparent, rgba(0,0,0,0.8))',
-                      padding: '8px 4px 4px 4px',
-                      transform: card.isReversed ? 'rotate(180deg)' : 'none'
+                      padding: '8px 4px 4px 4px'
                     }}>
                       <div style={{
                         color: 'rgba(210,175,80,1)',
@@ -1008,15 +1015,24 @@ ${systemPromptText}`;
                         width: '70px',
                         height: '105px',
                         borderRadius: '6px',
-                        transform: card.isReversed ? 'rotate(180deg)' : 'none',
                         position: 'relative',
                         overflow: 'hidden',
-                        backgroundImage: cardInfo?.imageUrl ? `url(${cardInfo.imageUrl})` : 'none',
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center',
                         backgroundColor: 'rgba(210,175,80,0.1)'
                       }}>
-                        {/* Оверлей сверху для номера позиции и иконки тултипа */}
+                        {/* Фоновое изображение карты с поворотом */}
+                        <div style={{
+                          position: 'absolute',
+                          top: '0',
+                          left: '0',
+                          right: '0',
+                          bottom: '0',
+                          backgroundImage: cardInfo?.imageUrl ? `url(${cardInfo.imageUrl})` : 'none',
+                          backgroundSize: 'cover',
+                          backgroundPosition: 'center',
+                          transform: card.isReversed ? 'rotate(180deg)' : 'none'
+                        }} />
+                        
+                        {/* Оверлей сверху для номера позиции и иконки тултипа (без поворота) */}
                         <div style={{
                           position: 'absolute',
                           top: '0',
@@ -1024,15 +1040,33 @@ ${systemPromptText}`;
                           right: '0',
                           background: 'linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.6), transparent)',
                           height: '35px',
-                          borderRadius: '6px 6px 0 0',
-                          transform: card.isReversed ? 'rotate(180deg)' : 'none'
+                          borderRadius: '6px 6px 0 0'
                         }}>
-                          {/* CustomTooltip в левом верхнем углу */}
+                          {/* Номер позиции в левом верхнем углу */}
+                          <div style={{
+                            position: 'absolute',
+                            top: '4px',
+                            left: '4px',
+                            width: '14px',
+                            height: '14px',
+                            borderRadius: '50%',
+                            border: `1px solid ${POSITION_NUMBER_COLOR}`,
+                            color: POSITION_NUMBER_TEXT_COLOR,
+                            fontSize: '9px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontWeight: '500',
+                            boxShadow: '0 1px 3px rgba(0,0,0,0.5)'
+                          }}>
+                            {card.position}
+                          </div>
+                          {/* CustomTooltip в правом верхнем углу */}
                           {hasInterpretation && (
                             <div style={{
                               position: 'absolute',
                               top: '4px',
-                              left: '4px'
+                              right: '4px'
                             }}>
                               <CustomTooltip
                                 content={getCardInterpretation(card.position) || ''}
@@ -1049,35 +1083,15 @@ ${systemPromptText}`;
                               />
                             </div>
                           )}
-                          {/* Номер позиции */}
-                          <div style={{
-                            position: 'absolute',
-                            top: '4px',
-                            right: '4px',
-                            width: '14px',
-                            height: '14px',
-                            borderRadius: '50%',
-                            border: `1px solid ${POSITION_NUMBER_COLOR}`,
-                            color: POSITION_NUMBER_TEXT_COLOR,
-                            fontSize: '9px',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            fontWeight: '500',
-                            boxShadow: '0 1px 3px rgba(0,0,0,0.5)'
-                          }}>
-                            {card.position}
-                          </div>
                         </div>
-                        {/* Оверлей для названия карты */}
+                        {/* Оверлей для названия карты (без поворота) */}
                         <div style={{
                           position: 'absolute',
                           bottom: '0',
                           left: '0',
                           right: '0',
                           background: 'linear-gradient(transparent, rgba(0,0,0,0.8))',
-                          padding: '6px 2px 2px 2px',
-                          transform: card.isReversed ? 'rotate(180deg)' : 'none'
+                          padding: '6px 2px 2px 2px'
                         }}>
                           <div style={{
                             color: 'rgba(210,175,80,1)',
@@ -1120,16 +1134,25 @@ ${systemPromptText}`;
                         width: '75px',
                         height: '110px',
                         borderRadius: '6px',
-                        transform: card.isReversed ? 'rotate(180deg)' : 'none',
                         position: 'relative',
                         overflow: 'hidden',
-                        backgroundImage: cardInfo?.imageUrl ? `url(${cardInfo.imageUrl})` : 'none',
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center',
                         backgroundColor: 'rgba(210,175,80,0.1)',
                         border: '1px solid #646464'
                       }}>
-                        {/* Оверлей сверху для номера позиции и иконки тултипа */}
+                        {/* Фоновое изображение карты с поворотом */}
+                        <div style={{
+                          position: 'absolute',
+                          top: '0',
+                          left: '0',
+                          right: '0',
+                          bottom: '0',
+                          backgroundImage: cardInfo?.imageUrl ? `url(${cardInfo.imageUrl})` : 'none',
+                          backgroundSize: 'cover',
+                          backgroundPosition: 'center',
+                          transform: card.isReversed ? 'rotate(180deg)' : 'none'
+                        }} />
+                        
+                        {/* Оверлей сверху для номера позиции и иконки тултипа (без поворота) */}
                         <div style={{
                           position: 'absolute',
                           top: '0',
@@ -1137,8 +1160,7 @@ ${systemPromptText}`;
                           right: '0',
                           background: 'linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.6), transparent)',
                           height: '35px',
-                          borderRadius: '6px 6px 0 0',
-                          transform: card.isReversed ? 'rotate(180deg)' : 'none'
+                          borderRadius: '6px 6px 0 0'
                         }}>
                           {/* Номер позиции в левом верхнем углу */}
                           <div style={{
@@ -1182,15 +1204,14 @@ ${systemPromptText}`;
                             </div>
                           )}
                         </div>
-                        {/* Оверлей для названия карты */}
+                        {/* Оверлей для названия карты (без поворота) */}
                         <div style={{
                           position: 'absolute',
                           bottom: '0',
                           left: '0',
                           right: '0',
                           background: 'linear-gradient(transparent, rgba(0,0,0,0.8))',
-                          padding: '6px 2px 2px 2px',
-                          transform: card.isReversed ? 'rotate(180deg)' : 'none'
+                          padding: '6px 2px 2px 2px'
                         }}>
                           <div style={{
                             color: 'rgba(210,175,80,1)',
