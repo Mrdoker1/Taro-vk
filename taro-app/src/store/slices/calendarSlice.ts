@@ -100,8 +100,8 @@ const saveToStorage = async (data: Record<string, CalendarDayData>): Promise<voi
         const dayKey = VK_DAY_PREFIX + date;
         const dayJson = JSON.stringify(dayData);
         
-        // Проверяем размер данных
-        if (dayJson.length > 4000) { // Оставляем запас
+        // Проверяем размер данных (уменьшаем лимит для большей безопасности)
+        if (dayJson.length > 3000) { // Уменьшили с 4000 до 3000 для большей безопасности
           console.warn(`День ${date} слишком большой (${dayJson.length} символов), разбиваем активности`);
           
           // Сохраняем день без активностей
@@ -340,7 +340,87 @@ const loadFromStorage = async (): Promise<Record<string, CalendarDayData>> => {
             if (!item.key.startsWith(VK_DAY_PREFIX)) continue;
             const date = item.key.substring(VK_DAY_PREFIX.length);
             try {
-              const dayData = JSON.parse(item.value);
+              // Проверяем, не обрезана ли строка JSON
+              const value = item.value;
+              if (!value.trim().endsWith('}') && !value.trim().endsWith(']')) {
+                console.warn('VK Storage: JSON строка выглядит обрезанной для', item.key, 'длина:', value.length);
+                
+                // Пытаемся восстановить данные из отдельных ключей активностей
+                const activityKeys: string[] = [];
+                for (let i = 0; i < 50; i++) {
+                  activityKeys.push(`${item.key}_activity_${i}`);
+                }
+                
+                try {
+                  const activitiesRes = await Promise.race([
+                    bridge.send('VKWebAppStorageGet', { keys: activityKeys }),
+                    timeout(3000),
+                  ]) as { keys: Array<{ key: string; value: string }> };
+                  
+                  const activities: CalendarActivity[] = [];
+                  for (const actItem of activitiesRes.keys) {
+                    if (actItem.value) {
+                      try {
+                        const activity = JSON.parse(actItem.value);
+                        activities.push(activity);
+                      } catch (e) {
+                        console.warn('Не удалось распарсить активность', actItem.key, e);
+                      }
+                    }
+                  }
+                  
+                  if (activities.length > 0) {
+                    // Восстанавливаем структуру дня с найденными активностями
+                    const restoredDayData: CalendarDayData = {
+                      date,
+                      activities
+                    };
+                    parsed[date] = restoredDayData;
+                    console.log('VK Storage: восстановлено', activities.length, 'активностей для', date);
+                    
+                    // Пересохраняем данные в правильном формате - используем логику разделения
+                    const jsonString = JSON.stringify(restoredDayData);
+                    if (jsonString.length <= 3000) {
+                      try {
+                        await Promise.race([
+                          bridge.send('VKWebAppStorageSet', { key: item.key, value: jsonString }),
+                          timeout(1000),
+                        ]);
+                      } catch (e) {
+                        console.warn('VK Storage: не удалось сохранить восстановленные данные', e);
+                      }
+                    }
+                  } else {
+                    // Если активности не найдены, создаем пустой день
+                    const emptyDayData: CalendarDayData = {
+                      date,
+                      activities: []
+                    };
+                    parsed[date] = emptyDayData;
+                    
+                    // Очищаем поврежденный ключ
+                    try {
+                      await Promise.race([
+                        bridge.send('VKWebAppStorageSet', { key: item.key, value: '' }),
+                        timeout(1000),
+                      ]);
+                      console.log('VK Storage: очищен поврежденный ключ', item.key);
+                    } catch {
+                      console.warn('VK Storage: не удалось очистить поврежденный ключ', item.key);
+                    }
+                  }
+                } catch (error) {
+                  console.warn('VK Storage: ошибка при восстановлении данных для', item.key, error);
+                  // В случае ошибки создаем пустой день
+                  parsed[date] = {
+                    date,
+                    activities: []
+                  };
+                }
+                continue;
+              }
+              
+              const dayData = JSON.parse(value);
               parsed[date] = dayData;
               
               // Проверяем, есть ли отдельно сохраненные активности
@@ -378,7 +458,18 @@ const loadFromStorage = async (): Promise<Record<string, CalendarDayData>> => {
               }
             } catch (e) {
               console.warn('VK Storage: не удалось распарсить день', item.key, e);
-              console.warn('Значение:', item.value.substring(0, 100) + '...');
+              console.warn('Значение длиной', item.value.length, ':', item.value.substring(0, 100) + '...');
+              
+              // Пытаемся очистить поврежденные данные
+              try {
+                await Promise.race([
+                  bridge.send('VKWebAppStorageSet', { key: item.key, value: '' }),
+                  timeout(1000),
+                ]);
+                console.log('VK Storage: очищен поврежденный ключ после ошибки парсинга', item.key);
+              } catch {
+                console.warn('VK Storage: не удалось очистить поврежденный ключ после ошибки', item.key);
+              }
             }
           }
         } catch (e) {
@@ -398,7 +489,24 @@ const loadFromStorage = async (): Promise<Record<string, CalendarDayData>> => {
             if (!item.key.startsWith(VK_NOTE_PREFIX)) continue;
             const date = item.key.substring(VK_NOTE_PREFIX.length);
             try {
-              const note: CalendarNote = JSON.parse(item.value);
+              // Проверяем, не обрезана ли строка JSON для заметки
+              const value = item.value;
+              if (!value.trim().endsWith('}') && !value.trim().endsWith(']')) {
+                console.warn('VK Storage: JSON строка заметки выглядит обрезанной для', item.key, 'длина:', value.length);
+                // Пытаемся очистить поврежденные данные
+                try {
+                  await Promise.race([
+                    bridge.send('VKWebAppStorageSet', { key: item.key, value: '' }),
+                    timeout(1000),
+                  ]);
+                  console.log('VK Storage: очищен поврежденный ключ заметки', item.key);
+                } catch {
+                  console.warn('VK Storage: не удалось очистить поврежденный ключ заметки', item.key);
+                }
+                continue;
+              }
+              
+              const note: CalendarNote = JSON.parse(value);
               if (!parsed[date]) {
                 parsed[date] = { date, activities: [], note };
               } else {
@@ -406,6 +514,18 @@ const loadFromStorage = async (): Promise<Record<string, CalendarDayData>> => {
               }
             } catch (e) {
               console.warn('VK Storage: не удалось распарсить заметку', item.key, e);
+              console.warn('Значение заметки длиной', item.value.length, ':', item.value.substring(0, 100) + '...');
+              
+              // Пытаемся очистить поврежденные данные заметки
+              try {
+                await Promise.race([
+                  bridge.send('VKWebAppStorageSet', { key: item.key, value: '' }),
+                  timeout(1000),
+                ]);
+                console.log('VK Storage: очищен поврежденный ключ заметки после ошибки парсинга', item.key);
+              } catch {
+                console.warn('VK Storage: не удалось очистить поврежденный ключ заметки после ошибки', item.key);
+              }
             }
           }
         } catch (e) {
@@ -608,30 +728,64 @@ export const saveCalendarData = (data: Record<string, CalendarDayData>) => async
 };
 
 export const addCalendarActivity = (date: string, activity: CalendarActivity) => async (dispatch: AppDispatch, getState: () => RootState) => {
-  dispatch(addActivity({ date, activity }));
+  // Сначала загружаем существующие данные, если календарь пустой
   const { calendar } = getState();
-  await dispatch(saveCalendarData(calendar.daysData));
+  if (Object.keys(calendar.daysData).length === 0 || !calendar.daysData[date]) {
+    await dispatch(loadCalendarData());
+  }
+  
+  dispatch(addActivity({ date, activity }));
+  const updatedState = getState();
+  await dispatch(saveCalendarData(updatedState.calendar.daysData));
+  
+  // После сохранения перезагружаем данные, чтобы получить правильно объединенные данные
+  // из основного хранилища и отдельных ключей активностей
+  await dispatch(loadCalendarData());
 };
 
 export const updateCalendarNote = (date: string, note: CalendarNote) => async (dispatch: AppDispatch, getState: () => RootState) => {
-  dispatch(updateNote({ date, note }));
+  // Сначала загружаем существующие данные, если календарь пустой
   const { calendar } = getState();
-  await dispatch(saveCalendarData(calendar.daysData));
+  if (Object.keys(calendar.daysData).length === 0 || !calendar.daysData[date]) {
+    await dispatch(loadCalendarData());
+  }
+  
+  dispatch(updateNote({ date, note }));
+  const updatedState = getState();
+  await dispatch(saveCalendarData(updatedState.calendar.daysData));
+  
+  // После сохранения перезагружаем данные для синхронизации
+  await dispatch(loadCalendarData());
   
   // Проверяем условие для разблокировки пина "Хранитель Воспоминаний"
   dispatch(checkPinConditions({ type: 'calendar_note_added', data: note }));
 };
 
 export const deleteCalendarNote = (date: string) => async (dispatch: AppDispatch, getState: () => RootState) => {
-  dispatch(deleteNote(date));
+  // Сначала загружаем существующие данные, если календарь пустой
   const { calendar } = getState();
-  await dispatch(saveCalendarData(calendar.daysData));
+  if (Object.keys(calendar.daysData).length === 0 || !calendar.daysData[date]) {
+    await dispatch(loadCalendarData());
+  }
+  
+  dispatch(deleteNote(date));
+  const updatedState = getState();
+  await dispatch(saveCalendarData(updatedState.calendar.daysData));
+  
+  // После сохранения перезагружаем данные для синхронизации
+  await dispatch(loadCalendarData());
 };
 
 export const removeCalendarActivity = (date: string, activityId: string) => async (dispatch: AppDispatch, getState: () => RootState) => {
-  dispatch(removeActivity({ date, activityId }));
+  // Сначала загружаем существующие данные, если календарь пустой
   const { calendar } = getState();
-  await dispatch(saveCalendarData(calendar.daysData));
+  if (Object.keys(calendar.daysData).length === 0 || !calendar.daysData[date]) {
+    await dispatch(loadCalendarData());
+  }
+  
+  dispatch(removeActivity({ date, activityId }));
+  const updatedState = getState();
+  await dispatch(saveCalendarData(updatedState.calendar.daysData));
 };
 
 // Явное удаление пустого дня из VK Storage и индекса
