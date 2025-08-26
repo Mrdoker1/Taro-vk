@@ -11,7 +11,7 @@ export const AppWrapper: React.FC<AppWrapperProps> = ({ children }) => {
 
   return (
     <div style={{ 
-      minHeight: '100vh',
+      minHeight: 'auto',
       paddingBottom: isMobile ? '70px' : '0', // Возвращаем стандартный отступ снизу для мобильного меню
       position: 'relative'
     }}>

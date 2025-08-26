@@ -4,6 +4,7 @@ import { Icon24Dismiss } from '@vkontakte/icons';
 import { useAppSelector, useAppDispatch } from '../store';
 import { hidePurchasePopup } from '../store/slices/starsSlice';
 import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
+import { useScrollLock } from '../hooks/useScrollLock';
 import { BACKGROUND_BASE } from '../constants/styles';
 import { StarButton } from './StarButton';
 
@@ -20,6 +21,11 @@ export const PurchaseStarsPopup: React.FC<PurchaseStarsPopupProps> = ({
   const routeNavigator = useRouteNavigator();
   const { showPurchasePopup } = useAppSelector(state => state.stars);
 
+  const isOpen = activeModal === 'purchase-stars' || showPurchasePopup;
+  
+  // Блокируем скролл фона когда попап открыт
+  useScrollLock(isOpen);
+
   const handleClose = () => {
     dispatch(hidePurchasePopup());
     onClose();
@@ -30,8 +36,6 @@ export const PurchaseStarsPopup: React.FC<PurchaseStarsPopupProps> = ({
     onClose();
     routeNavigator.push('/stars-purchase');
   };
-
-  const isOpen = activeModal === 'purchase-stars' || showPurchasePopup;
 
   if (!isOpen) return null;
 

@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import { Button, Text, IconButton, Title } from '@vkontakte/vkui';
 import { Icon24Dismiss } from '@vkontakte/icons';
-import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
 import { CalendarActivity } from '../store/slices/calendarSlice';
+import { useScrollLock } from '../hooks/useScrollLock';
 import calendarSpreadIcon from '../assets/calendar-spread.svg';
 import calendarAffirmIcon from '../assets/calendar-affirm.svg';
 import { BACKGROUND_BASE } from '../constants/styles';
@@ -22,6 +22,9 @@ export const DeleteActivityPopup: React.FC<DeleteActivityPopupProps> = ({
   onConfirm,
   getActivityDetails
 }) => {
+  // Блокируем скролл фона когда попап открыт
+  useScrollLock(isOpen);
+  
   // Обработчик системной кнопки "Назад"
   useEffect(() => {
     if (!isOpen) return;

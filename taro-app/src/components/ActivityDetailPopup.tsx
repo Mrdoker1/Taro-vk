@@ -5,6 +5,7 @@ import { CalendarActivity } from '../store/slices/calendarSlice';
 import { getAffirmationIcon } from '../constants/affirmation';
 import { downloadOrShareActivity, shareActivityToVK } from '../utils/shareUtils';
 import { BACKGROUND_BASE } from '../constants/styles';
+import { useScrollLock } from '../hooks/useScrollLock';
 import calendarSpreadIcon from '../assets/calendar-spread.svg';
 import calendarAffirmIcon from '../assets/calendar-affirm.svg';
 
@@ -31,6 +32,9 @@ export const ActivityDetailPopup: React.FC<ActivityDetailPopupProps> = ({
   isOpen,
   onClose
 }) => {
+  // Блокируем скролл фона когда попап открыт
+  useScrollLock(isOpen);
+  
   if (!isOpen) return null;
 
   const getActivityIcon = () => {

@@ -124,7 +124,7 @@ export const LegalInfo: FC<LegalInfoProps> = ({ id }) => {
             <div style={{
               display: 'flex',
               flexDirection: 'column',
-              gap: '24px',
+              gap: isMobile ? '16px' : '20px',
               maxWidth: '400px',
               margin: '0 auto'
             }}>

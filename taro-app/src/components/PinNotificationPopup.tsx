@@ -3,6 +3,7 @@ import { Button, Text, Title } from '@vkontakte/vkui';
 import { Icon24Dismiss } from '@vkontakte/icons';
 import { useAppSelector, useAppDispatch } from '../store';
 import { hideNotification, clearNotification } from '../store/slices/pinsSlice';
+import { useScrollLock } from '../hooks/useScrollLock';
 import pinAffirmation from '../assets/pin-affirmation.png';
 import pinCalendar from '../assets/pin-calendar.png';
 import pinSpreads from '../assets/pin-spreads.png';
@@ -20,6 +21,9 @@ export const PinNotificationPopup: React.FC = () => {
   const dispatch = useAppDispatch();
   const notification = useAppSelector(state => state.pins.notification);
 
+  // Блокируем скролл фона когда попап открыт
+  useScrollLock(!!notification?.isVisible);
+
   // Полная очистка после анимации скрытия
   useEffect(() => {
     if (notification && !notification.isVisible) {
@@ -30,31 +34,6 @@ export const PinNotificationPopup: React.FC = () => {
       return () => clearTimeout(timer);
     }
   }, [notification, dispatch]);
-
-  // Блокировка скролла при открытом модальном окне
-  useEffect(() => {
-    if (notification?.isVisible) {
-      // Сохраняем текущее значение overflow
-      const originalOverflow = document.body.style.overflow;
-      const originalPosition = document.body.style.position;
-      
-      // Блокируем скролл
-      document.body.style.overflow = 'hidden';
-      document.body.style.position = 'fixed';
-      document.body.style.top = '0';
-      document.body.style.left = '0';
-      document.body.style.right = '0';
-      
-      // Восстанавливаем при размонтировании
-      return () => {
-        document.body.style.overflow = originalOverflow;
-        document.body.style.position = originalPosition;
-        document.body.style.top = '';
-        document.body.style.left = '';
-        document.body.style.right = '';
-      };
-    }
-  }, [notification?.isVisible]);
 
   if (!notification) return null;
 

@@ -1,5 +1,6 @@
 import React from 'react';
 import { ModalRoot, ModalPage, ModalPageHeader, Div, Button, Text } from '@vkontakte/vkui';
+import { useScrollLock } from '../hooks/useScrollLock';
 
 interface ConfirmationModalProps {
   isOpen: boolean;
@@ -20,6 +21,9 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   confirmText = "Да",
   cancelText = "Отмена"
 }) => {
+  // Блокируем скролл фона когда модал открыт
+  useScrollLock(isOpen);
+  
   if (!isOpen) return null;
 
   return (
