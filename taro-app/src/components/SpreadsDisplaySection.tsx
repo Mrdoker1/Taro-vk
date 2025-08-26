@@ -103,7 +103,7 @@ const SpreadCard: React.FC<SpreadCardProps> = ({ spread, onSelectSpread }) => {
         <div style={imageStyle}>
           <img
             src={getSpreadImage(spread)}
-            alt={`${spread.name} layout`}
+            alt={`${spread.name}`}
             style={{
               width: '100%',
               height: '100%',
