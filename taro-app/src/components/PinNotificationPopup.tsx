@@ -186,7 +186,7 @@ export const PinNotificationPopup: React.FC = () => {
           marginBottom: '20px',
           fontStyle: 'italic'
         }}>
-          Ваши достижения доступны в профиле
+          Твои достижения доступны в профиле
         </Text>
 
         {/* Кнопки */}

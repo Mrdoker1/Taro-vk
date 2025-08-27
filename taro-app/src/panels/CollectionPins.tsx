@@ -127,7 +127,7 @@ export const CollectionPins: FC<CollectionPinsProps> = ({ id }) => {
                   margin: '4px 0 0 0',
                   fontFamily: 'Jost'
                 }}>
-                  Собирайте достижения на вашем пути к мудрости
+                  Собирай достижения на пути к мудрости
                 </p>
               </div>
               <p style={{
@@ -361,7 +361,7 @@ export const CollectionPins: FC<CollectionPinsProps> = ({ id }) => {
                 fontFamily: 'Jost',
                 fontStyle: 'italic'
               }}>
-                Каждый пин - это веха на вашем пути самопознания. 
+                Каждый пин - это веха на пути самопознания. 
                 Продолжайте исследовать мир Таро и аффирмаций!
               </Text>
             </div>

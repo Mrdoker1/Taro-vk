@@ -130,7 +130,7 @@ export const Profile: FC<ProfileProps> = ({ id, fetchedUser }) => {
                   margin: '4px 0 0 0',
                   fontFamily: 'Jost'
                 }}>
-                  Ваш путь в мире Таро и аффирмаций
+                  Твой путь в мире Таро и аффирмаций
                 </p>
               </div>
             </div>

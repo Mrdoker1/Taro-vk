@@ -263,7 +263,7 @@ export const ExploreSection: React.FC<ExploreSectionProps> = ({
       onButtonClick: onOpenAffirmations
     },
     {
-      title: "Ваш духовный дневник",
+      title: "Твой духовный дневник",
       description: "Отслеживай свои расклады Таро, аффирмации и ведите заметки о своем духовном развитии.",
       buttonText: "Открыть календарь",
       onButtonClick: onOpenCalendar
