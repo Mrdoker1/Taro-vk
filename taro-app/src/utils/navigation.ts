@@ -10,10 +10,9 @@ export const safeNavigateBack = (routeNavigator: RouteNavigator) => {
   // В VK Mini Apps history.length может быть ненадежным,
   // поэтому используем проверку через document.referrer и window.history
   const hasHistory = window.history.length > 1;
-  const hasReferrer = document.referrer && document.referrer.includes('vk.com');
   
   // Если есть история в пределах приложения, возвращаемся назад
-  if (hasHistory && hasReferrer) {
+  if (hasHistory) {
     try {
       routeNavigator.back();
     } catch (error) {

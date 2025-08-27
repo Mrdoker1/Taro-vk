@@ -50,7 +50,7 @@ const VK_NOTE_PREFIX = 'calendar_note_'; // + YYYY-MM-DD (note stored separately
 // Кэш для данных календаря в памяти
 let memoryCache: Record<string, CalendarDayData> | null = null;
 let cacheTimestamp = 0;
-const CACHE_TTL = 5000; // 5 секунд кэш
+const CACHE_TTL = 60 * 60 * 1000; // 1 час кэш - достаточно долго, чтобы не терять данные
 
 // Utility functions for storage
 const isVKEnvironment = (): boolean => {
@@ -62,6 +62,17 @@ const saveToStorage = async (data: Record<string, CalendarDayData>): Promise<voi
     // Обновляем кэш в памяти
     memoryCache = { ...data };
     cacheTimestamp = Date.now();
+    
+    const dataKeys = Object.keys(data);
+    console.log('📅 СОХРАНЕНИЕ: Сохраняем календарные данные');
+    console.log('📊 Количество дней:', dataKeys.length);
+    console.log('📝 Диапазон дат:', dataKeys.length > 0 ? `${dataKeys.sort()[0]} - ${dataKeys.sort()[dataKeys.length - 1]}` : 'нет данных');
+    
+    if (isVKEnvironment()) {
+      console.log('🔵 VK Storage: Используем VK Storage для сохранения');
+    } else {
+      console.log('🟡 LocalStorage: Используем localStorage для сохранения');
+    }
     
   if (isVKEnvironment()) {
       // VK Storage: сохраняем покомпонентно по дням, чтобы не упереться в лимит размера значения.
@@ -87,17 +98,60 @@ const saveToStorage = async (data: Record<string, CalendarDayData>): Promise<voi
       for (const date of newDates) {
         const dayData = data[date];
         const dayKey = VK_DAY_PREFIX + date;
-        try {
-          await Promise.race([
-            bridge.send('VKWebAppStorageSet', {
-              key: dayKey,
-              value: JSON.stringify(dayData),
-            }),
-            timeout(3000),
-          ]);
-        } catch (e) {
-          console.error('VK Storage: не удалось сохранить день', date, e);
-          // Падать не будем — продолжим сохранять остальные дни
+        const dayJson = JSON.stringify(dayData);
+        
+        // Проверяем размер данных
+        if (dayJson.length > 4000) { // Оставляем запас
+          console.warn(`День ${date} слишком большой (${dayJson.length} символов), разбиваем активности`);
+          
+          // Сохраняем день без активностей
+          const dayWithoutActivities = {
+            date: dayData.date,
+            activities: [],
+            note: dayData.note
+          };
+          
+          try {
+            await Promise.race([
+              bridge.send('VKWebAppStorageSet', {
+                key: dayKey,
+                value: JSON.stringify(dayWithoutActivities),
+              }),
+              timeout(3000),
+            ]);
+            
+            // Сохраняем активности отдельно
+            for (let i = 0; i < dayData.activities.length; i++) {
+              const activity = dayData.activities[i];
+              const activityKey = `${dayKey}_activity_${i}`;
+              try {
+                await Promise.race([
+                  bridge.send('VKWebAppStorageSet', {
+                    key: activityKey,
+                    value: JSON.stringify(activity),
+                  }),
+                  timeout(3000),
+                ]);
+              } catch (e) {
+                console.error('VK Storage: не удалось сохранить активность', activityKey, e);
+              }
+            }
+          } catch (e) {
+            console.error('VK Storage: не удалось сохранить день', date, e);
+          }
+        } else {
+          // Обычное сохранение
+          try {
+            await Promise.race([
+              bridge.send('VKWebAppStorageSet', {
+                key: dayKey,
+                value: dayJson,
+              }),
+              timeout(3000),
+            ]);
+          } catch (e) {
+            console.error('VK Storage: не удалось сохранить день', date, e);
+          }
         }
 
         // Сохраняем заметку отдельно, чтобы она не терялась, если dayData слишком большой
@@ -197,60 +251,69 @@ const loadFromStorage = async (): Promise<Record<string, CalendarDayData>> => {
       }
 
       // 1) Получаем индекс дат
-      const getIndexRes = await Promise.race([
-        bridge.send('VKWebAppStorageGet', { keys: [VK_INDEX_KEY] }),
-        timeout(3000),
-      ]) as { keys: Array<{ key: string; value: string }> };
-      const indexRaw = getIndexRes.keys.find(k => k.key === VK_INDEX_KEY)?.value;
-      const index: { dates: string[] } = indexRaw ? JSON.parse(indexRaw) : { dates: [] };
+      let index: { dates: string[] } = { dates: [] };
+      
+      try {
+        const getIndexRes = await Promise.race([
+          bridge.send('VKWebAppStorageGet', { keys: [VK_INDEX_KEY] }),
+          timeout(3000),
+        ]) as { keys: Array<{ key: string; value: string }> };
+        const indexRaw = getIndexRes.keys.find(k => k.key === VK_INDEX_KEY)?.value;
+        if (indexRaw) {
+          index = JSON.parse(indexRaw);
+        }
+      } catch (e) {
+        console.warn('VK Storage: не удалось загрузить индекс', e);
+      }
 
-      // Если индекс пуст — пробуем восстановиться
-      if (!index.dates || index.dates.length === 0) {
-        // 1a) Пытаемся просканировать ключи VK Storage для восстановления
+      // ВСЕГДА пробуем восстановить данные, даже если индекс найден
+      // Это защитит от потери данных если индекс неполный
+      let recoveredDates: string[] = [];
+      try {
         const allKeys: string[] = [];
-        try {
-          const MAX = 100;
-          for (let offset = 0; offset < 2000; offset += MAX) { // ограничимся 2000 для безопасности
-            const res = await Promise.race([
-              bridge.send('VKWebAppStorageGetKeys', { count: MAX, offset }),
-              timeout(3000),
-            ]) as { keys: string[] };
-            if (!res || !res.keys || res.keys.length === 0) break;
-            allKeys.push(...res.keys);
-            if (res.keys.length < MAX) break;
-          }
-        } catch (e) {
-          console.warn('VK Storage: не удалось получить список ключей', e);
+        const MAX = 100;
+        for (let offset = 0; offset < 2000; offset += MAX) {
+          const res = await Promise.race([
+            bridge.send('VKWebAppStorageGetKeys', { count: MAX, offset }),
+            timeout(3000),
+          ]) as { keys: string[] };
+          if (!res || !res.keys || res.keys.length === 0) break;
+          allKeys.push(...res.keys);
+          if (res.keys.length < MAX) break;
         }
 
-        const datesFromKeys = Array.from(new Set(
+        recoveredDates = Array.from(new Set(
           allKeys
             .filter(k => k.startsWith(VK_DAY_PREFIX) || k.startsWith(VK_NOTE_PREFIX))
             .map(k => k.startsWith(VK_DAY_PREFIX) ? k.substring(VK_DAY_PREFIX.length) : k.substring(VK_NOTE_PREFIX.length))
         ));
-
-        if (datesFromKeys.length > 0) {
-          // Строим временный индекс и продолжаем обычную загрузку ниже на основе datesFromKeys
-          const rebuiltIndex: { dates: string[] } = { dates: datesFromKeys };
-          index.dates = rebuiltIndex.dates;
-        } else {
-          // 1b) Пытаемся локальный зеркальный бэкап
-          try {
-            const localRaw = localStorage.getItem(STORAGE_KEY);
-            if (localRaw) {
-              const parsedLocal = JSON.parse(localRaw) as Record<string, CalendarDayData>;
-              memoryCache = parsedLocal;
-              cacheTimestamp = now;
-              return parsedLocal;
-            }
-          } catch {
-            // ignore
-          }
-          memoryCache = {};
-          cacheTimestamp = now;
-          return {};
-        }
+      } catch (e) {
+        console.warn('VK Storage: не удалось получить список ключей для восстановления', e);
       }
+
+      // Объединяем даты из индекса и восстановленные даты
+      const allDates = Array.from(new Set([...index.dates, ...recoveredDates]));
+      
+      if (allDates.length === 0) {
+        // Если нет ни индекса, ни восстановленных данных - пробуем localStorage
+        try {
+          const localRaw = localStorage.getItem(STORAGE_KEY);
+          if (localRaw) {
+            const parsedLocal = JSON.parse(localRaw) as Record<string, CalendarDayData>;
+            memoryCache = parsedLocal;
+            cacheTimestamp = now;
+            return parsedLocal;
+          }
+        } catch {
+          // ignore
+        }
+        memoryCache = {};
+        cacheTimestamp = now;
+        return {};
+      }
+
+      // Используем объединенный список дат для загрузки
+      index.dates = allDates;
 
       // 2) Готовим список ключей и батч-запрос (с разбивкой по 100 ключей)
       const MAX_KEYS = 100;
@@ -277,9 +340,45 @@ const loadFromStorage = async (): Promise<Record<string, CalendarDayData>> => {
             if (!item.key.startsWith(VK_DAY_PREFIX)) continue;
             const date = item.key.substring(VK_DAY_PREFIX.length);
             try {
-              parsed[date] = JSON.parse(item.value);
+              const dayData = JSON.parse(item.value);
+              parsed[date] = dayData;
+              
+              // Проверяем, есть ли отдельно сохраненные активности
+              if (dayData.activities.length === 0) {
+                // Пытаемся загрузить активности отдельно
+                const activityKeys: string[] = [];
+                for (let i = 0; i < 50; i++) { // Максимум 50 активностей на день
+                  activityKeys.push(`${item.key}_activity_${i}`);
+                }
+                
+                try {
+                  const activitiesRes = await Promise.race([
+                    bridge.send('VKWebAppStorageGet', { keys: activityKeys }),
+                    timeout(3000),
+                  ]) as { keys: Array<{ key: string; value: string }> };
+                  
+                  const activities: CalendarActivity[] = [];
+                  for (const actItem of activitiesRes.keys) {
+                    if (actItem.value) {
+                      try {
+                        const activity = JSON.parse(actItem.value);
+                        activities.push(activity);
+                      } catch (e) {
+                        console.warn('Не удалось распарсить активность', actItem.key, e);
+                      }
+                    }
+                  }
+                  
+                  if (activities.length > 0) {
+                    parsed[date].activities = activities;
+                  }
+                } catch (e) {
+                  console.warn('Не удалось загрузить отдельные активности для', date, e);
+                }
+              }
             } catch (e) {
               console.warn('VK Storage: не удалось распарсить день', item.key, e);
+              console.warn('Значение:', item.value.substring(0, 100) + '...');
             }
           }
         } catch (e) {
