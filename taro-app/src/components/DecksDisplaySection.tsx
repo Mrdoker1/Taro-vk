@@ -2,8 +2,8 @@ import React from 'react';
 import { CustomButton } from './CustomButton';
 import { CustomTooltip } from './CustomTooltip';
 import { MagicLoader } from './MagicLoader';
-import { useAppSelector } from '../store';
-import { TaroDeck } from '../store/slices/taroDecksSlice';
+import { useAppSelector, useAppDispatch } from '../store';
+import { TaroDeck, fetchDecks } from '../store/slices/taroDecksSlice';
 import { BACKGROUND_BASE } from '../constants/styles';
 import noImagePlaceholder from '../assets/no-image.png';
 import decksIcon from '../assets/decks.svg';
@@ -200,8 +200,13 @@ interface DecksDisplaySectionProps {
 }
 
 export const DecksDisplaySection: React.FC<DecksDisplaySectionProps> = React.memo(({ onViewDeckDetails }) => {
+  const dispatch = useAppDispatch();
   const { decks, decksLoading, decksError } = useAppSelector((state) => state.taroDecks);
   const { isMobile, isSmallMobile } = useResponsive();
+
+  const handleReloadDecks = () => {
+    dispatch(fetchDecks({ lang: 'russian' }));
+  };
 
   const sectionStyle: React.CSSProperties = {
     display: 'flex',
@@ -249,9 +254,78 @@ export const DecksDisplaySection: React.FC<DecksDisplaySectionProps> = React.mem
     }
 
     if (decksError) {
-      return <div style={{ ...contentStyle, justifyContent: 'center', alignItems: 'center', color: '#ff6b6b', fontSize: isSmallMobile ? '14px' : '16px', fontFamily: FONT_FAMILY, textAlign: 'center', padding: '20px' }}>
-        Ошибка загрузки колод: {decksError}
-      </div>;
+      return (
+        <div style={{
+          ...contentStyle,
+          justifyContent: 'center',
+          alignItems: 'center',
+          textAlign: 'center',
+          padding: '20px'
+        }}>
+          <div style={{
+            fontSize: isSmallMobile ? '14px' : '16px',
+            fontFamily: FONT_FAMILY,
+            color: '#ffffff',
+            marginBottom: '16px',
+            opacity: 0.9
+          }}>
+            Не удалось загрузить колоды
+          </div>
+          <button
+            onClick={handleReloadDecks}
+            disabled={decksLoading}
+            style={{
+              padding: '10px 20px',
+              backgroundColor: 'rgba(227, 199, 122, 0.2)',
+              border: '1px solid rgba(227, 199, 122, 0.4)',
+              borderRadius: '8px',
+              color: '#e3c77a',
+              fontFamily: 'Jost, sans-serif',
+              fontSize: '14px',
+              fontWeight: '500',
+              cursor: decksLoading ? 'not-allowed' : 'pointer',
+              transition: 'all 0.2s ease',
+              opacity: decksLoading ? 0.6 : 1,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              justifyContent: 'center',
+              margin: '0 auto'
+            }}
+            onMouseEnter={(e) => {
+              if (!decksLoading) {
+                e.currentTarget.style.backgroundColor = 'rgba(227, 199, 122, 0.3)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = 'rgba(227, 199, 122, 0.2)';
+            }}
+          >
+            {decksLoading ? (
+              <>
+                <div style={{
+                  width: '16px',
+                  height: '16px',
+                  border: '2px solid transparent',
+                  borderTop: '2px solid #e3c77a',
+                  borderRadius: '50%',
+                  animation: 'spin 1s linear infinite'
+                }} />
+                Загрузка...
+              </>
+            ) : (
+              <>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M4 4V9H9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M20 20V15H15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M20.49 9A9 9 0 0 0 5.64 5.64L4 9M3.51 15A9 9 0 0 0 18.36 18.36L20 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                Обновить
+              </>
+            )}
+          </button>
+        </div>
+      );
     }
 
     if (!decks || decks.length === 0) {
@@ -274,7 +348,16 @@ export const DecksDisplaySection: React.FC<DecksDisplaySectionProps> = React.mem
   };
 
   return (
-    <section style={sectionStyle}>
+    <>
+      <style>
+        {`
+          @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+          }
+        `}
+      </style>
+      <section style={sectionStyle}>
       {/* Заголовок секции */}
       <div style={headerStyle}>
         <img
@@ -309,5 +392,6 @@ export const DecksDisplaySection: React.FC<DecksDisplaySectionProps> = React.mem
       {/* Контент секции */}
       {renderContent()}
     </section>
+    </>
   );
 });

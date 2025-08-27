@@ -133,6 +133,12 @@ export const HoroscopeSection = () => {
     routeNavigator.push(`/${DEFAULT_VIEW_PANELS.SETTINGS}`);
   };
 
+  const handleReloadHoroscope = () => {
+    // Сбрасываем ключ для принудительной перезагрузки
+    lastFetchKey.current = '';
+    dispatch(fetchHoroscope({ sign, type, lang }));
+  };
+
   // Получаем цвет дня для свечения
   const getDayColor = () => {
     if (horoscope?.color) {
@@ -384,21 +390,6 @@ export const HoroscopeSection = () => {
     padding: isVerySmallMobile ? '6px 8px' : isMobile ? '8px 12px' : '16px 24px',
     minWidth: 0,
     minHeight: isVerySmallMobile ? '200px' : isMobile ? '250px' : '300px'
-  };
-
-
-
-  const errorContainerStyle: React.CSSProperties = {
-    backgroundColor: 'rgba(239, 68, 68, 0.2)',
-    border: '1px solid rgba(239, 68, 68, 0.3)',
-    borderRadius: '6px',
-    padding: isVerySmallMobile ? '8px' : isMobile ? '10px' : '12px',
-    marginBottom: isVerySmallMobile ? '8px' : isMobile ? '10px' : '12px'
-  };
-
-  const errorTextStyle: React.CSSProperties = {
-    color: '#fecaca',
-    fontSize: isVerySmallMobile ? '13px' : isMobile ? '13px' : '12px'
   };
 
   const predictionTextStyle: React.CSSProperties = {
@@ -669,6 +660,11 @@ export const HoroscopeSection = () => {
               opacity: 0.9;
               transform: scale(1.02);
             }
+          }
+          
+          @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
           }
           
 
@@ -1102,8 +1098,72 @@ export const HoroscopeSection = () => {
             )}
             
             {error && (
-              <div style={errorContainerStyle}>
-                <div style={errorTextStyle}>{error}</div>
+              <div style={{
+                textAlign: 'center',
+                padding: '20px',
+                color: '#ffffff',
+                fontFamily: 'Jost, sans-serif'
+              }}>
+                <div style={{
+                  fontSize: '16px',
+                  marginBottom: '16px',
+                  opacity: 0.9
+                }}>
+                  Не удалось загрузить гороскоп
+                </div>
+                <button
+                  onClick={handleReloadHoroscope}
+                  disabled={loading}
+                  style={{
+                    padding: '10px 20px',
+                    backgroundColor: 'rgba(227, 199, 122, 0.2)',
+                    border: '1px solid rgba(227, 199, 122, 0.4)',
+                    borderRadius: '8px',
+                    color: '#e3c77a',
+                    fontFamily: 'Jost, sans-serif',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    cursor: loading ? 'not-allowed' : 'pointer',
+                    transition: 'all 0.2s ease',
+                    opacity: loading ? 0.6 : 1,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    justifyContent: 'center',
+                    margin: '0 auto'
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!loading) {
+                      e.currentTarget.style.backgroundColor = 'rgba(227, 199, 122, 0.3)';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(227, 199, 122, 0.2)';
+                  }}
+                >
+                  {loading ? (
+                    <>
+                      <div style={{
+                        width: '16px',
+                        height: '16px',
+                        border: '2px solid transparent',
+                        borderTop: '2px solid #e3c77a',
+                        borderRadius: '50%',
+                        animation: 'spin 1s linear infinite'
+                      }} />
+                      Загрузка...
+                    </>
+                  ) : (
+                    <>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M4 4V9H9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        <path d="M20 20V15H15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        <path d="M20.49 9A9 9 0 0 0 5.64 5.64L4 9M3.51 15A9 9 0 0 0 18.36 18.36L20 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                      Обновить
+                    </>
+                  )}
+                </button>
               </div>
             )}
             

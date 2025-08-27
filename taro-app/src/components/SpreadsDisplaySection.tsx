@@ -1,8 +1,8 @@
 import React from 'react';
 import { CustomButton } from './CustomButton';
 import { MagicLoader } from './MagicLoader';
-import { useAppSelector } from '../store';
-import { TaroSpread } from '../store/slices/taroSpreadsSlice';
+import { useAppSelector, useAppDispatch } from '../store';
+import { TaroSpread, fetchSpreads } from '../store/slices/taroSpreadsSlice';
 import noImage from '../assets/no-image.png';
 import { BACKGROUND_BASE } from '../constants/styles';
 
@@ -178,8 +178,13 @@ interface SpreadsDisplaySectionProps {
 }
 
 export const SpreadsDisplaySection: React.FC<SpreadsDisplaySectionProps> = ({ onSelectSpread }) => {
+  const dispatch = useAppDispatch();
   const { spreads, spreadsLoading, spreadsError } = useAppSelector((state) => state.taroSpreads);
   const { isMobile, isVerySmallMobile } = useResponsive();
+
+  const handleReloadSpreads = () => {
+    dispatch(fetchSpreads({ lang: 'russian' }));
+  };
 
   // Стили секции
   const sectionStyle: React.CSSProperties = {
@@ -329,14 +334,80 @@ export const SpreadsDisplaySection: React.FC<SpreadsDisplaySectionProps> = ({ on
         <div style={contentWrapperStyle}>
           <div style={{
             textAlign: 'center',
-            color: 'rgba(255, 255, 255, 0.8)',
-            fontSize: '16px',
-            fontFamily: FONT_FAMILY,
-            padding: '40px 20px'
+            padding: '20px',
+            color: '#ffffff',
+            fontFamily: FONT_FAMILY
           }}>
-            Ошибка загрузки раскладов: {spreadsError}
+            <div style={{
+              fontSize: '16px',
+              marginBottom: '16px',
+              opacity: 0.9
+            }}>
+              Не удалось загрузить расклады
+            </div>
+            <button
+              onClick={handleReloadSpreads}
+              disabled={spreadsLoading}
+              style={{
+                padding: '10px 20px',
+                backgroundColor: 'rgba(227, 199, 122, 0.2)',
+                border: '1px solid rgba(227, 199, 122, 0.4)',
+                borderRadius: '8px',
+                color: '#e3c77a',
+                fontFamily: 'Jost, sans-serif',
+                fontSize: '14px',
+                fontWeight: '500',
+                cursor: spreadsLoading ? 'not-allowed' : 'pointer',
+                transition: 'all 0.2s ease',
+                opacity: spreadsLoading ? 0.6 : 1,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                justifyContent: 'center',
+                margin: '0 auto'
+              }}
+              onMouseEnter={(e) => {
+                if (!spreadsLoading) {
+                  e.currentTarget.style.backgroundColor = 'rgba(227, 199, 122, 0.3)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'rgba(227, 199, 122, 0.2)';
+              }}
+            >
+              {spreadsLoading ? (
+                <>
+                  <div style={{
+                    width: '16px',
+                    height: '16px',
+                    border: '2px solid transparent',
+                    borderTop: '2px solid #e3c77a',
+                    borderRadius: '50%',
+                    animation: 'spin 1s linear infinite'
+                  }} />
+                  Загрузка...
+                </>
+              ) : (
+                <>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4 4V9H9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M20 20V15H15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M20.49 9A9 9 0 0 0 5.64 5.64L4 9M3.51 15A9 9 0 0 0 18.36 18.36L20 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  Обновить
+                </>
+              )}
+            </button>
           </div>
         </div>
+        <style>
+          {`
+            @keyframes spin {
+              from { transform: rotate(0deg); }
+              to { transform: rotate(360deg); }
+            }
+          `}
+        </style>
       </section>
     );
   }
