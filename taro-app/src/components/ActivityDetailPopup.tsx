@@ -181,7 +181,10 @@ export const ActivityDetailPopup: React.FC<ActivityDetailPopupProps> = ({
                   lineHeight: '1.3',
                   color: '#ffffff',
                   fontWeight: '300',
-                  whiteSpace: 'pre-line'
+                  whiteSpace: 'pre-line',
+                  wordBreak: 'break-word',
+                  overflowWrap: 'break-word',
+                  wordWrap: 'break-word'
                 }}>
                   {fullData.usage}
                 </Text>
@@ -196,7 +199,10 @@ export const ActivityDetailPopup: React.FC<ActivityDetailPopupProps> = ({
             lineHeight: '1.5',
             color: '#ffffff',
             fontWeight: '300',
-            whiteSpace: 'pre-line'
+            whiteSpace: 'pre-line',
+            wordBreak: 'break-word',
+            overflowWrap: 'break-word',
+            wordWrap: 'break-word'
           }}>
             {activity.fullContent}
           </Text>
@@ -287,7 +293,10 @@ export const ActivityDetailPopup: React.FC<ActivityDetailPopupProps> = ({
                 lineHeight: '1.4',
                 color: '#ffffff',
                 fontWeight: '300',
-                whiteSpace: 'pre-line'
+                whiteSpace: 'pre-line',
+                wordBreak: 'break-word',
+                overflowWrap: 'break-word',
+                wordWrap: 'break-word'
               }}>
                 {fullData.interpretation}
               </Text>
@@ -364,7 +373,10 @@ export const ActivityDetailPopup: React.FC<ActivityDetailPopupProps> = ({
             lineHeight: '1.5',
             color: '#ffffff',
             fontWeight: '300',
-            whiteSpace: 'pre-line'
+            whiteSpace: 'pre-line',
+            wordBreak: 'break-word',
+            overflowWrap: 'break-word',
+            wordWrap: 'break-word'
           }}>
             {activity.fullContent}
           </Text>
@@ -379,7 +391,10 @@ export const ActivityDetailPopup: React.FC<ActivityDetailPopupProps> = ({
         lineHeight: '1.5',
         color: '#ffffff',
         fontWeight: '300',
-        whiteSpace: 'pre-line'
+        whiteSpace: 'pre-line',
+        wordBreak: 'break-word',
+        overflowWrap: 'break-word',
+        wordWrap: 'break-word'
       }}>
         {activity.fullContent}
       </Text>

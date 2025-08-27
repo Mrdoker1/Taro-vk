@@ -606,7 +606,8 @@ export const Calendar: React.FC<CalendarProps> = () => {
                       border: '1px solid rgba(255, 255, 255, 0.1)',
                       boxShadow: '0 4px 16px rgba(0, 0, 0, 0.3)',
                       transition: 'all 0.2s ease',
-                      cursor: 'pointer'
+                      cursor: 'pointer',
+                      overflow: 'hidden'
                     }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.background = 'linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.06))';
@@ -648,6 +649,8 @@ export const Calendar: React.FC<CalendarProps> = () => {
                             color: 'rgba(232, 210, 140, 0.8)',
                             lineHeight: '1.3',
                             wordBreak: 'break-word',
+                            overflowWrap: 'break-word',
+                            wordWrap: 'break-word',
                             fontFamily: 'Jost'
                           }}>
                             {getActivityDetails(activity)}
@@ -716,7 +719,14 @@ export const Calendar: React.FC<CalendarProps> = () => {
                     placeholder="Введи заметку для этого дня..."
                     rows={isMobile ? 3 : 4}
                     maxLength={300}
-                    style={{ marginBottom: isMobile ? '6px' : '8px', fontSize: isMobile ? '11px' : '12px' }}
+                    style={{ 
+                      marginBottom: isMobile ? '6px' : '8px', 
+                      fontSize: isMobile ? '11px' : '12px',
+                      wordBreak: 'break-word',
+                      overflowWrap: 'break-word',
+                      wordWrap: 'break-word',
+                      whiteSpace: 'pre-wrap'
+                    }}
                   />
                   {/* Счетчик символов для заметки */}
                   <div style={{
@@ -798,7 +808,10 @@ export const Calendar: React.FC<CalendarProps> = () => {
                         lineHeight: '1.4',
                         fontSize: isMobile ? '12px' : '14px',
                         color: '#E8D28C',
-                        marginBottom: isMobile ? '6px' : '8px'
+                        marginBottom: isMobile ? '6px' : '8px',
+                        wordBreak: 'break-word',
+                        overflowWrap: 'break-word',
+                        wordWrap: 'break-word'
                       }}>
                         {selectedDateData!.note!.content}
                       </Text>

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Text, IconButton } from '@vkontakte/vkui';
-import { Icon24Refresh } from '@vkontakte/icons';
+import { Text } from '@vkontakte/vkui';
 import { useAppDispatch, useAppSelector } from '../store';
 import { fetchSpreadDetails } from '../store/slices/taroSpreadsSlice';
 import { fetchDecks } from '../store/slices/taroDecksSlice';
@@ -312,58 +311,76 @@ export const TaroSpreadDetails: React.FC<TaroSpreadDetailsProps> = ({
                 </Text>
                 <div style={{
                   display: 'flex',
+                  flexDirection: 'column',
                   alignItems: 'center',
-                  gap: '8px'
+                  gap: '12px'
                 }}>
                   <Text style={{ color: '#ffffff', fontSize: '14px' }}>
                     Попробуйте перезагрузить
                   </Text>
-                  <IconButton 
+                  <button 
                     onClick={handleReloadDecks}
                     disabled={decksLoading}
                     style={{
-                      color: '#E8D28C',
+                      padding: '8px 16px',
                       backgroundColor: 'rgba(232, 210, 140, 0.1)',
+                      border: '1px solid rgba(232, 210, 140, 0.3)',
                       borderRadius: '8px',
-                      transform: decksLoading ? 'rotate(360deg)' : 'none',
-                      transition: 'transform 1s linear',
-                      opacity: decksLoading ? 0.7 : 1
+                      color: '#E8D28C',
+                      fontFamily: 'Jost, sans-serif',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      cursor: decksLoading ? 'not-allowed' : 'pointer',
+                      transition: 'all 0.2s ease',
+                      opacity: decksLoading ? 0.6 : 1,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      justifyContent: 'center'
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!decksLoading) {
+                        e.currentTarget.style.backgroundColor = 'rgba(232, 210, 140, 0.2)';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = 'rgba(232, 210, 140, 0.1)';
                     }}
                   >
-                    <Icon24Refresh />
-                  </IconButton>
+                    {decksLoading ? (
+                      <>
+                        <div style={{
+                          width: '16px',
+                          height: '16px',
+                          border: '2px solid transparent',
+                          borderTop: '2px solid #E8D28C',
+                          borderRadius: '50%',
+                          animation: 'spin 1s linear infinite'
+                        }} />
+                        Загрузка...
+                      </>
+                    ) : (
+                      <>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M4 4V9H9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          <path d="M20 20V15H15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          <path d="M20.49 9A9 9 0 0 0 5.64 5.64L4 9M3.51 15A9 9 0 0 0 18.36 18.36L20 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                        Обновить
+                      </>
+                    )}
+                  </button>
                 </div>
               </div>
             ) : (
-              <div style={{ 
-                display: 'flex', 
-                alignItems: 'flex-end', 
-                gap: '12px' 
-              }}>
-                <div style={{ flex: 1 }}>
-                  <CustomSelect
-                    label="Выбери колоду для гадания"
-                    value={selectedDeckId}
-                    options={deckOptions}
-                    placeholder="Выбери колоду"
-                    onChange={setSelectedDeckId}
-                  />
-                </div>
-                <IconButton 
-                  onClick={handleReloadDecks}
-                  disabled={decksLoading}
-                  style={{
-                    color: '#E8D28C',
-                    backgroundColor: 'rgba(232, 210, 140, 0.1)',
-                    borderRadius: '8px',
-                    marginBottom: '2px',
-                    transform: decksLoading ? 'rotate(360deg)' : 'none',
-                    transition: 'transform 1s linear',
-                    opacity: decksLoading ? 0.7 : 1
-                  }}
-                >
-                  <Icon24Refresh />
-                </IconButton>
+              <div style={{ width: '100%' }}>
+                <CustomSelect
+                  label="Выбери колоду для гадания"
+                  value={selectedDeckId}
+                  options={deckOptions}
+                  placeholder="Выбери колоду"
+                  onChange={setSelectedDeckId}
+                />
               </div>
             )}
           </div>
@@ -745,6 +762,16 @@ export const TaroSpreadDetails: React.FC<TaroSpreadDetailsProps> = ({
           }}
         />
       </div>
+
+      {/* CSS для анимации спиннера */}
+      <style>
+        {`
+          @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+          }
+        `}
+      </style>
     </div>
   );
 };
