@@ -318,16 +318,75 @@ interface VKStoryParams {
 const SHARE_TEXT = '🔮✨ Расклады Таро и аффирмации!\n\nУзнай, что говорят карты именно тебе 🌟\n\n#Таро #Селуна #Аффирмации';
 
 /**
+ * Создает краткий текст для шаринга
+ */
+const createShareText = (activity?: CalendarActivity): string => {
+  if (!activity || !activity.fullContent) {
+    return SHARE_TEXT;
+  }
+
+  try {
+    let shareText = '';
+    
+    if (activity.type === 'tarot_reading') {
+      const data: TarotData = JSON.parse(activity.fullContent);
+      
+      shareText = '🔮 РАСКЛАД ТАРО 🔮\n\n';
+      
+      if (data.question) {
+        shareText += `❓ Вопрос: ${data.question}\n\n`;
+      }
+      
+      if (data.cards && data.cards.length > 0) {
+        shareText += '🃏 Карты:\n';
+        data.cards.forEach((card, index) => {
+          shareText += `${index + 1}. ${card.positionLabel}: ${card.cardName} ${card.isReversed ? '(Перевернутая)' : '(Прямая)'}\n`;
+        });
+        shareText += '\n';
+      }
+      
+      if (data.interpretation) {
+        shareText += `✨ Толкование:\n${data.interpretation}\n\n`;
+      }
+      
+    } else if (activity.type === 'affirmation') {
+      const data: AffirmationData = JSON.parse(activity.fullContent);
+      
+      shareText = '✨ ЕЖЕДНЕВНЫЕ АФФИРМАЦИИ ✨\n\n';
+      
+      if (data.sections && data.sections.length > 0) {
+        data.sections.forEach((section, index) => {
+          shareText += `${index + 1}. ${section.title}:\n${section.text}\n\n`;
+        });
+      }
+      
+      if (data.usage) {
+        shareText += `💡 Как использовать:\n${data.usage}\n\n`;
+      }
+    }
+
+    shareText += '🌟 #Таро #Селуна #Аффирмации';
+    
+    return shareText;
+  } catch (error) {
+    console.error('Ошибка при создании текста для шаринга:', error);
+    return SHARE_TEXT;
+  }
+};
+
+/**
  * Делится активностью в VK через VKWebAppShare с поддержкой историй
  */
-export const shareActivityToVK = async (shareToStory: boolean = false): Promise<void> => {
+export const shareActivityToVK = async (activity?: CalendarActivity, shareToStory: boolean = false): Promise<void> => {
   try {
+    const shareText = createShareText(activity);
+    
     if (shareToStory) {
       // Для историй используем VKWebAppShowStoryBox
       const storyParams: VKStoryParams = {
         background_type: 'none',
         url: 'https://vk.com/app53429194',
-        text: SHARE_TEXT
+        text: shareText
       };
       
       const storyResult = await bridge.send('VKWebAppShowStoryBox', storyParams);
@@ -335,9 +394,10 @@ export const shareActivityToVK = async (shareToStory: boolean = false): Promise<
       
     } else {
       // Для обычного шаринга используем VKWebAppShare
+      // На Android/iOS поддерживается text, на Mobile Web/Web - только link
       const shareParams: VKShareParams = {
         link: 'https://vk.com/app53429194',
-        text: SHARE_TEXT
+        text: shareText  // Будет показан только в личных сообщениях на мобильных платформах
       };
       
       const result = await bridge.send('VKWebAppShare', shareParams) as VKShareResult | VKShareResult[];

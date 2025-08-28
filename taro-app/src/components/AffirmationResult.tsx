@@ -108,8 +108,22 @@ export const AffirmationResult: React.FC<AffirmationResultProps> = ({
 
   const handleShare = async () => {
     try {
+      // Создаем временную активность для использования с утилитой шаринга
+      const affirmationData = {
+        sections: parsedAffirmation.sections || [],
+        usage: undefined // В результатах аффирмаций обычно нет поля usage
+      };
 
-      await shareActivityToVK();
+      const tempActivity: CalendarActivity = {
+        id: `temp_${Date.now()}`,
+        type: 'affirmation',
+        title: 'Ежедневная аффирмация',
+        summary: parsedAffirmation.title || getCurrentTopic(),
+        timestamp: Date.now(),
+        fullContent: JSON.stringify(affirmationData)
+      };
+
+      await shareActivityToVK(tempActivity);
     } catch (error) {
       console.error('Ошибка при поделиться аффирмацией:', error);
     }
