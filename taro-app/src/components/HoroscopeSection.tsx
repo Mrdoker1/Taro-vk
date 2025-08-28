@@ -1180,7 +1180,7 @@ export const HoroscopeSection = () => {
                   <div style={infoRowStyle}>
                     <div style={{...labelStyle, display: 'flex', alignItems: 'center', gap: '4px'}}>
                       <CustomTooltip
-                        content="Эмоциональное состояние, которое будет преобладать в этот день"
+                        content="Эмоциональное состояние, которое будет преобладать в этот период"
                         ariaLabel="Показать справку о настроении"
                       />
                       Настроение
@@ -1213,7 +1213,7 @@ export const HoroscopeSection = () => {
                   <div style={infoRowStyle}>
                     <div style={{...labelStyle, display: 'flex', alignItems: 'center', gap: '4px'}}>
                       <CustomTooltip
-                        content="Цвет, который поможет привлечь позитивную энергию и удачу в этот день"
+                        content="Цвет, который поможет привлечь позитивную энергию и удачу в этот период"
                         ariaLabel="Показать справку о цвете дня"
                       />
                       Цвет дня
