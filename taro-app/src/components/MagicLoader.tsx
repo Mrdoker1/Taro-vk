@@ -1,5 +1,6 @@
 import { FC } from 'react';
 import { Text } from '@vkontakte/vkui';
+import pinStarIcon from '../assets/particles.png';
 
 interface MagicLoaderProps {
   text?: string;
@@ -96,7 +97,6 @@ export const MagicLoader: FC<MagicLoaderProps> = ({
         
         {/* Центральная звезда */}
         <div style={{
-          fontSize: currentSize.iconSize,
           animation: 'magicTwinkle 1s ease-in-out infinite alternate',
           display: 'flex',
           alignItems: 'center',
@@ -104,7 +104,15 @@ export const MagicLoader: FC<MagicLoaderProps> = ({
           position: 'relative',
           zIndex: 1
         }}>
-          ✨
+          <img 
+            src={pinStarIcon} 
+            alt="star" 
+            style={{
+              width: currentSize.iconSize,
+              height: currentSize.iconSize,
+              objectFit: 'contain'
+            }}
+          />
         </div>
       </div>
 
