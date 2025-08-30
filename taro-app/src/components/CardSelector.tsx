@@ -204,7 +204,7 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
             marginBottom: '24px',
             fontFamily: 'Jost'
           }}>
-            Ошибка: {deckError}
+            Ошибка: {deckError[0].toLowerCase() + deckError.slice(1)}
           </Text>
           <CustomButton onClick={onBack} variant="secondary" size="m">
             Назад

@@ -432,7 +432,7 @@ ${systemPromptText}`;
     return (
       <div style={{ padding: '16px' }}>
         <Text style={{ color: 'var(--vkui--color_text_negative)' }}>
-          Ошибка: {templateError}
+          Ошибка: {templateError[0].toLowerCase() + templateError.slice(1)}
         </Text>
         <Button onClick={onBack} size="m" mode="secondary" style={{ marginTop: 16 }}>
           Назад
@@ -601,7 +601,7 @@ ${systemPromptText}`;
                         </>
                       ) : (
                         <>
-                          Ошибка: {generationError}
+                          Ошибка: {generationError[0].toLowerCase() + generationError.slice(1)}
                           <br />
                           <span style={{ fontSize: '12px' }}>
                             Проверьте соединение с интернетом или попробуйте позже.

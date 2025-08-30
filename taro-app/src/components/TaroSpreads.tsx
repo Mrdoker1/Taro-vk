@@ -20,7 +20,7 @@ export const TaroSpreads: React.FC<TaroSpreadsProps> = ({ onSelectSpread }) => {
   }
 
   if (spreadsError) {
-    return <div>Ошибка: {spreadsError}</div>;
+    return <div>Ошибка: {spreadsError[0].toLowerCase() + spreadsError.slice(1)}</div>;
   }
 
   return (

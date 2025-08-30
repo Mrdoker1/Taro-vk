@@ -98,8 +98,8 @@ export const StarCounter: React.FC<StarCounterProps> = ({
       {error && (
         <>
           <Spacing size={12} />
-          <Text style={{ color: 'var(--vkui--color_text_negative)' }}>
-            Ошибка: {error}
+                    <Text style={{ color: '#ff6b6b', textAlign: 'center', fontSize: '14px' }}>
+            Ошибка: {error[0].toLowerCase() + error.slice(1)}
           </Text>
         </>
       )}

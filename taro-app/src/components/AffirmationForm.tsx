@@ -92,7 +92,7 @@ export const AffirmationForm: React.FC<AffirmationFormProps> = ({
               fontSize: '14px',
               fontFamily: 'Jost'
             }}>
-              Ошибка: {generationError}
+              Ошибка: {generationError[0].toLowerCase() + generationError.slice(1)}
             </Text>
             {onRetry && (
               <IconButton

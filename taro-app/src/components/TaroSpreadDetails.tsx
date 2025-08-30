@@ -157,7 +157,7 @@ export const TaroSpreadDetails: React.FC<TaroSpreadDetailsProps> = ({
           fontSize: '16px',
           marginBottom: '24px'
         }}>
-          Ошибка: {spreadError}
+          Ошибка: {spreadError[0].toLowerCase() + spreadError.slice(1)}
         </p>
         <CustomButton onClick={onBack}>
           Назад к раскладам
