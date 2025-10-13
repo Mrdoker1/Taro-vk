@@ -18,6 +18,7 @@ import { useAppDispatch, useAppSelector } from '../store';
 
 import { fetchDecks } from '../store/slices/taroDecksSlice';
 import { DEFAULT_VIEW_PANELS } from '../routes';
+import { AndroidAppBanner } from '../components/AndroidAppBanner';
 import { AppHeader } from '../components/AppHeader';
 import { Footer } from '../components/Footer';
 import { HoroscopeSection } from '../components/HoroscopeSection';
@@ -181,10 +182,12 @@ export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
             />
           </div>
 
-          {/* Android App Banner
+          {/* Android App Banner */}
           <div style={{ marginTop: '12px' }}>
-            <AndroidAppBanner />
-          </div> */}
+            <AndroidAppBanner 
+              onClickStore={() => window.open('https://play.google.com/store/apps/details?id=com.taroandroid', '_blank')}
+            />
+          </div>
 
           {/* Секция с колодами */}
           <div style={{ marginBottom: '20px' }}>
