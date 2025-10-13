@@ -174,18 +174,18 @@ export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
         <Div style={{ padding: '0 12px' }}>
           <HoroscopeSection />
 
+          {/* Android App Banner */}
+          <div style={{ marginTop: '12px' }}>
+            <AndroidAppBanner 
+              onClickStore={() => window.open('https://play.google.com/store/apps/details?id=com.taroandroid', '_blank')}
+            />
+          </div>
+
           <div style={{ marginTop: '12px' }}>
             <ExploreSection 
               onOpenSpreads={handleOpenSpreads}
               onOpenAffirmations={handleOpenAffirmations}
               onOpenCalendar={handleOpenCalendar}
-            />
-          </div>
-
-          {/* Android App Banner */}
-          <div style={{ marginTop: '12px' }}>
-            <AndroidAppBanner 
-              onClickStore={() => window.open('https://play.google.com/store/apps/details?id=com.taroandroid', '_blank')}
             />
           </div>
 
