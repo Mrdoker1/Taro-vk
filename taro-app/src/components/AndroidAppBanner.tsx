@@ -1,15 +1,14 @@
 import { FC, useEffect, useState } from 'react';
-import { CustomButton } from './CustomButton';
 import phoneImage from '../assets/phonescreen.png';
 import googlePlayIcon from '../assets/googleplay.svg';
 import bannerBg from '../assets/bannerbackground.png';
 
 interface AndroidAppBannerProps {
-  onClickStore?: () => void;
   backgroundImageUrl?: string; // optional background image
 }
 
-export const AndroidAppBanner: FC<AndroidAppBannerProps> = ({ onClickStore, backgroundImageUrl }) => {
+/** Информационный баннер: приложение есть в Google Play. Без ссылки и кнопки (ограничения маркетплейса). */
+export const AndroidAppBanner: FC<AndroidAppBannerProps> = ({ backgroundImageUrl }) => {
   const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1200);
 
   useEffect(() => {
@@ -101,7 +100,7 @@ export const AndroidAppBanner: FC<AndroidAppBannerProps> = ({ onClickStore, back
           />
         </div>
 
-        {/* Text (left) and Button (right) in one container */}
+        {/* Текст и иконка маркета — только информация, без ссылки и кнопки */}
         <div
           style={{
             position: 'relative',
@@ -110,7 +109,7 @@ export const AndroidAppBanner: FC<AndroidAppBannerProps> = ({ onClickStore, back
             display: 'flex',
             flexDirection: isMobile ? 'column' : 'row',
             alignItems: isMobile ? 'flex-start' : 'center',
-            justifyContent: 'space-between',
+            justifyContent: 'flex-start',
             gap: 'clamp(8px, 2vw, 24px)',
             zIndex: 1,
           }}
@@ -129,7 +128,7 @@ export const AndroidAppBanner: FC<AndroidAppBannerProps> = ({ onClickStore, back
             >
               Наше приложение
               <br />
-              теперь на Android!
+              в Google Play
             </h1>
 
             <p
@@ -141,38 +140,19 @@ export const AndroidAppBanner: FC<AndroidAppBannerProps> = ({ onClickStore, back
                 margin: '0 0 10px 0',
               }}
             >
-              Еще больше функций и удобный доступ к раскладам и дневнику. Все возможности в одном месте — прямо на твоём смартфоне.
+              Seluna доступна в Google Play. Ещё больше функций, расклады и дневник — всё в одном приложении на твоём смартфоне.
             </p>
 
             <img
               src={googlePlayIcon}
-              alt="Get it on Google Play"
+              alt="Доступно в Google Play"
               style={{
                 width: isMobile ? '140px' : '180px',
                 height: 'auto',
                 objectFit: 'contain',
-                cursor: onClickStore ? 'pointer' : 'default',
+                pointerEvents: 'none',
               }}
-              onClick={() => onClickStore && onClickStore()}
             />
-          </div>
-
-          <div
-            style={{
-              flexShrink: 0,
-              alignSelf: isMobile ? 'flex-start' : 'center',
-              marginTop: isMobile ? '8px' : 0,
-            }}
-          >
-            <CustomButton
-              variant="primary"
-              size="m"
-              mobileSize="xs"
-              onClick={() => onClickStore && onClickStore()}
-              style={{ minWidth: 'auto', zIndex: 1 }}
-            >
-              Попробовать сейчас
-            </CustomButton>
           </div>
         </div>
         

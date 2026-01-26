@@ -24,7 +24,6 @@ import { Footer } from '../components/Footer';
 import { HoroscopeSection } from '../components/HoroscopeSection';
 import { ExploreSection } from '../components/ExploreSection';
 import { DecksDisplaySection } from '../components/DecksDisplaySection';
-// import { AndroidAppBanner } from '../components/AndroidAppBanner';
 
 
 
@@ -174,11 +173,9 @@ export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
         <Div style={{ padding: '0 12px' }}>
           <HoroscopeSection />
 
-          {/* Android App Banner */}
+          {/* Android App Banner — информационный, без ссылки и кнопки */}
           <div style={{ marginTop: '12px' }}>
-            <AndroidAppBanner 
-              onClickStore={() => window.open('https://play.google.com/store/apps/details?id=com.taroandroid', '_blank')}
-            />
+            <AndroidAppBanner />
           </div>
 
           <div style={{ marginTop: '12px' }}>
