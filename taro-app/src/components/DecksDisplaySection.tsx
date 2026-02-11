@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 import { CustomButton } from './CustomButton';
 import { CustomTooltip } from './CustomTooltip';
 import { MagicLoader } from './MagicLoader';
@@ -86,7 +87,16 @@ const DeckCard: React.FC<DeckCardProps> = React.memo(({ deck, onViewDetails }) =
   };
 
   return (
-    <div style={baseCardStyle}>
+    <motion.div 
+      style={baseCardStyle}
+      initial={{ opacity: 0, x: -30 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.5 }}
+      whileHover={{ 
+        scale: 1.02,
+        transition: { type: 'spring', stiffness: 300, damping: 20 }
+      }}
+    >
       {/* Внутренняя обводка */}
       <div style={{
         border: `1px solid ${BORDER_COLOR}`,
@@ -191,7 +201,7 @@ const DeckCard: React.FC<DeckCardProps> = React.memo(({ deck, onViewDetails }) =
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 });
 
@@ -357,10 +367,20 @@ export const DecksDisplaySection: React.FC<DecksDisplaySectionProps> = React.mem
           }
         `}
       </style>
-      <section style={sectionStyle}>
+      <motion.section 
+        style={sectionStyle}
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.6, ease: 'easeOut' }}
+      >
       {/* Заголовок секции */}
-      <div style={headerStyle}>
-        <img
+      <motion.div 
+        style={headerStyle}
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.6, delay: 0.7 }}
+      >
+        <motion.img
           src={decksIcon}
           alt="Deck icon"
           style={{
@@ -368,6 +388,14 @@ export const DecksDisplaySection: React.FC<DecksDisplaySectionProps> = React.mem
             height: '44px',
             objectFit: 'contain',
             flexShrink: 0
+          }}
+          animate={{ 
+            y: [0, -5, 0],
+          }}
+          transition={{
+            duration: 3,
+            repeat: Infinity,
+            ease: 'easeInOut',
           }}
         />
         <h2 style={{
@@ -387,11 +415,11 @@ export const DecksDisplaySection: React.FC<DecksDisplaySectionProps> = React.mem
             ariaLabel="Показать справку о разделе Твои колоды"
           />
         </div>
-      </div>
+      </motion.div>
       
       {/* Контент секции */}
       {renderContent()}
-    </section>
+    </motion.section>
     </>
   );
 });

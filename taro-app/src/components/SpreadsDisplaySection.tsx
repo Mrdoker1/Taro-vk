@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 import { CustomButton } from './CustomButton';
 import { MagicLoader } from './MagicLoader';
 import { useAppSelector, useAppDispatch } from '../store';
@@ -87,7 +88,16 @@ const SpreadCard: React.FC<SpreadCardProps> = ({ spread, onSelectSpread }) => {
   };
 
   return (
-    <div style={baseCardStyle}>
+    <motion.div 
+      style={baseCardStyle}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      whileHover={{ 
+        scale: 1.02,
+        transition: { type: 'spring', stiffness: 300, damping: 20 }
+      }}
+    >
       {/* Внутренняя обводка */}
       <div style={{
         border: `1px solid ${BORDER_COLOR}`,
@@ -169,7 +179,7 @@ const SpreadCard: React.FC<SpreadCardProps> = ({ spread, onSelectSpread }) => {
           </CustomButton>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
@@ -249,29 +259,62 @@ export const SpreadsDisplaySection: React.FC<SpreadsDisplaySectionProps> = ({ on
 
   if (spreadsLoading) {
     return (
-      <section style={sectionStyle}>
-        <div style={backgroundStyle} />
+      <motion.section 
+        style={sectionStyle}
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: 'easeOut' }}
+      >
+        <motion.div 
+          style={backgroundStyle}
+          animate={{ 
+            scale: [1, 1.02, 1],
+          }}
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+            ease: 'easeInOut',
+          }}
+        />
         
         {/* Заголовок секции */}
-        <div style={headerStyle}>
-          <img
+        <motion.div 
+          style={headerStyle}
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+        >
+          <motion.img
             src="https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/cf86979ebd7f8f29d083fff45b7dbbc96221b5a9"
             alt="Tarot spreads icon"
             style={iconStyle}
+            animate={{ 
+              rotate: [0, 5, -5, 0],
+            }}
+            transition={{
+              duration: 5,
+              repeat: Infinity,
+              ease: 'easeInOut',
+            }}
           />
           <h2 style={titleStyle}>
             Доступные расклады
           </h2>
-        </div>
+        </motion.div>
 
         {/* Декоративный элемент */}
-        <div style={{
-          display: 'flex',
-          justifyContent: 'center',
-          marginBottom: '16px',
-          position: 'relative'
-        }}>
-          <img
+        <motion.div 
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            marginBottom: '16px',
+            position: 'relative'
+          }}
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+        >
+          <motion.img
             src="https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/a73aa4a82442cd6022e0ae5e650a0c240ffa4f01"
             alt="Decorative element"
             style={{
@@ -279,8 +322,16 @@ export const SpreadsDisplaySection: React.FC<SpreadsDisplaySectionProps> = ({ on
               height: 'auto',
               objectFit: 'contain'
             }}
+            animate={{ 
+              rotate: [0, 5, -5, 0],
+            }}
+            transition={{
+              duration: 6,
+              repeat: Infinity,
+              ease: 'easeInOut',
+            }}
           />
-        </div>
+        </motion.div>
 
         <div style={contentWrapperStyle}>
           <div style={{
@@ -292,7 +343,7 @@ export const SpreadsDisplaySection: React.FC<SpreadsDisplaySectionProps> = ({ on
             <MagicLoader text="Загружаем расклады..." />
           </div>
         </div>
-      </section>
+      </motion.section>
     );
   }
 
@@ -413,30 +464,63 @@ export const SpreadsDisplaySection: React.FC<SpreadsDisplaySectionProps> = ({ on
   }
 
   return (
-    <section style={sectionStyle}>
+    <motion.section 
+      style={sectionStyle}
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, ease: 'easeOut' }}
+    >
       {/* Фоновое изображение */}
-      <div style={backgroundStyle} />
+      <motion.div 
+        style={backgroundStyle}
+        animate={{ 
+          scale: [1, 1.02, 1],
+        }}
+        transition={{
+          duration: 8,
+          repeat: Infinity,
+          ease: 'easeInOut',
+        }}
+      />
       
       {/* Заголовок секции */}
-      <div style={headerStyle}>
-        <img
+      <motion.div 
+        style={headerStyle}
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.6, delay: 0.2 }}
+      >
+        <motion.img
           src="https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/cf86979ebd7f8f29d083fff45b7dbbc96221b5a9"
           alt="Tarot spreads icon"
           style={iconStyle}
+          animate={{ 
+            rotate: [0, 5, -5, 0],
+          }}
+          transition={{
+            duration: 5,
+            repeat: Infinity,
+            ease: 'easeInOut',
+          }}
         />
         <h2 style={titleStyle}>
           Доступные расклады
         </h2>
-      </div>
+      </motion.div>
       
       {/* Декоративный элемент */}
-      <div style={{
-        display: 'flex',
-        justifyContent: 'center',
-        marginBottom: '16px',
-        position: 'relative'
-      }}>
-        <img
+      <motion.div 
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          marginBottom: '16px',
+          position: 'relative'
+        }}
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.6, delay: 0.3 }}
+      >
+        <motion.img
           src="https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/a73aa4a82442cd6022e0ae5e650a0c240ffa4f01"
           alt="Decorative element"
           style={{
@@ -444,8 +528,16 @@ export const SpreadsDisplaySection: React.FC<SpreadsDisplaySectionProps> = ({ on
             height: 'auto',
             objectFit: 'contain'
           }}
+          animate={{ 
+            rotate: [0, 5, -5, 0],
+          }}
+          transition={{
+            duration: 6,
+            repeat: Infinity,
+            ease: 'easeInOut',
+          }}
         />
-      </div>
+      </motion.div>
 
       {/* Контент секции */}
       <div style={contentWrapperStyle}>
@@ -470,23 +562,35 @@ export const SpreadsDisplaySection: React.FC<SpreadsDisplaySectionProps> = ({ on
             minWidth: isMobile ? '280px' : 'auto',
             justifyItems: 'center'
           }}>
-            {spreads.map((spread) => (
-              <SpreadCard
+            {spreads.map((spread, index) => (
+              <motion.div
                 key={spread.id}
-                spread={spread}
-                onSelectSpread={onSelectSpread}
-              />
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.4 + index * 0.1 }}
+                style={{ width: '100%' }}
+              >
+                <SpreadCard
+                  spread={spread}
+                  onSelectSpread={onSelectSpread}
+                />
+              </motion.div>
             ))}
           </div>
         )}
 
         {/* Нижний декоративный элемент */}
-        <div style={{
-          display: 'flex',
-          justifyContent: 'center',
-          position: 'relative',
-          marginTop: '16px',
-        }}>
+        <motion.div 
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            position: 'relative',
+            marginTop: '16px',
+          }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.8 }}
+        >
           <img
             src="https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/154f96a15bcd974fd38495f6f7aeec22f8b9613a"
             alt="Decorative element"
@@ -496,8 +600,8 @@ export const SpreadsDisplaySection: React.FC<SpreadsDisplaySectionProps> = ({ on
               objectFit: 'contain'
             }}
           />
-        </div>
+        </motion.div>
       </div>
-    </section>
+    </motion.section>
   );
 };

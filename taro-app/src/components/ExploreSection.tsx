@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 import { CustomTooltip } from './CustomTooltip';
 import { CustomButton } from './CustomButton';
 import exploreAImage from '../assets/explore-a.png';
@@ -41,17 +42,23 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
   const isVerySmallMobile = windowWidth < 480;
 
   return (
-    <div style={{
-      border: '1px solid rgba(227, 199, 122, 0.15)',
-      borderRadius: isMobile ? '6px' : '500px 500px 4px 4px',
-      padding: isMobile ? '6px' : '8px',
-      flex: isMobile ? 'none' : '1',
-      minWidth: isMobile ? 'auto' : '240px',
-      maxWidth: isMobile ? 'calc(100% - 8px)' : '320px',
-      width: isMobile ? 'auto' : 'auto',
-      height: isMobile ? 'auto' : 'fit-content',
-      backgroundColor: 'transparent',
-    }}>
+    <motion.div 
+      style={{
+        border: '1px solid rgba(227, 199, 122, 0.15)',
+        borderRadius: isMobile ? '6px' : '500px 500px 4px 4px',
+        padding: isMobile ? '6px' : '8px',
+        flex: isMobile ? 'none' : '1',
+        minWidth: isMobile ? 'auto' : '240px',
+        maxWidth: isMobile ? 'calc(100% - 8px)' : '320px',
+        width: isMobile ? 'auto' : 'auto',
+        height: isMobile ? 'auto' : 'fit-content',
+        backgroundColor: 'transparent',
+      }}
+      whileHover={{ 
+        y: -8,
+        transition: { type: 'spring', stiffness: 300, damping: 20 }
+      }}
+    >
       <div style={{
         border: '1px solid rgba(227, 199, 122, 0.15)',
         borderRadius: isMobile ? '0px' : '500px 500px 0px 0px',
@@ -162,7 +169,7 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
           </CustomButton>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
@@ -271,21 +278,49 @@ export const ExploreSection: React.FC<ExploreSectionProps> = ({
   ];
 
   return (
-    <section style={sectionStyle}>
+    <motion.section 
+      style={sectionStyle}
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, delay: 0.3, ease: 'easeOut' }}
+    >
       {/* Фоновое изображение */}
-      <div style={backgroundStyle} />
+      <motion.div 
+        style={backgroundStyle}
+        animate={{ 
+          scale: [1, 1.03, 1],
+        }}
+        transition={{
+          duration: 10,
+          repeat: Infinity,
+          ease: 'easeInOut',
+        }}
+      />
       
       {/* Заголовок секции */}
-      <div style={headerStyle}>
-        <img
+      <motion.div 
+        style={headerStyle}
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.6, delay: 0.4 }}
+      >
+        <motion.img
           src="https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/8fe9fd736d65fcb16451a2d349310471db362c0c?placeholderIfAbsent=true"
           alt="Explore icon"
           style={iconStyle}
+          animate={{ 
+            rotate: [0, -5, 5, 0],
+          }}
+          transition={{
+            duration: 5,
+            repeat: Infinity,
+            ease: 'easeInOut',
+          }}
         />
         <h2 style={titleStyle}>
           Исследуй Таро
         </h2>
-      </div>
+      </motion.div>
       
       {/* Контент секции */}
       <div style={contentWrapperStyle}>
@@ -299,16 +334,22 @@ export const ExploreSection: React.FC<ExploreSectionProps> = ({
           padding: isMobile ? '0' : '0'
         }}>
           {features.map((feature, index) => (
-            <FeatureCard
+            <motion.div
               key={index}
-              title={feature.title}
-              description={feature.description}
-              buttonText={feature.buttonText}
-              onButtonClick={feature.onButtonClick}
-            />
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.5 + index * 0.1 }}
+            >
+              <FeatureCard
+                title={feature.title}
+                description={feature.description}
+                buttonText={feature.buttonText}
+                onButtonClick={feature.onButtonClick}
+              />
+            </motion.div>
           ))}
         </div>
       </div>
-    </section>
+    </motion.section>
   );
 }; 

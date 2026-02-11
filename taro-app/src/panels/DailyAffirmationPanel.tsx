@@ -1,4 +1,5 @@
 import { FC } from 'react';
+import { motion } from 'framer-motion';
 import {
   Panel,
   Div,
@@ -50,28 +51,46 @@ export const DailyAffirmationPanel: FC<DailyAffirmationPanelProps> = ({ id }) =>
           display: 'flex',
           justifyContent: 'center'
         }}>
-          <div style={{
-            width: '100%',
-            ...BACKGROUND_BASE,
-            borderRadius: '12px',
-            overflow: 'hidden',
-            position: 'relative',
-            padding: isMobile ? '16px 8px' : '32px'
-          }}>
+          <motion.div 
+            style={{
+              width: '100%',
+              ...BACKGROUND_BASE,
+              borderRadius: '12px',
+              overflow: 'hidden',
+              position: 'relative',
+              padding: isMobile ? '16px 8px' : '32px'
+            }}
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: 'easeOut' }}
+          >
             {/* Заголовок секции */}
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-              marginBottom: '32px'
-            }}>
-              <img
+            <motion.div 
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                marginBottom: '32px'
+              }}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+            >
+              <motion.img
                 src={affirmationIcon}
                 alt="Affirmation icon"
                 style={{
                   width: '60px',
                   height: '60px',
                   objectFit: 'contain'
+                }}
+                animate={{ 
+                  scale: [1, 1.05, 1],
+                }}
+                transition={{
+                  duration: 4,
+                  repeat: Infinity,
+                  ease: 'easeInOut',
                 }}
               />
               <div style={{ flex: 1, minWidth: 0 }}>
@@ -97,15 +116,20 @@ export const DailyAffirmationPanel: FC<DailyAffirmationPanelProps> = ({ id }) =>
                   Позитивные утверждения помогут тебе настроиться на успешный день и привлечь желаемое в свою жизнь.
                 </div>
               </div>
-            </div>
+            </motion.div>
 
             {/* Декоративные элементы и основной компонент */}
-            <div style={{
-              display: 'flex',
-              justifyContent: 'center',
-              marginBottom: '16px'
-            }}>
-              <img
+            <motion.div 
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                marginBottom: '16px'
+              }}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+            >
+              <motion.img
                 src="https://api.builder.io/api/v1/image/assets/a61b8aff1f9a4d4b8c540558ab06b276/a73aa4a82442cd6022e0ae5e650a0c240ffa4f01"
                 alt="Decorative element"
                 style={{
@@ -113,8 +137,16 @@ export const DailyAffirmationPanel: FC<DailyAffirmationPanelProps> = ({ id }) =>
                   height: 'auto',
                   objectFit: 'contain'
                 }}
+                animate={{ 
+                  rotate: [0, 5, -5, 0],
+                }}
+                transition={{
+                  duration: 6,
+                  repeat: Infinity,
+                  ease: 'easeInOut',
+                }}
               />
-            </div>
+            </motion.div>
 
             {/* Разделитель */}
             <div style={{
@@ -125,7 +157,7 @@ export const DailyAffirmationPanel: FC<DailyAffirmationPanelProps> = ({ id }) =>
             }} />
 
             <DailyAffirmation />
-          </div>
+          </motion.div>
         </Div>
 
         <Footer 

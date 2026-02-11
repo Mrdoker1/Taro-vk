@@ -1,4 +1,5 @@
 import React, { useEffect, useCallback, useRef } from 'react';
+import { motion } from 'framer-motion';
 import { useAppDispatch, useAppSelector } from '../store';
 import { setType, fetchHoroscope } from '../store/slices/horoscopeSlice';
 import { Tabs, TabsItem } from '@vkontakte/vkui';
@@ -732,19 +733,45 @@ export const HoroscopeSection = () => {
         `}
       </style>
       
-      <section 
+      <motion.section 
         className={`HoroscopeSection ${isMobile ? 'HoroscopeSection--mobile' : ''} ${isVerySmallMobile ? 'HoroscopeSection--small' : ''}`} 
         style={sectionStyle}
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: 'easeOut' }}
       >
         {/* Background Image */}
-        <div style={backgroundStyle} />
+        <motion.div 
+          style={backgroundStyle}
+          animate={{ 
+            scale: [1, 1.02, 1],
+          }}
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+            ease: 'easeInOut',
+          }}
+        />
       
       {/* Header */}
-      <div style={headerStyle}>
-        <img
+      <motion.div 
+        style={headerStyle}
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.6, delay: 0.2 }}
+      >
+        <motion.img
           src={appIcon}
           alt="Horoscope icon"
           style={iconStyle}
+          animate={{ 
+            rotate: [0, 5, -5, 0],
+          }}
+          transition={{
+            duration: 4,
+            repeat: Infinity,
+            ease: 'easeInOut',
+          }}
         />
         <h1 style={titleStyle}>
           Привет, это твой гороскоп,{' '}
@@ -790,7 +817,7 @@ export const HoroscopeSection = () => {
             />
           </span>
         </h1>
-      </div>
+      </motion.div>
       
       {/* Main Content */}
       <div style={contentWrapperStyle}>
@@ -1272,7 +1299,7 @@ export const HoroscopeSection = () => {
           </div>
         </div>
       </div>
-    </section>
+    </motion.section>
     </>
   );
 }; 

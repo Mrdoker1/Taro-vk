@@ -1,4 +1,5 @@
 import { FC, useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
 import phoneImage from '../assets/phonescreen.png';
 import googlePlayIcon from '../assets/googleplay.svg';
 import bannerBg from '../assets/bannerbackground.png';
@@ -20,7 +21,10 @@ export const AndroidAppBanner: FC<AndroidAppBannerProps> = ({ backgroundImageUrl
   const isMobile = windowWidth < 768;
 
   return (
-    <section
+    <motion.section
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, ease: 'easeOut' }}
       style={{
         borderRadius: '8px',
         border: '1px solid rgba(227,199,122,0.15)',
@@ -53,9 +57,18 @@ export const AndroidAppBanner: FC<AndroidAppBannerProps> = ({ backgroundImageUrl
       >
         {/* Background (center fill, lower opacity) */}
     {(backgroundImageUrl || bannerBg) && (
-      <img
+      <motion.img
       src={backgroundImageUrl || bannerBg}
             alt="Banner background"
+            initial={{ opacity: 0, scale: 1.15 }}
+            animate={{ 
+              opacity: 0.08, 
+              scale: 1,
+            }}
+            transition={{ 
+              duration: 1.2, 
+              ease: 'easeOut',
+            }}
             style={{
               border: '1px solid rgba(227,199,122,1)',
               borderRadius: '8px',
@@ -64,15 +77,25 @@ export const AndroidAppBanner: FC<AndroidAppBannerProps> = ({ backgroundImageUrl
               width: '100%',
               objectFit: 'cover',
               inset: 0,
-        opacity: 0.2,
               objectPosition: 'center',
-        filter: 'brightness(1.1)',
+        filter: 'brightness(0.7) saturate(0.6)',
               zIndex: 0,
             }}
           />
         )}
         {/* Image left (always slightly protruding) */}
-        <div
+        <motion.div
+          initial={{ opacity: 0, x: -50, rotate: -10 }}
+          animate={{ 
+            opacity: 1, 
+            x: 0, 
+            rotate: 0,
+          }}
+          transition={{ 
+            duration: 0.8, 
+            delay: 0.2, 
+            ease: [0.34, 1.56, 0.64, 1],
+          }}
           style={{
             position: 'relative',
             display: 'flex',
@@ -85,9 +108,17 @@ export const AndroidAppBanner: FC<AndroidAppBannerProps> = ({ backgroundImageUrl
             marginLeft: isMobile ? 0 : 'clamp(24px, 8vw, 140px)',
           }}
         >
-          <img
+          <motion.img
             src={phoneImage}
             alt="Android app preview"
+            animate={{
+              y: [0, -8, 0],
+            }}
+            transition={{
+              duration: 3,
+              repeat: Infinity,
+              ease: 'easeInOut',
+            }}
             style={{
               width: isMobile ? '150px' : '140px',
               height: isMobile ? '270px' : '260px',
@@ -98,10 +129,13 @@ export const AndroidAppBanner: FC<AndroidAppBannerProps> = ({ backgroundImageUrl
               pointerEvents: 'none',
             }}
           />
-        </div>
+        </motion.div>
 
         {/* Текст и иконка маркета — только информация, без ссылки и кнопки */}
-        <div
+        <motion.div
+          initial={{ opacity: 0, x: 30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.7, delay: 0.3, ease: 'easeOut' }}
           style={{
             position: 'relative',
             minWidth: 0,
@@ -115,7 +149,10 @@ export const AndroidAppBanner: FC<AndroidAppBannerProps> = ({ backgroundImageUrl
           }}
         >
           <div style={{ flex: '1 1 auto', minWidth: 0 }}>
-            <h1
+            <motion.h1
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
               style={{
                 fontFamily: 'Jost',
                 fontWeight: 400,
@@ -129,35 +166,49 @@ export const AndroidAppBanner: FC<AndroidAppBannerProps> = ({ backgroundImageUrl
               Наше приложение
               <br />
               в Google Play
-            </h1>
+            </motion.h1>
 
-            <p
+            <motion.p
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.5 }}
               style={{
                 fontSize: isMobile ? '13px' : '16px',
                 color: 'rgba(255,255,255,0.75)',
                 fontWeight: 300,
                 lineHeight: 1.5,
-                margin: '0 0 10px 0',
+                margin: '0 0 0 0',
               }}
             >
               Seluna доступна в Google Play. Ещё больше функций, расклады и дневник — всё в одном приложении на твоём смартфоне.
-            </p>
+            </motion.p>
 
-            <img
+            <motion.img
               src={googlePlayIcon}
               alt="Доступно в Google Play"
+              initial={{ opacity: 0, scale: 0.8, y: 20 }}
+              animate={{ 
+                opacity: 1, 
+                scale: [1, 1.03, 1],
+              }}
+              transition={{ 
+                opacity: { duration: 0.6, delay: 0.6, ease: [0.34, 1.56, 0.64, 1] },
+                scale: { duration: 2.5, repeat: Infinity, ease: 'easeInOut' },
+              }}
               style={{
                 width: isMobile ? '140px' : '180px',
                 height: 'auto',
                 objectFit: 'contain',
                 pointerEvents: 'none',
+                marginTop: 0,
+                marginBottom: '20px',
               }}
             />
           </div>
-        </div>
+        </motion.div>
         
       </div>
-    </section>
+    </motion.section>
   );
 };
 
